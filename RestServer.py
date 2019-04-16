@@ -1,4 +1,5 @@
 from flask import Flask, jsonify
+from flask import request
 from RobotCommunication import *
 import GetPixyInfo
 from time import sleep
@@ -21,13 +22,13 @@ def get_task(data):
     print "Got:\t"+data;
     #if data[1:6] == "'c':7":
         #response = ExecuteRemoteCode.execute(data)
-    if data == "{'c':5}":
+    #if data == "{'c':5}":
         
-        response = GetPixyInfo.getSig()#jsonify({'some':'data'})
+        #response = GetPixyInfo.getSig()#jsonify({'some':'data'})
         
     
         #response = GetPixyInfo.getSig()
-    elif data == "{'s':0}":
+    if data == "{'s':0}":
         shutdown_server()
         response = jsonify({"C":'Shutting Down'})
     else:
@@ -38,16 +39,19 @@ def get_task(data):
     response.headers.add('Access-Control-Allow-Origin','*')
     return response
 
-@app.route('/sendPixyData/<string:data>', methods=['GET'])
-def get_pixy_data(data):
-    
+@app.route('/sendPixyData', methods=['GET'])
+def get_pixy_data():
     while True:
-        print "Sending Pixy Info"
-        r = requests.get("http://10.0.10.11:3000/cmd",auth=('tester','test'))
+        response = GetPixyInfo.getSig()
+        print "Got: "+response
+        link = "http://"+request.remote_addr+":3000/pixy/"+response
+        print ("Sending Pixy Info to "+request.remote_addr)
+        r = requests.get(link, auth=('tester','test'))
         sleep(2)
 
-
-
+@app.route("/get_my_ip", methods=["GET"])
+def get_my_ip():
+    return jsonify({'ip': request.remote_addr}), 200
 
 if __name__ == '__main__':
     GetPixyInfo.startup()

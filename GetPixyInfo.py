@@ -2,6 +2,7 @@ import pixy
 from ctypes import *
 from pixy import *
 from flask import jsonify
+import json
 
 # This code will  what the pixy camera sees in get sig and will not try to move it
 
@@ -46,4 +47,4 @@ def getSig():
       ret ["Y"+str(i)] = blocks[i].m_y
       ret ["W"+str(i)] = blocks[i].m_width
       ret ["H"+str(i)] = blocks[i].m_height
-    return jsonify(ret)
+    return json.dumps(ret)
