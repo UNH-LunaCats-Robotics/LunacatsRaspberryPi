@@ -38,16 +38,13 @@ def get_task(data):
     response.headers.add('Access-Control-Allow-Origin','*')
     return response
 
-
-
-def sendPixyInfo():
-
-   
-    print "Sending Pixy Info"
-    r = requests.get("http://10.0.10.11:3000/cmd",auth=('tester','test'))
-    sleep(2)
-    threading.Timer(2.5,sendPixyInfo())
-
+@app.route('/sendPixyData/<string:data>', methods=['GET'])
+def get_task(data):
+    
+    while True:
+        print "Sending Pixy Info"
+        r = requests.get("http://10.0.10.11:3000/cmd",auth=('tester','test'))
+        sleep(2)
 
 
 
