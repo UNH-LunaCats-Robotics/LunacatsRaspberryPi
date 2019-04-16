@@ -39,7 +39,7 @@ def get_task(data):
     return response
 
 @app.route('/sendPixyData/<string:data>', methods=['GET'])
-def get_task(data):
+def get_pixy_data(data):
     
     while True:
         print "Sending Pixy Info"
