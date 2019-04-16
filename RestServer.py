@@ -5,21 +5,12 @@ from time import sleep
 import requests
 import threading
 
-def sendPixyInfo():
-    threading.Timer(2.5,sendPixyInfo).start()
-    print "Sending Pixy Info On thread"
-    try:
-        r = requests.get("http://10.0.10.14:3000/cmd/{'C':0}")
-    except:
-        print "\tCan't send info!!!!!"
-#sendPixyInfo()
-
-
 def shutdown_server():
     func = request.environ.get('werkzeug.server.shutdown')
     if func is None:
         raise RuntimeError('Not running with the Werkzeug Server')
     func()
+
 
 app = Flask(__name__)
 
@@ -48,11 +39,30 @@ def get_task(data):
     return response
 
 
+
+def sendPixyInfo():
+
+   
+    print "Sending Pixy Info"
+    r = requests.get("http://10.0.10.11:3000/cmd",auth=('tester','test'))
+    sleep(2)
+    threading.Timer(2.5,sendPixyInfo())
+
+
+
+
+
 if __name__ == '__main__':
     GetPixyInfo.startup()
+    
     app.run(host = '0.0.0.0')
+    threading.Timer(2.5,sendPixyInfo())
+    
 
 @app.route('/shutdown/<string:data>', methods=['GET'])
 def shutdown():
     shutdown_server()
     return 'Server shutting down...'
+    runConnectThread = False;
+
+
