@@ -1,23 +1,24 @@
-from RobotCommunication import *
-import PixyFollowSig
-from time import sleep
+# from RobotCommunication import *
+# from time import sleep
 import json
-import threading
-
 
 # The height that the picture should be at the target position
 posHeight = 60
 posWidth  = 30
 
 # The allowed variation for the height
-heightVary = 20;
-widthVary = 5;
+heightVary = 20
+widthVary = 5
     
+lidarDistance = 0
+objectDetected = False
 
-taskInput = ""
 
-lidarDistance = 0;
-objectDetected = False;
+def performAction(action, args): 
+	if taskInput != "S":
+		action(args)
+		return False
+	return True
 
 
 def terminTask():
@@ -96,24 +97,18 @@ def processWidth(data,i,angle):
         goRight(angle)
     else:
         holdPos()
-
-
-def performAction(action, args): 
-	if taskInput != "S":
-		action(args)
-		return False
-	return True
 		
     
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
+    taskInput = ""
     print "Running"
     while taskInput != "S":
         # PixyFollowSig.track()
 
-        # dataString = PixyFollowSig.getSig()
-        # data = json.loads(dataString)
+        dataString = "{'c':0}"
+        data = json.loads(dataString)
 
         if objectDetected:
             print "Object Detected!!!!!"
@@ -137,3 +132,4 @@ if __name__ == '__main__':
 
 
 
+print "TEST"
