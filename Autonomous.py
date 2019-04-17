@@ -10,7 +10,7 @@ posHeight = 60
 posWidth  = 30
 
 # The allowed variation for the height
-heightVary = 20
+heightVary = 20;
 widthVary = 5;
     
 
@@ -98,27 +98,32 @@ def processWidth(data,i,angle):
         holdPos()
 
 
-
-
+def performAction(action, args): 
+	if taskInput != "S":
+		action(args)
+		return False
+	return True
+		
+    
 
 if __name__ == '__main__':
 
-
-
+    print "Running"
     while taskInput != "S":
-        PixyFollowSig.track()
+        # PixyFollowSig.track()
 
-        dataString = PixyFollowSig.getSig()
-        data = json.loads(dataString)
+        # dataString = PixyFollowSig.getSig()
+        # data = json.loads(dataString)
 
         if objectDetected:
             print "Object Detected!!!!!"
-            back(15)
-            sleep(0.5)
-            left(15)
-            sleep(2)
-            forward(15)
-            sleep(1.5)
+            performAction(back,(15))
+	    #back(15)
+            performAction(sleep,0.5)
+            performAction(left,15)
+            performAction(sleep,2)
+            performAction(forward,15)
+            performAction(sleep,1.5)
             objectDetected = False
             print "Object evaded!"
         if data["C"] == 0:
