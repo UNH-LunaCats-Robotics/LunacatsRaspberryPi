@@ -1,34 +1,44 @@
-# from RobotCommunication import *
+from RobotCommunication import *
+#from PixyFollowSig import *
+
 # from time import sleep
 import json
 
 # The height that the picture should be at the target position
 posHeight = 60
-posWidth  = 30
+posWidth = 30
 
 # The allowed variation for the height
 heightVary = 20
 widthVary = 5
-    
+
 lidarDistance = 0
 objectDetected = False
+atGoodHeight = False
 
+taskInput = ""
 
-def performAction(action, args): 
-	if taskInput != "S":
-		action(args)
-		return False
-	return True
+def performAction(action, args):
+    global taskInput
+    if taskInput != "S":
+        action(args)
+        return False
+    return True
 
 
 def terminTask():
     global taskInput
     while taskInput != "S":
         taskInput = raw_input("Input")
-    PixyFollowSig.terminate()
+#    PixyFollowSig.terminate()
 
 
-def faceTarget(angle,target):
+def faceTarget(angle, target):
+    print "Facing Target"
+    return True
+
+
+"""
     if angle - 50 > target:
         right(15)
         return False
@@ -36,12 +46,17 @@ def faceTarget(angle,target):
         left(15)
         return False
     return True
+"""
+
 
 def goForward(angle):
     global lidarDistance
     global objectDetected
 
     print "Going Forward:" + str(angle)
+
+
+"""
     if faceTarget(angle,0):
         newDataStr = forward(15)
         print "GOT: '"+newDataStr+"'"
@@ -50,33 +65,50 @@ def goForward(angle):
         print "Distance:" + str(lidarDistance)
         if lidarDistance < 3.0:
             objectDetected = True
+"""
 
 
 def goBack(angle):
     print "Going Back:" + str(angle)
+
+
+"""
     if faceTarget(angle, 0):
         back(15)
+"""
+
 
 def goLeft(angle):
     print "Going Left"
+
+
+"""
     if faceTarget(angle, -250):
         forward(15)
+"""
+
+
 def goRight(angle):
     print "Going Right"
+
+
+"""
     if faceTarget(angle, 250):
         forward(15)
+"""
+
 
 def holdPos():
     stop()
     print "Holding Position"
 
 
-atGoodHeight = False
-
-def processHeight(data,i,angle):
+def processHeight(data, i, angle):
     global atGoodHeight
     height = data["H" + str(i)]
-    #print "getting Height:" + str(height)
+
+    objectDetected = False
+    # print "getting Height:" + str(height)
 
     if height > posHeight + heightVary:
         goBack(angle)
@@ -87,9 +119,10 @@ def processHeight(data,i,angle):
     else:
         atGoodHeight = True
 
-def processWidth(data,i,angle):
+
+def processWidth(data, i, angle):
     width = data["W" + str(i)]
-    #print "getting Width:" + str(width)
+    # print "getting Width:" + str(width)
 
     if width > posWidth + widthVary:
         goLeft(angle)
@@ -97,39 +130,46 @@ def processWidth(data,i,angle):
         goRight(angle)
     else:
         holdPos()
-		
-    
 
 
-if __name__ == '__main__':
-    taskInput = ""
-    print "Running"
-    while taskInput != "S":
+def getAutonStatus():
+    global taskInput
+    return taskInput == "S"
+
+
+def stopAutonomous():
+    global taskInput
+    taskInput = False
+
+
+def runAutonomous():
+    global taskInput,objectDetected
+    taskInput = "This should be a boolean"
+
+    while taskInput:
         # PixyFollowSig.track()
 
-        dataString = "{'c':0}"
-        data = json.loads(dataString)
+        #dataString = PixyFollowSig.getSig()
+        #data = json.loads(dataString)
 
         if objectDetected:
             print "Object Detected!!!!!"
-            performAction(back,(15))
-	    #back(15)
-            performAction(sleep,0.5)
-            performAction(left,15)
-            performAction(sleep,2)
-            performAction(forward,15)
-            performAction(sleep,1.5)
+            performAction(back, (15))
+            # back(15)
+            performAction(sleep, 0.5)
+            performAction(left, 15)
+            performAction(sleep, 2)
+            performAction(forward, 15)
+            performAction(sleep, 1.5)
             objectDetected = False
             print "Object evaded!"
-        if data["C"] == 0:
-            stop()
+        # if data["C"] == 0:
+        #    stop()
         else:
-            for i in range(0,data["C"]):
-                if data["S"+str(i)] == 1:
-                    processHeight(data,i,data["A"])
-                if data["S" + str(i)] == 1 and atGoodHeight:
-                    processWidth(data, i,data["A"])
+            print "Processing Data"
 
-
-
-print "TEST"
+            # for i in range(0,data["C"]):
+            #     if data["S"+str(i)] == 1:
+            #         processHeight(data,i,data["A"])
+            #     if data["S" + str(i)] == 1 and atGoodHeight:
+            #         processWidth(data, i,data["A"])
