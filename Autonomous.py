@@ -30,7 +30,6 @@ def terminTask():
     global taskInput
     while taskInput != "S":
         taskInput = raw_input("Input")
-#    PixyFollowSig.terminate()
 
 
 def faceTarget(angle, target):
