@@ -43,35 +43,35 @@ def runAutonomous():
     global runAutonomous,objectDetected
     runAutonomous = True
 
-    while getAutonStatus():
-        pixyInfo = GetPixyInfo.getSig()
+    # while getAutonStatus():
+    #     pixyInfo = GetPixyInfo.getSig()
 
-        if pixyInfo["C"] > 0:
-            print "I SEE SOMETHING!!!!!"
-        else:
-            print "I see Nothing..."
-            turnCount = 5
-            turnAngle = 5
-            sleepTime = 2
-            foundBoard = False
-            for i = 1 to turnCount:
-                left(turnAngle)
-                sleep(sleepTime)
-                pixyInfo = GetPixyInfo.getSig()
-                if pixyInfo["C"] > 0:
-                    print "I SEE SOMETHING!!!!!"
-                    foundBoard = True
-                    break
-            if not foundBoard:
-                right(turnAngle*turnCount)
-                sleep(sleepTime*turnCount)
-                for i = 1 to turnCount:
-                    right(turnAngle)
-                    sleep(sleepTime)
-                    pixyInfo = GetPixyInfo.getSig()
-                    if pixyInfo["C"] > 0:
-                        print "I SEE SOMETHING!!!!!"
-                        foundBoard = True
-                        break
+    #     if pixyInfo["C"] > 0:
+    #         print "I SEE SOMETHING!!!!!"
+    #     else:
+    #         print "I see Nothing..."
+    #         turnCount = 5
+    #         turnAngle = 5
+    #         sleepTime = 2
+    #         foundBoard = False
+    #         for i = 1 to turnCount:
+    #             left(turnAngle)
+    #             sleep(sleepTime)
+    #             pixyInfo = GetPixyInfo.getSig()
+    #             if pixyInfo["C"] > 0:
+    #                 print "I SEE SOMETHING!!!!!"
+    #                 foundBoard = True
+    #                 break
+    #         if not foundBoard:
+    #             right(turnAngle*turnCount)
+    #             sleep(sleepTime*turnCount)
+    #             for i = 1 to turnCount:
+    #                 right(turnAngle)
+    #                 sleep(sleepTime)
+    #                 pixyInfo = GetPixyInfo.getSig()
+    #                 if pixyInfo["C"] > 0:
+    #                     print "I SEE SOMETHING!!!!!"
+    #                     foundBoard = True
+    #                     break
 
             
