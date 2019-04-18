@@ -47,4 +47,4 @@ def getSig():
       ret ["Y"+str(i)] = blocks[i].m_y
       ret ["W"+str(i)] = blocks[i].m_width
       ret ["H"+str(i)] = blocks[i].m_height
-    return json.dumps(ret)
+    return ret

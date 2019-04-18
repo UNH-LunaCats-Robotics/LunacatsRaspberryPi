@@ -23,26 +23,20 @@ def get_task(data):
     autonStatus = getAutonStatus()
     response = jsonify()
 
-    # if data[1:6] == "'c':7":
-        # response = ExecuteRemoteCode.execute(data)
     if data == "{'c':5}":
-        response = GetPixyInfo.getSig()
+        response = json.dumps(GetPixyInfo.getSig())
+    test = "5"
+    test["5"]
     if data == "{'s':0}":
         shutdown_server()
         response = jsonify({"C": 'Shutting Down'})
+        
     elif data == "{'c':7}":
         print "looks like its time to start the autonomous"
-        if not autonStatus:
-            runAutonomous()
-            print "ok I started"
-        else:
-            print "I'm already running!"
-            stopAutonomous()
+        runAutonomous()
     elif data == "{'c':8}":
-        if autonStatus:
-            stopAutonomous()
-        else:
-            print "I'm already stopped!"
+        print "Stopping the autonomonous!!!!!"
+        stopAutonomous()
     else:
         print "Sending to Arduino"
         response = jsonify(send_json(data))
@@ -55,7 +49,7 @@ def get_task(data):
 @app.route('/sendPixyData', methods=['GET'])
 def get_pixy_data():
     while True:
-        response = GetPixyInfo.getSig()
+        response = json.dumps(GetPixyInfo.getSig())
         print "Got: "+response
         link = "http://"+request.remote_addr+":3000/setPixyData/"+response
         print("Sending Pixy Info to "+link)
@@ -78,4 +72,3 @@ if __name__ == '__main__':
 def shutdown():
     shutdown_server()
     return 'Server shutting down...'
-    runConnectThread = False
