@@ -37,17 +37,6 @@ def faceTarget(angle, target):
     return True
 
 
-"""
-    if angle - 50 > target:
-        right(15)
-        return False
-    elif angle + 50 < target:
-        left(15)
-        return False
-    return True
-"""
-
-
 def goForward(angle):
     global lidarDistance
     global objectDetected
@@ -55,46 +44,16 @@ def goForward(angle):
     print "Going Forward:" + str(angle)
 
 
-"""
-    if faceTarget(angle,0):
-        newDataStr = forward(15)
-        print "GOT: '"+newDataStr+"'"
-        newData = json.loads(newDataStr)
-        lidarDistance = newData["L"]
-        print "Distance:" + str(lidarDistance)
-        if lidarDistance < 3.0:
-            objectDetected = True
-"""
-
-
 def goBack(angle):
     print "Going Back:" + str(angle)
-
-
-"""
-    if faceTarget(angle, 0):
-        back(15)
-"""
 
 
 def goLeft(angle):
     print "Going Left"
 
 
-"""
-    if faceTarget(angle, -250):
-        forward(15)
-"""
-
-
 def goRight(angle):
     print "Going Right"
-
-
-"""
-    if faceTarget(angle, 250):
-        forward(15)
-"""
 
 
 def holdPos():
@@ -133,7 +92,7 @@ def processWidth(data, i, angle):
 
 def getAutonStatus():
     global taskInput
-    return taskInput == "S"
+    return taskInput
 
 
 def stopAutonomous():
@@ -143,9 +102,9 @@ def stopAutonomous():
 
 def runAutonomous():
     global taskInput,objectDetected
-    taskInput = "This should be a boolean"
+    taskInput = True
 
-    while taskInput:
+    while getAutonStatus():
         # PixyFollowSig.track()
 
         #dataString = PixyFollowSig.getSig()
@@ -165,7 +124,7 @@ def runAutonomous():
         # if data["C"] == 0:
         #    stop()
         else:
-            print "Processing Data"
+            print "Processing Data!"
 
             # for i in range(0,data["C"]):
             #     if data["S"+str(i)] == 1:

@@ -4,7 +4,6 @@ from RobotCommunication import *
 import GetPixyInfo
 from time import sleep
 import requests
-import threading
 from Autonomous import *
 
 
@@ -38,6 +37,7 @@ def get_task(data):
             print "ok I started"
         else:
             print "I'm already running!"
+            stopAutonomous()
     elif data == "{'c':8}":
         if autonStatus:
             stopAutonomous()
@@ -57,9 +57,9 @@ def get_pixy_data():
     while True:
         response = GetPixyInfo.getSig()
         print "Got: "+response
-        link = "http://"+request.remote_addr+":3000/setPixyInfo/"+response
-        print("Sending Pixy Info to "+request.link)
-        r = requests.get(link, auth=('tester', 'test'))
+        link = "http://"+request.remote_addr+":3000/setPixyData/"+response
+        print("Sending Pixy Info to "+link)
+        r = requests.get(link)
         sleep(2)
 
 
@@ -70,9 +70,8 @@ def get_my_ip():
 
 if __name__ == '__main__':
     GetPixyInfo.startup()
-
     app.run(host='0.0.0.0')
-    threading.Timer(2.5, sendPixyInfo())
+
 
 
 @app.route('/shutdown/<string:data>', methods=['GET'])
