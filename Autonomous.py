@@ -39,7 +39,6 @@ def stopAutonomous():
     runAutonomous = False
 
 
-
 def runAutonomous():
     global runAutonomous,objectDetected
     runAutonomous = True
