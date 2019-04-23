@@ -26,8 +26,6 @@ def get_task(data):
 
     if data == "{'c':5}":
         response = json.dumps(GetPixyInfo.getSig())
-    test = "5"
-    test["5"]
     if data == "{'s':0}":
         shutdown_server()
         response = jsonify({"C": 'Shutting Down'})
@@ -39,8 +37,9 @@ def get_task(data):
         print "Stopping the autonomonous!!!!!"
         stopAutonomous()
     else:
-        print "Sending to Arduino"
-        response = jsonify(send_json(data))
+        text = send_json(data)
+        print "Arduino Responded:" + text;
+        response = jsonify(text);
 
     print "Sending to Laptop"
     response.headers.add('Access-Control-Allow-Origin', '*')

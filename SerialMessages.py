@@ -6,28 +6,50 @@ from serial import *
 # And then going to Tools->Port to see where it's plugged in
 Port = '/dev/ttyACM0'
 
+sendData = True;
+def getDataState():
+    return sendData;
 
-# This establishes a serial connection, it also uses a 0.2 second timeout
-try:
-    try:
-        ser = Serial(Port, 2000000)
-    except:
-        ser = Serial('/dev/ttyACM1', 2000000)
+def setDataState(newState):
+    sendData = newState;
+
+ser = Serial(Port, 115200)
+
+def send_json(data):
+        print "Trying to send:"+ str(getDataState());
+        timeout = 0;
+        if not getDataState():
+            print "Timed out on sending:" + data;
+            return "Timeout"
+
         
-    ser.timeout = 0.2
-    
-    def send_json(data):
-        """This function sends some json to the robot, which will in turn send some json data back"""
-        ser.flush()
+        setDataState(False);
+        # if not ser.isOpen():
+        #     ser.open()
+
+        try:
+            """This function sends some json to the robot, which will in turn send some json data back"""
+            ser.flush()
+            
+            if ser.isOpen():
+                ser.writelines(str(data))
+
+            sleep(0.6);
+            print "Serial:" + ser.isOpen();
+            line = ser.readline()
+
+            # ser.close()
+
+            # sleep(0.2);
+        except:
+            setDataState(True)
+            print "There was an error:",sys.exc_info()[0]
+
         
-        if ser.isOpen():
-            ser.writelines(str(data))
-            sleep(0.05);
-        return ser.readline()
-except:
-    def send_json(data):
-        return "ERROR - Cannot Communicate to Serial"    
 
 
+        setDataState(True);
+
+        return line
 
 
