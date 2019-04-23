@@ -34,13 +34,16 @@ def send_json(data):
             if ser.isOpen():
                 ser.writelines(str(data))
 
-            sleep(0.6);
-            print "Serial:" + ser.isOpen();
-            line = ser.readline()
+            sleep(1.2);
+            #print "Serial:" + ser.isOpen();
+            #line = ser.readline()
 
             # ser.close()
 
             # sleep(0.2);
+            setDataState(True);
+
+            return "Sent!"
         except:
             setDataState(True)
             print "There was an error:",sys.exc_info()[0]
@@ -48,8 +51,6 @@ def send_json(data):
         
 
 
-        setDataState(True);
-
-        return line
+        
 
 
