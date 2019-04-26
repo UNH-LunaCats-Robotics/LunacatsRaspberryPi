@@ -1,12 +1,12 @@
 from time import sleep
 from serial import *
 import threading
-
+import atexit
 # This is the port the arduino is connected on, this can be found by
 # Plugging an arduino into your computer and opening up the arduino IDE,
 # And then going to Tools->Port to see where it's plugged in
 # Port = '/dev/ttyACM0'
-Port = '/dev/cu.usbmodem1411'
+Port = 'COM4'
 
 # sendData = True
 # def getDataState():
@@ -16,7 +16,10 @@ Port = '/dev/cu.usbmodem1411'
 #     sendData = newState
 
 ser = Serial(Port, 115200)
+def closeArduinoPort():
+        ser.close()
 
+atexit.register(closeArduinoPort)
 def send_json(data):
         # print ("Trying to send:"+ str(getDataState()));
         # timeout = 0;
@@ -51,23 +54,35 @@ def send_json(data):
         #     setDataState(True)
         #     print ("There was an error:",sys.exc_info()[0])
         print("trying to send: " + str(data))
-        thread = threading.Thread(target=send_task, args=(data,))
-        thread.start()
-        return_value = thread.join()
-        return return_value
+        # thread = threading.Thread(target=send_task, args=(data,))
+        # thread.start()
+        # return_value = thread.join()
+        testLine = "{\"hello\":\"world\"}"
+        # return_value = send_task("{\"hello\":\"world\"}")
+        ser.writelines(testLine.encode())
+        # print(testLine.decode())
+        
+        sleep(3)
+        line = ser.readline().decode()
+        #print(line)
+        # print(thread.isAlive())
+        return line
+        # return send_task(data)
 
 def send_task(data):
     ser.flush()
-    
     if not ser.isOpen():
         ser.open()
-    ser.writelines(str(data))
-    print ("Serial:" + str(ser.isOpen()));
-    line = ser.readline()
+#     data = data + "\n\r"
+
+    ser.writelines(data.encode())
+    print("SERIAL OUT " + str(ser.out_waiting) )
+    while not ser.out_waiting == 0:
+        print("waiting")
+    print ("Serial:" + str(ser.isOpen()))
+    line = ser.readline().decode()
+    print( "line: " + str(line))
     return line
         
 
-
         
-
-
