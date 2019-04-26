@@ -20,7 +20,7 @@ app = Flask(__name__)
 # {'cmd': '0', 'power': 50}
 @app.route('/cmd/<string:data>', methods=['GET'])
 def get_task(data):
-    print "Got:\t"+data
+    print ("Got:\t"+data)
     autonStatus = getAutonStatus()
     response = jsonify()
 
@@ -31,17 +31,17 @@ def get_task(data):
         response = jsonify({"C": 'Shutting Down'})
         
     elif data == "{'c':7}":
-        print "looks like its time to start the autonomous"
+        print ("looks like its time to start the autonomous")
         runAutonomous()
     elif data == "{'c':8}":
-        print "Stopping the autonomonous!!!!!"
+        print ("Stopping the autonomonous!!!!!")
         stopAutonomous()
     else:
         text = send_json(data)
-        print "Arduino Responded:" + text;
-        response = jsonify(text);
+        print ("Arduino Responded:" + str(text))
+        response = jsonify(text)
 
-    print "Sending to Laptop"
+    print ("Sending to Laptop")
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
@@ -50,7 +50,7 @@ def get_task(data):
 def get_pixy_data():
     while True:
         response = json.dumps(GetPixyInfo.getSig())
-        print "Got: "+response
+        print ("Got: "+response)
         link = "http://"+request.remote_addr+":3000/setPixyData/"+response
         print("Sending Pixy Info to "+link)
         r = requests.get(link)

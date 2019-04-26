@@ -10,22 +10,22 @@ def forward(angle):
     global lidarDistance
     global objectDetected
 
-    print "Going Forward:" + str(angle)
+    print ("Going Forward:" + str(angle))
 
 
 def back(angle):
-    print "Going Back:" + str(angle)
+    print ("Going Back:" + str(angle))
 
 
 def left(angle):
-    print "Going Left"
+    print ("Going Left")
 
 
 def right(angle):
-    print "Going Right"
+    print ("Going Right")
 
 def stop(angle):
-    print "Stopping"
+    print ("Stopping")
 
 
 
@@ -47,9 +47,9 @@ def runAutonomous():
         pixyInfo = GetPixyInfo.getSig()
 
         if pixyInfo["C"] > 0:
-            print "I SEE SOMETHING!!!!!"
+            print ("I SEE SOMETHING!!!!!")
         else:
-            print "I see Nothing..."
+            print ("I see Nothing...")
             turnCount = 5
             turnAngle = 5
             sleepTime = 2
@@ -59,7 +59,7 @@ def runAutonomous():
                 sleep(sleepTime)
                 pixyInfo = GetPixyInfo.getSig()
                 if pixyInfo["C"] > 0:
-                    print "I SEE SOMETHING!!!!!"
+                    print ("I SEE SOMETHING!!!!!")
                     foundBoard = True
                     break
             if not foundBoard:
@@ -70,7 +70,7 @@ def runAutonomous():
                     sleep(sleepTime)
                     pixyInfo = GetPixyInfo.getSig()
                     if pixyInfo["C"] > 0:
-                        print "I SEE SOMETHING!!!!!"
+                        print ("I SEE SOMETHING!!!!!")
                         foundBoard = True
                         break
 
