@@ -3,12 +3,32 @@ from serial import *
 import threading
 import atexit
 
+port = '/dev/ttyACM0'
+baudrate = 115200
 
-Port = '/dev/ttyACM0'
+ser = serial.Serial(port, baudrate, timeout = 10) 
 
-ser = Serial(Port)
+def closePort():
+    ser.close()
+
+atexit.register(closePort)
+
+def writeToArduino(msg):
+    print("Sending: "+msg)
+    ser.write(bytes(msg,'utf-8'))
 
 def startup():
+        sleep(2)
+        writeToArduino("init")
+        response = ser.readline()
+        print("Result: "+str(responce))
+        if str(response) == "b'success'\r\n":
+                print("the Arduino is ready to respond to messages!")
+        else if responce == "b''":
+                print("WARNING -- Arduino Communication Timed Out!")
+        else:
+                print("WARNING -- Arduino failed initialization test.")
+                
         thread = threading.Thread(target=send_task,args=())
         thread.start()
 
@@ -22,7 +42,6 @@ def send_json(data):
         while sendMsg != "" or res != "":
                 sleep(0.001)
         sendMsg = data;
-
         while res == "":
                 sleep(0.001);
         ret = res
@@ -41,11 +60,8 @@ def send_task():
                 if sendMsg == "":
                         continue
                 msg = sendMsg
-                print("Processing:" + msg)
-
-                ser.write(bytes(msg,'utf-8'))
-                sleep(1)
-                print ("Sent!")
-                res = "Ok"#ser.readline().strip()
+                
+                writeToArduino(msg)
+                res = ser.readline().strip()
                 print ("Got:" +res)
                 sendMsg = ""
