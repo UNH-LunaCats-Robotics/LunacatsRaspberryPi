@@ -64,6 +64,7 @@ def get_my_ip():
 
 if __name__ == '__main__':
     GetPixyInfo.startup()
+    startup()
     app.run(host='0.0.0.0')
 
 

@@ -2,87 +2,46 @@ from time import sleep
 from serial import *
 import threading
 import atexit
-# This is the port the arduino is connected on, this can be found by
-# Plugging an arduino into your computer and opening up the arduino IDE,
-# And then going to Tools->Port to see where it's plugged in
-# Port = '/dev/ttyACM0'
-Port = 'COM4'
 
-# sendData = True
-# def getDataState():
-#     return sendData
+def startup():
+        thread = threading.Thread(target=send_task,args=())
+        thread.start()
 
-# def setDataState(newState):
-#     sendData = newState
 
-ser = Serial(Port, 115200)
-def closeArduinoPort():
-        ser.close()
+res = ""
+sendMsg = ""
 
-atexit.register(closeArduinoPort)
 def send_json(data):
-        # print ("Trying to send:"+ str(getDataState()));
-        # timeout = 0;
-        # if not getDataState():
-        #     print ("Timed out on sending:" + data);
-        #     return "Timeout"
-
+        global res,sendMsg;
         
-        # setDataState(False);
-        # if ser.isOpen() == False:
-        #     ser.open()
+        while sendMsg != "" or res != "":
+                sleep(0.001)
+        sendMsg = data;
 
-        # try:
-        #     """This function sends some json to the robot, which will in turn send some json data back"""
-        #     ser.flush()
-            
-        #     if not ser.isOpen():
-        #         ser.open()
-        #     ser.writelines(str(data))
+        while res == "":
+                sleep(0.001);
+        ret = res
+        res = ""
 
-        #     sleep(1.2);
-        #     #print ("Serial:" + ser.isOpen());
-        #     #line = ser.readline()
 
-        #     # ser.close()
+        print("Got:"+ret);
+        return ret
 
-        #     # sleep(0.2);
-        #     setDataState(True);
 
-        #     return "Sent!"
-        # except:
-        #     setDataState(True)
-        #     print ("There was an error:",sys.exc_info()[0])
-        print("trying to send: " + str(data))
-        # thread = threading.Thread(target=send_task, args=(data,))
-        # thread.start()
-        # return_value = thread.join()
-        testLine = "{\"hello\":\"world\"}"
-        # return_value = send_task("{\"hello\":\"world\"}")
-        ser.writelines(testLine.encode())
-        # print(testLine.decode())
-        
-        sleep(3)
-        line = ser.readline().decode()
-        #print(line)
-        # print(thread.isAlive())
-        return line
-        # return send_task(data)
 
-def send_task(data):
-    ser.flush()
-    if not ser.isOpen():
-        ser.open()
-#     data = data + "\n\r"
+def send_task():
+        global res,sendMsg;
+        while True:
+                sleep(0.001);
+                if sendMsg == "":
+                        continue
+                msg = sendMsg
+                print("Processing:" + msg)
 
-    ser.writelines(data.encode())
-    print("SERIAL OUT " + str(ser.out_waiting) )
-    while not ser.out_waiting == 0:
-        print("waiting")
-    print ("Serial:" + str(ser.isOpen()))
-    line = ser.readline().decode()
-    print( "line: " + str(line))
-    return line
-        
+                sleep(1) # Need to replace with pyserial
+                res = msg + " and sent!"
+                sendMsg = ""
+                
+
 
         
