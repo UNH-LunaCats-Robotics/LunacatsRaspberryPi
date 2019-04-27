@@ -39,11 +39,16 @@ def get_task(data):
     else:
         text = send_json(data)
         print ("Arduino Responded:" + str(text))
-        response = jsonify(text)
+        try:
+            response = jsonify(text)
+            print ("Sending to Laptop")
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response
+        except:
+            print("fail")
+            return ""
 
-    print ("Sending to Laptop")
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+    
 
 
 @app.route('/sendPixyData', methods=['GET'])
