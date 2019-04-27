@@ -3,6 +3,11 @@ from serial import *
 import threading
 import atexit
 
+
+Port = '/dev/ttyACM0'
+
+ser = Serial(Port)
+
 def startup():
         thread = threading.Thread(target=send_task,args=())
         thread.start()
@@ -38,10 +43,9 @@ def send_task():
                 msg = sendMsg
                 print("Processing:" + msg)
 
-                sleep(1) # Need to replace with pyserial
-                res = msg + " and sent!"
+                ser.write(bytes(msg,'utf-8'))
+                sleep(1)
+                print ("Sent!")
+                res = "Ok"#ser.readline().strip()
+                print ("Got:" +res)
                 sendMsg = ""
-                
-
-
-        
