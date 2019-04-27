@@ -1,9 +1,9 @@
 from time import sleep
-from serial import *
+import serial
 import threading
 import atexit
 
-port = '/dev/ttyACM0'
+port = 'COM4'
 baudrate = 115200
 
 ser = serial.Serial(port, baudrate, timeout = 10) 
@@ -21,10 +21,10 @@ def startup():
         sleep(2)
         writeToArduino("init")
         response = ser.readline()
-        print("Result: "+str(responce))
-        if str(response) == "b'success'\r\n":
+        print("Result: "+str(response))
+        if str(response) == "b'success\r\n'":
                 print("the Arduino is ready to respond to messages!")
-        else if responce == "b''":
+        elif response == "b''":
                 print("WARNING -- Arduino Communication Timed Out!")
         else:
                 print("WARNING -- Arduino failed initialization test.")
@@ -48,7 +48,7 @@ def send_json(data):
         res = ""
 
 
-        print("Got:"+ret);
+        print("Got:"+ str(ret));
         return ret
 
 
@@ -62,6 +62,7 @@ def send_task():
                 msg = sendMsg
                 
                 writeToArduino(msg)
-                res = ser.readline().strip()
-                print ("Got:" +res)
+                res = str(ser.readline().strip())
+                print ("Got:" + str(res))
+                print("Type: " + str(type(res)))
                 sendMsg = ""
