@@ -41,5 +41,5 @@ if __name__ == "__main__":
     #writeToArduino("init")
     initArduino()
     while True: 
-        test_r()tRead
+        test_r()
         
