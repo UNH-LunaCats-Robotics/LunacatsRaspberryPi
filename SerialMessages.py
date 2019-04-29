@@ -5,21 +5,15 @@ import threading
 import atexit
 import json
 
-port = '/dev/cu.usbmodem101'
+port = '/dev/ttyACM0'
 baudrate = 115200
-
-ser = serial.Serial(port, baudrate, timeout = 0.05)
-
+ser = serial.Serial(port, baudrate, timeout = 1)
 
 def closePort():
     if ser != None:
         ser.close()
 
 atexit.register(closePort)
-
-def writeToArduino(msg):
-    print("Sending: " + str(msg))
-    ser.write(bytes([msg]))
 
 def startup():
         thread = threading.Thread(target=send_task,args=())
@@ -29,7 +23,7 @@ messageQueue = Queue(maxsize=2)
 
 def send_json(data):
         global messageQueue;
-        messageQueue.put(data["c"])
+        messageQueue.put(data)
 
 def send_task():
         while True:
@@ -37,7 +31,8 @@ def send_task():
                 item = messageQueue.get()
                 if item is None:
                         break
-                
-                writeToArduino(item)
-                # print("Arduino Responded:" + str(ser.read()))
+
+                print("Sending:" + json.dumps(item) )
+                ser.write(bytes(json.dumps(item),'utf-8'))
+                print("Arduino Responded:" + str(ser.read()))
                 messageQueue.task_done()
