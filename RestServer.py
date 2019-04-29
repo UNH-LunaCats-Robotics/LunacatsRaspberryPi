@@ -1,11 +1,12 @@
 from flask import Flask, jsonify
 from flask import request
-from RobotCommunication import *
-import GetPixyInfo
 from time import sleep
 import requests
 import json
-from Autonomous import *
+
+import GetPixyInfo
+import RobotCommunication
+import Autonomous
 
 
 def shutdown_server():
@@ -20,33 +21,21 @@ app = Flask(__name__)
 # {'cmd': '0', 'power': 50}
 @app.route('/cmd/<string:data>', methods=['GET'])
 def get_task(data):
-    print ("Got:\t"+data)
-    autonStatus = getAutonStatus()
+    print ("Recieved:\t"+data)
+    
     response = jsonify()
 
     if data == "{'c':5}":
         response = json.dumps(GetPixyInfo.getSig())
-    if data == "{'s':0}":
-        shutdown_server()
-        response = jsonify({"C": 'Shutting Down'})
-        
     elif data == "{'c':7}":
-        print ("looks like its time to start the autonomous")
-        runAutonomous()
+        response = Autonomous.runAutonomous()
     elif data == "{'c':8}":
-        print ("Stopping the autonomonous!!!!!")
-        stopAutonomous()
+        response = Autonomous.stopAutonomous()
     else:
-        text = send_json(data)
-        print ("Arduino Responded:" + str(text))
-        try:
-            response = jsonify(text)
-            print ("Sending to Laptop")
-            response.headers.add('Access-Control-Allow-Origin', '*')
-            return response
-        except:
-            print("fail")
-            return ""
+        response = jsonify(RobotCommunication.sendMessage(data))
+        
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
     
 
@@ -55,7 +44,7 @@ def get_task(data):
 def get_pixy_data():
     while True:
         response = json.dumps(GetPixyInfo.getSig())
-        print ("Got: "+response)
+        print ("Got: " + response)
         link = "http://"+request.remote_addr+":3000/setPixyData/"+response
         print("Sending Pixy Info to "+link)
         r = requests.get(link)
@@ -69,7 +58,7 @@ def get_my_ip():
 
 if __name__ == '__main__':
     GetPixyInfo.startup()
-    startup()
+    RobotCommunication.startup()
     app.run(host='0.0.0.0')
 
 

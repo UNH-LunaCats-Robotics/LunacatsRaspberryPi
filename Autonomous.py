@@ -37,6 +37,7 @@ def getAutonStatus():
 def stopAutonomous():
     global runAutonomous
     runAutonomous = False
+    return "Stopped!"
 
 
 def runAutonomous():
