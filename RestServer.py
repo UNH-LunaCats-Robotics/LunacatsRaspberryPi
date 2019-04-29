@@ -21,18 +21,19 @@ app = Flask(__name__)
 # {'cmd': '0', 'power': 50}
 @app.route('/cmd/<string:data>', methods=['GET'])
 def get_task(data):
-    print ("Recieved:\t"+data)
+
+    dataJson = json.loads(data)
     
     response = jsonify()
 
-    if data == "{'c':5}":
+    if   dataJson["c"] == 5:
         response = json.dumps(GetPixyInfo.getSig())
-    elif data == "{'c':7}":
+    elif dataJson["c"] == 7:
         response = Autonomous.runAutonomous()
-    elif data == "{'c':8}":
+    elif dataJson["c"] == 8:
         response = Autonomous.stopAutonomous()
     else:
-        response = jsonify(RobotCommunication.sendMessage(data))
+        response = jsonify(RobotCommunication.sendMessage(dataJson))
         
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
