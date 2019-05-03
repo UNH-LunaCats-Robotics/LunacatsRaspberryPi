@@ -38,7 +38,8 @@ def stopAutonomous():
     global runAutonomous
     runAutonomous = False
 
-
+ /b;k;jmy8hdll'.,<,,;/,:M
+ jpuy97079p677y97y97/ 
 def runAutonomous():
     global runAutonomous,objectDetected
     runAutonomous = True
