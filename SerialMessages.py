@@ -21,6 +21,7 @@ def startup():
 
 messageQueue = Queue(maxsize=2)
 
+
 def send_json(data):
         global messageQueue;
         messageQueue.put(data)
