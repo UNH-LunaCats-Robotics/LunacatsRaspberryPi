@@ -33,7 +33,7 @@ def send_task():
                 if item is None:
                         break
 
-                print("Sending:" + json.dumps(item) )
+                print "Sending:" + json.dumps(item) 
                 ser.write(bytes(json.dumps(item),'utf-8'))
-                print("Arduino Responded:" + str(ser.read()))
+                print "Arduino Responded:" + ser.read()
                 messageQueue.task_done()

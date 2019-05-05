@@ -69,180 +69,57 @@ except AttributeError:
     _newclass = 0
 
 
-class BlockArray(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, BlockArray, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, BlockArray, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        this = _pixy.new_BlockArray(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _pixy.delete_BlockArray
-    __del__ = lambda self : None;
-    def __getitem__(self, *args): return _pixy.BlockArray___getitem__(self, *args)
-    def __setitem__(self, *args): return _pixy.BlockArray___setitem__(self, *args)
-    def cast(self): return _pixy.BlockArray_cast(self)
-    __swig_getmethods__["frompointer"] = lambda x: _pixy.BlockArray_frompointer
-    if _newclass:frompointer = staticmethod(_pixy.BlockArray_frompointer)
-BlockArray_swigregister = _pixy.BlockArray_swigregister
-BlockArray_swigregister(BlockArray)
 
-def BlockArray_frompointer(*args):
-  return _pixy.BlockArray_frompointer(*args)
-BlockArray_frompointer = _pixy.BlockArray_frompointer
+def pixy_init():
+  return _pixy.pixy_init()
+pixy_init = _pixy.pixy_init
 
-class VectorArray(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, VectorArray, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, VectorArray, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        this = _pixy.new_VectorArray(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _pixy.delete_VectorArray
-    __del__ = lambda self : None;
-    def __getitem__(self, *args): return _pixy.VectorArray___getitem__(self, *args)
-    def __setitem__(self, *args): return _pixy.VectorArray___setitem__(self, *args)
-    def cast(self): return _pixy.VectorArray_cast(self)
-    __swig_getmethods__["frompointer"] = lambda x: _pixy.VectorArray_frompointer
-    if _newclass:frompointer = staticmethod(_pixy.VectorArray_frompointer)
-VectorArray_swigregister = _pixy.VectorArray_swigregister
-VectorArray_swigregister(VectorArray)
+def pixy_close():
+  return _pixy.pixy_close()
+pixy_close = _pixy.pixy_close
 
-def VectorArray_frompointer(*args):
-  return _pixy.VectorArray_frompointer(*args)
-VectorArray_frompointer = _pixy.VectorArray_frompointer
+def pixy_error(*args):
+  return _pixy.pixy_error(*args)
+pixy_error = _pixy.pixy_error
 
-class IntersectionLineArray(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, IntersectionLineArray, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, IntersectionLineArray, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        this = _pixy.new_IntersectionLineArray(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _pixy.delete_IntersectionLineArray
-    __del__ = lambda self : None;
-    def __getitem__(self, *args): return _pixy.IntersectionLineArray___getitem__(self, *args)
-    def __setitem__(self, *args): return _pixy.IntersectionLineArray___setitem__(self, *args)
-    def cast(self): return _pixy.IntersectionLineArray_cast(self)
-    __swig_getmethods__["frompointer"] = lambda x: _pixy.IntersectionLineArray_frompointer
-    if _newclass:frompointer = staticmethod(_pixy.IntersectionLineArray_frompointer)
-IntersectionLineArray_swigregister = _pixy.IntersectionLineArray_swigregister
-IntersectionLineArray_swigregister(IntersectionLineArray)
+def pixy_blocks_are_new():
+  return _pixy.pixy_blocks_are_new()
+pixy_blocks_are_new = _pixy.pixy_blocks_are_new
 
-def IntersectionLineArray_frompointer(*args):
-  return _pixy.IntersectionLineArray_frompointer(*args)
-IntersectionLineArray_frompointer = _pixy.IntersectionLineArray_frompointer
+def pixy_get_blocks(*args):
+  return _pixy.pixy_get_blocks(*args)
+pixy_get_blocks = _pixy.pixy_get_blocks
 
-class BarcodeArray(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, BarcodeArray, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, BarcodeArray, name)
-    __repr__ = _swig_repr
-    def __init__(self, *args): 
-        this = _pixy.new_BarcodeArray(*args)
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _pixy.delete_BarcodeArray
-    __del__ = lambda self : None;
-    def __getitem__(self, *args): return _pixy.BarcodeArray___getitem__(self, *args)
-    def __setitem__(self, *args): return _pixy.BarcodeArray___setitem__(self, *args)
-    def cast(self): return _pixy.BarcodeArray_cast(self)
-    __swig_getmethods__["frompointer"] = lambda x: _pixy.BarcodeArray_frompointer
-    if _newclass:frompointer = staticmethod(_pixy.BarcodeArray_frompointer)
-BarcodeArray_swigregister = _pixy.BarcodeArray_swigregister
-BarcodeArray_swigregister(BarcodeArray)
-
-def BarcodeArray_frompointer(*args):
-  return _pixy.BarcodeArray_frompointer(*args)
-BarcodeArray_frompointer = _pixy.BarcodeArray_frompointer
-
-
-def init():
-  return _pixy.init()
-init = _pixy.init
-
-def change_prog(*args):
-  return _pixy.change_prog(*args)
-change_prog = _pixy.change_prog
-
-def get_frame_width():
-  return _pixy.get_frame_width()
-get_frame_width = _pixy.get_frame_width
-
-def get_frame_height():
-  return _pixy.get_frame_height()
-get_frame_height = _pixy.get_frame_height
-
-def ccc_get_blocks(*args):
-  return _pixy.ccc_get_blocks(*args)
-ccc_get_blocks = _pixy.ccc_get_blocks
-
-def line_get_all_features():
-  return _pixy.line_get_all_features()
-line_get_all_features = _pixy.line_get_all_features
-
-def line_get_main_features():
-  return _pixy.line_get_main_features()
-line_get_main_features = _pixy.line_get_main_features
-
-def line_get_intersections(*args):
-  return _pixy.line_get_intersections(*args)
-line_get_intersections = _pixy.line_get_intersections
-
-def line_get_vectors(*args):
-  return _pixy.line_get_vectors(*args)
-line_get_vectors = _pixy.line_get_vectors
-
-def line_get_barcodes(*args):
-  return _pixy.line_get_barcodes(*args)
-line_get_barcodes = _pixy.line_get_barcodes
-
-def set_servos(*args):
-  return _pixy.set_servos(*args)
-set_servos = _pixy.set_servos
-
-def video_get_RGB(*args):
-  return _pixy.video_get_RGB(*args)
-video_get_RGB = _pixy.video_get_RGB
+def pixy_rcs_set_position(*args):
+  return _pixy.pixy_rcs_set_position(*args)
+pixy_rcs_set_position = _pixy.pixy_rcs_set_position
 class Block(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, Block, name, value)
     __swig_getmethods__ = {}
     __getattr__ = lambda self, name: _swig_getattr(self, Block, name)
     __repr__ = _swig_repr
-    __swig_setmethods__["m_signature"] = _pixy.Block_m_signature_set
-    __swig_getmethods__["m_signature"] = _pixy.Block_m_signature_get
-    if _newclass:m_signature = _swig_property(_pixy.Block_m_signature_get, _pixy.Block_m_signature_set)
-    __swig_setmethods__["m_x"] = _pixy.Block_m_x_set
-    __swig_getmethods__["m_x"] = _pixy.Block_m_x_get
-    if _newclass:m_x = _swig_property(_pixy.Block_m_x_get, _pixy.Block_m_x_set)
-    __swig_setmethods__["m_y"] = _pixy.Block_m_y_set
-    __swig_getmethods__["m_y"] = _pixy.Block_m_y_get
-    if _newclass:m_y = _swig_property(_pixy.Block_m_y_get, _pixy.Block_m_y_set)
-    __swig_setmethods__["m_width"] = _pixy.Block_m_width_set
-    __swig_getmethods__["m_width"] = _pixy.Block_m_width_get
-    if _newclass:m_width = _swig_property(_pixy.Block_m_width_get, _pixy.Block_m_width_set)
-    __swig_setmethods__["m_height"] = _pixy.Block_m_height_set
-    __swig_getmethods__["m_height"] = _pixy.Block_m_height_get
-    if _newclass:m_height = _swig_property(_pixy.Block_m_height_get, _pixy.Block_m_height_set)
-    __swig_setmethods__["m_angle"] = _pixy.Block_m_angle_set
-    __swig_getmethods__["m_angle"] = _pixy.Block_m_angle_get
-    if _newclass:m_angle = _swig_property(_pixy.Block_m_angle_get, _pixy.Block_m_angle_set)
-    __swig_setmethods__["m_index"] = _pixy.Block_m_index_set
-    __swig_getmethods__["m_index"] = _pixy.Block_m_index_get
-    if _newclass:m_index = _swig_property(_pixy.Block_m_index_get, _pixy.Block_m_index_set)
-    __swig_setmethods__["m_age"] = _pixy.Block_m_age_set
-    __swig_getmethods__["m_age"] = _pixy.Block_m_age_get
-    if _newclass:m_age = _swig_property(_pixy.Block_m_age_get, _pixy.Block_m_age_set)
+    __swig_setmethods__["type"] = _pixy.Block_type_set
+    __swig_getmethods__["type"] = _pixy.Block_type_get
+    if _newclass:type = _swig_property(_pixy.Block_type_get, _pixy.Block_type_set)
+    __swig_setmethods__["signature"] = _pixy.Block_signature_set
+    __swig_getmethods__["signature"] = _pixy.Block_signature_get
+    if _newclass:signature = _swig_property(_pixy.Block_signature_get, _pixy.Block_signature_set)
+    __swig_setmethods__["x"] = _pixy.Block_x_set
+    __swig_getmethods__["x"] = _pixy.Block_x_get
+    if _newclass:x = _swig_property(_pixy.Block_x_get, _pixy.Block_x_set)
+    __swig_setmethods__["y"] = _pixy.Block_y_set
+    __swig_getmethods__["y"] = _pixy.Block_y_get
+    if _newclass:y = _swig_property(_pixy.Block_y_get, _pixy.Block_y_set)
+    __swig_setmethods__["width"] = _pixy.Block_width_set
+    __swig_getmethods__["width"] = _pixy.Block_width_get
+    if _newclass:width = _swig_property(_pixy.Block_width_get, _pixy.Block_width_set)
+    __swig_setmethods__["height"] = _pixy.Block_height_set
+    __swig_getmethods__["height"] = _pixy.Block_height_get
+    if _newclass:height = _swig_property(_pixy.Block_height_get, _pixy.Block_height_set)
+    __swig_setmethods__["angle"] = _pixy.Block_angle_set
+    __swig_getmethods__["angle"] = _pixy.Block_angle_get
+    if _newclass:angle = _swig_property(_pixy.Block_angle_get, _pixy.Block_angle_set)
     def __init__(self): 
         this = _pixy.new_Block()
         try: self.this.append(this)
@@ -251,63 +128,6 @@ class Block(_object):
     __del__ = lambda self : None;
 Block_swigregister = _pixy.Block_swigregister
 Block_swigregister(Block)
-
-class Vector(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, Vector, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, Vector, name)
-    __repr__ = _swig_repr
-    __swig_setmethods__["m_x0"] = _pixy.Vector_m_x0_set
-    __swig_getmethods__["m_x0"] = _pixy.Vector_m_x0_get
-    if _newclass:m_x0 = _swig_property(_pixy.Vector_m_x0_get, _pixy.Vector_m_x0_set)
-    __swig_setmethods__["m_y0"] = _pixy.Vector_m_y0_set
-    __swig_getmethods__["m_y0"] = _pixy.Vector_m_y0_get
-    if _newclass:m_y0 = _swig_property(_pixy.Vector_m_y0_get, _pixy.Vector_m_y0_set)
-    __swig_setmethods__["m_x1"] = _pixy.Vector_m_x1_set
-    __swig_getmethods__["m_x1"] = _pixy.Vector_m_x1_get
-    if _newclass:m_x1 = _swig_property(_pixy.Vector_m_x1_get, _pixy.Vector_m_x1_set)
-    __swig_setmethods__["m_y1"] = _pixy.Vector_m_y1_set
-    __swig_getmethods__["m_y1"] = _pixy.Vector_m_y1_get
-    if _newclass:m_y1 = _swig_property(_pixy.Vector_m_y1_get, _pixy.Vector_m_y1_set)
-    __swig_setmethods__["m_index"] = _pixy.Vector_m_index_set
-    __swig_getmethods__["m_index"] = _pixy.Vector_m_index_get
-    if _newclass:m_index = _swig_property(_pixy.Vector_m_index_get, _pixy.Vector_m_index_set)
-    __swig_setmethods__["m_flags"] = _pixy.Vector_m_flags_set
-    __swig_getmethods__["m_flags"] = _pixy.Vector_m_flags_get
-    if _newclass:m_flags = _swig_property(_pixy.Vector_m_flags_get, _pixy.Vector_m_flags_set)
-    def __init__(self): 
-        this = _pixy.new_Vector()
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _pixy.delete_Vector
-    __del__ = lambda self : None;
-Vector_swigregister = _pixy.Vector_swigregister
-Vector_swigregister(Vector)
-
-class IntersectionLine(_object):
-    __swig_setmethods__ = {}
-    __setattr__ = lambda self, name, value: _swig_setattr(self, IntersectionLine, name, value)
-    __swig_getmethods__ = {}
-    __getattr__ = lambda self, name: _swig_getattr(self, IntersectionLine, name)
-    __repr__ = _swig_repr
-    __swig_setmethods__["m_index"] = _pixy.IntersectionLine_m_index_set
-    __swig_getmethods__["m_index"] = _pixy.IntersectionLine_m_index_get
-    if _newclass:m_index = _swig_property(_pixy.IntersectionLine_m_index_get, _pixy.IntersectionLine_m_index_set)
-    __swig_setmethods__["m_reserved"] = _pixy.IntersectionLine_m_reserved_set
-    __swig_getmethods__["m_reserved"] = _pixy.IntersectionLine_m_reserved_get
-    if _newclass:m_reserved = _swig_property(_pixy.IntersectionLine_m_reserved_get, _pixy.IntersectionLine_m_reserved_set)
-    __swig_setmethods__["m_angle"] = _pixy.IntersectionLine_m_angle_set
-    __swig_getmethods__["m_angle"] = _pixy.IntersectionLine_m_angle_get
-    if _newclass:m_angle = _swig_property(_pixy.IntersectionLine_m_angle_get, _pixy.IntersectionLine_m_angle_set)
-    def __init__(self): 
-        this = _pixy.new_IntersectionLine()
-        try: self.this.append(this)
-        except: self.this = this
-    __swig_destroy__ = _pixy.delete_IntersectionLine
-    __del__ = lambda self : None;
-IntersectionLine_swigregister = _pixy.IntersectionLine_swigregister
-IntersectionLine_swigregister(IntersectionLine)
 
 # This file is compatible with both classic and new-style classes.
 

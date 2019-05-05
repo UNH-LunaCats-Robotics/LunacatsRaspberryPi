@@ -45,9 +45,9 @@ def get_task(data):
 def get_pixy_data():
     while True:
         response = json.dumps(GetPixyInfo.getSig())
-        print ("Got: " + response)
+        print "Got: " + response
         link = "http://"+request.remote_addr+":3000/setPixyData/"+response
-        print("Sending Pixy Info to "+link)
+        print "Sending Pixy Info to "+link
         r = requests.get(link)
         sleep(2)
 
