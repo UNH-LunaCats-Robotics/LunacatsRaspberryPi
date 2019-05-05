@@ -8,6 +8,7 @@ if connected < -1:
   print("Not Connected")
 
 if __name__ == "__main__":
+    print("Starting Test")
     while True:
       print("Distance: "+str(lidar.getDistance()))
       print("Velocity: "+str(lidar.getVelocity()))

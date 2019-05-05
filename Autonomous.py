@@ -3,23 +3,16 @@ import GetPixyInfo
 
 from time import sleep
  
-
 runAutonomous = False
 
 def forward(angle):
-    global lidarDistance
-    global objectDetected
-
     print ("Going Forward:" + str(angle))
-
 
 def back(angle):
     print ("Going Back:" + str(angle))
 
-
 def left(angle):
     print ("Going Left")
-
 
 def right(angle):
     print ("Going Right")
@@ -39,10 +32,8 @@ def stopAutonomous():
     runAutonomous = False
     return "Stopped!"
 
- /b;k;jmy8hdll'.,<,,;/,:M
- jpuy97079p677y97y97/ 
 def runAutonomous():
-    global runAutonomous,objectDetected
+    global runAutonomous
     runAutonomous = True
 
     while getAutonStatus():
@@ -77,3 +68,5 @@ def runAutonomous():
                         break
 
             
+if __name__ == '__main__':
+    runAutonomous()

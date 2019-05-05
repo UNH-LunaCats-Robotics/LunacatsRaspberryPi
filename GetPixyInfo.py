@@ -1,35 +1,35 @@
-# import pixy 
+import pixy 
 from ctypes import *
-# from pixy import *
+from pixy import *
 from flask import jsonify
 import json
 
 # This code will  what the pixy camera sees in get sig and will not try to move it
 
 
-# class Blocks (Structure):
-#   _fields_ = [ ("m_signature", c_uint),
-#     ("m_x", c_uint),
-#     ("m_y", c_uint),
-#     ("m_width", c_uint),
-#     ("m_height", c_uint),
-#     ("m_angle", c_uint),
-#     ("m_index", c_uint),
-#     ("m_age", c_uint) ]
+class Blocks (Structure):
+  _fields_ = [ ("m_signature", c_uint),
+    ("m_x", c_uint),
+    ("m_y", c_uint),
+    ("m_width", c_uint),
+    ("m_height", c_uint),
+    ("m_angle", c_uint),
+    ("m_index", c_uint),
+    ("m_age", c_uint) ]
 
 
-# blocks = BlockArray(100)
-# frame = 0
-# pixyCam = None
+blocks = BlockArray(100)
+frame = 0
+pixyCam = None
 
 def startup():
-  # global pixyCam
+  global pixyCam
   
-  # pixyCam = pixy.init ()
-  # if pixyCam == -1:
-  #   print ("Can't connect to pixycamera!!!!!")
-  # else:
-  #   pixy.change_prog ("color_connected_components")
+  pixyCam = pixy.init ()
+  if pixyCam == -1:
+    print ("Can't connect to pixycamera!!!!!")
+  else:
+    pixy.change_prog ("color_connected_components")
   print("False")
 
 
