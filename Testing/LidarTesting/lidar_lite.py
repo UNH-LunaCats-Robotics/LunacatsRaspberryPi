@@ -11,11 +11,18 @@ class Lidar_Lite():
     self.velWriteReg = 0x04
     self.velWriteVal = 0x08
     self.velReadReg = 0x09
-    self.bus = smbus.SMBus(None)
+    try:
+        self.bus = smbus.SMBus(1)
+        time.sleep(0.5)
+        print("success")
+    except:
+        #self.bus = smbus.SMBus(1)
+        time.sleep(0.5)
+        print("no success")
 
   def connect(self, bus):
     try:
-      self.bus = smbus.SMBus(bus)
+      #self.bus = smbus.SMBus(bus)
       time.sleep(0.5)
       return 0
     except:
