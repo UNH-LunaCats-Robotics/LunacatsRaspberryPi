@@ -13,8 +13,8 @@ def closePort():
 atexit.register(closePort)
 
 def writeToArduino(msg):
-    print("Sending "+msg)
-    ser.write(bytes(msg,'utf-8'))
+    print "Sending "+msg
+    ser.write(bytes(msg))
 
 def initArduino():
     sleep(2)
@@ -22,7 +22,7 @@ def initArduino():
     pong = ser.readline()
 
 def test_rw(ping):
-    writeToArduino("init")
+    writeToArduino(ping)
     pong = ser.readline().strip()
     print("\Init Response: "+str(pong))
     #sleep(0.5)
@@ -41,5 +41,5 @@ if __name__ == "__main__":
     #writeToArduino("init")
     initArduino()
     while True: 
-        test_r()
+        test_rw(ping)
         
