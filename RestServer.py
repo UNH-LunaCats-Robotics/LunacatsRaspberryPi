@@ -4,6 +4,7 @@ from time import sleep
 import requests
 import json
 
+
 import GetPixyInfo
 import RobotCommunication
 import Autonomous
@@ -27,14 +28,11 @@ def get_task(data):
     response = jsonify()
 
     if   dataJson["c"] == 5:
-        pass
-        #response = json.dumps(GetPixyInfo.getSig())
+        response = json.dumps(GetPixyInfo.getSig())
     elif dataJson["c"] == 7:
-        pass
-        #response = Autonomous.runAutonomous()
+        response = Autonomous.runAutonomous()
     elif dataJson["c"] == 8:
-        pass
-        #response = Autonomous.stopAutonomous()
+        response = Autonomous.stopAutonomous()
     else:
         response = jsonify(RobotCommunication.sendMessage(dataJson))
         
