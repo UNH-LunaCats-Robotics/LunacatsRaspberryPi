@@ -27,18 +27,19 @@ def get_task(data):
     response = jsonify()
 
     if   dataJson["c"] == 5:
-        response = json.dumps(GetPixyInfo.getSig())
+        pass
+        #response = json.dumps(GetPixyInfo.getSig())
     elif dataJson["c"] == 7:
-        response = Autonomous.runAutonomous()
+        pass
+        #response = Autonomous.runAutonomous()
     elif dataJson["c"] == 8:
-        response = Autonomous.stopAutonomous()
+        pass
+        #response = Autonomous.stopAutonomous()
     else:
         response = jsonify(RobotCommunication.sendMessage(dataJson))
         
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-
-    
 
 
 @app.route('/sendPixyData', methods=['GET'])
@@ -59,7 +60,7 @@ def get_my_ip():
 
 if __name__ == '__main__':
     GetPixyInfo.startup()
-    RobotCommunication.startup()
+    #RobotCommunication.startup()
     app.run(host='0.0.0.0')
 
 
