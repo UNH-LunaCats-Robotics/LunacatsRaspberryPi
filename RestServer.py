@@ -4,6 +4,7 @@ from time import sleep
 import requests
 import json
 
+
 import GetPixyInfo
 import RobotCommunication
 import Autonomous
@@ -38,8 +39,6 @@ def get_task(data):
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-    
-
 
 @app.route('/sendPixyData', methods=['GET'])
 def get_pixy_data():
@@ -59,7 +58,7 @@ def get_my_ip():
 
 if __name__ == '__main__':
     GetPixyInfo.startup()
-    RobotCommunication.startup()
+    #RobotCommunication.startup()
     app.run(host='0.0.0.0')
 
 
