@@ -1,7 +1,8 @@
-from queue import Queue
+#from queue import Queue
+#import threading
 from time import sleep
 import serial
-import threading
+from threading import Thread, Lock
 import atexit
 import json
 
@@ -15,6 +16,32 @@ def closePort():
 
 atexit.register(closePort)
 
+mutex = Lock()
+
+def writeToArduino(msg):
+    print "Sending: "+msg
+    ser.write(bytes(msg))
+
+def send_json(data):
+    mutex.acquire()
+    try:
+        writeToArduino(json.dumps(data))
+        print "Arduino Responded:" + ser.read()
+        sleep(0.025) #give some buffer time for arduino 
+    finally:
+        mutex.release()
+
+'''
+#testing main function
+if __name__ == "__main__":
+    #initArduino()
+    sleep(0.5)
+    for i in range(10):
+        t = Thread(target = processData, args = (i,))
+        t.start() 
+'''
+
+'''
 def startup():
         thread = threading.Thread(target=send_task,args=())
         thread.start()
@@ -37,3 +64,4 @@ def send_task():
                 ser.write(bytes(json.dumps(item),'utf-8'))
                 print "Arduino Responded:" + ser.read()
                 messageQueue.task_done()
+'''
