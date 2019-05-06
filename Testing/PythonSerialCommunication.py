@@ -24,7 +24,7 @@ def initArduino():
 def test_rw(ping):
     writeToArduino(ping)
     pong = ser.readline().strip()
-    print("\Init Response: "+str(pong))
+    print("\tResponse: "+str(pong))
     #sleep(0.5)
 
 def test_w(ping): 
@@ -41,5 +41,5 @@ if __name__ == "__main__":
     #writeToArduino("init")
     initArduino()
     while True: 
-        test_rw(ping)
+        test_r()
         
