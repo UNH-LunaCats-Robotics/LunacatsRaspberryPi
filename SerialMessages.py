@@ -34,5 +34,5 @@ def send_task():
 
                 print("Sending:" + json.dumps(item) )
                 ser.write(bytes(json.dumps(item),'utf-8'))
-                print("Arduino Responded:" + str(ser.read()))
+                # print("Arduino Responded:" + str(ser.read()))
                 messageQueue.task_done()
