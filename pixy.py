@@ -69,30 +69,42 @@ except AttributeError:
     _newclass = 0
 
 
+class BlockArray(_object):
+    __swig_setmethods__ = {}
+    __setattr__ = lambda self, name, value: _swig_setattr(self, BlockArray, name, value)
+    __swig_getmethods__ = {}
+    __getattr__ = lambda self, name: _swig_getattr(self, BlockArray, name)
+    __repr__ = _swig_repr
+    def __init__(self, *args): 
+        this = _pixy.new_BlockArray(*args)
+        try: self.this.append(this)
+        except: self.this = this
+    __swig_destroy__ = _pixy.delete_BlockArray
+    __del__ = lambda self : None;
+    def __getitem__(self, *args): return _pixy.BlockArray___getitem__(self, *args)
+    def __setitem__(self, *args): return _pixy.BlockArray___setitem__(self, *args)
+    def cast(self): return _pixy.BlockArray_cast(self)
+    __swig_getmethods__["frompointer"] = lambda x: _pixy.BlockArray_frompointer
+    if _newclass:frompointer = staticmethod(_pixy.BlockArray_frompointer)
+BlockArray_swigregister = _pixy.BlockArray_swigregister
+BlockArray_swigregister(BlockArray)
+
+def BlockArray_frompointer(*args):
+  return _pixy.BlockArray_frompointer(*args)
+BlockArray_frompointer = _pixy.BlockArray_frompointer
+
 
 def pixy_init():
   return _pixy.pixy_init()
 pixy_init = _pixy.pixy_init
 
-def pixy_close():
-  return _pixy.pixy_close()
-pixy_close = _pixy.pixy_close
-
-def pixy_error(*args):
-  return _pixy.pixy_error(*args)
-pixy_error = _pixy.pixy_error
-
-def pixy_blocks_are_new():
-  return _pixy.pixy_blocks_are_new()
-pixy_blocks_are_new = _pixy.pixy_blocks_are_new
-
 def pixy_get_blocks(*args):
   return _pixy.pixy_get_blocks(*args)
 pixy_get_blocks = _pixy.pixy_get_blocks
 
-def pixy_rcs_set_position(*args):
-  return _pixy.pixy_rcs_set_position(*args)
-pixy_rcs_set_position = _pixy.pixy_rcs_set_position
+def pixy_close():
+  return _pixy.pixy_close()
+pixy_close = _pixy.pixy_close
 class Block(_object):
     __swig_setmethods__ = {}
     __setattr__ = lambda self, name, value: _swig_setattr(self, Block, name, value)
