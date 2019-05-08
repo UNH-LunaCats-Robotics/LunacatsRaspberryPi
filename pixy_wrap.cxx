@@ -2934,19 +2934,25 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 /* -------- TYPES TABLE (BEGIN) -------- */
 
-#define SWIGTYPE_p_Block swig_types[0]
-#define SWIGTYPE_p_BlockArray swig_types[1]
-#define SWIGTYPE_p_char swig_types[2]
-#define SWIGTYPE_p_int swig_types[3]
-#define SWIGTYPE_p_long_long swig_types[4]
-#define SWIGTYPE_p_short swig_types[5]
-#define SWIGTYPE_p_signed_char swig_types[6]
-#define SWIGTYPE_p_unsigned_char swig_types[7]
-#define SWIGTYPE_p_unsigned_int swig_types[8]
-#define SWIGTYPE_p_unsigned_long_long swig_types[9]
-#define SWIGTYPE_p_unsigned_short swig_types[10]
-static swig_type_info *swig_types[12];
-static swig_module_info swig_module = {swig_types, 11, 0, 0, 0, 0};
+#define SWIGTYPE_p_Barcode swig_types[0]
+#define SWIGTYPE_p_BarcodeArray swig_types[1]
+#define SWIGTYPE_p_Block swig_types[2]
+#define SWIGTYPE_p_BlockArray swig_types[3]
+#define SWIGTYPE_p_IntersectionLine swig_types[4]
+#define SWIGTYPE_p_IntersectionLineArray swig_types[5]
+#define SWIGTYPE_p_Vector swig_types[6]
+#define SWIGTYPE_p_VectorArray swig_types[7]
+#define SWIGTYPE_p_char swig_types[8]
+#define SWIGTYPE_p_int swig_types[9]
+#define SWIGTYPE_p_long_long swig_types[10]
+#define SWIGTYPE_p_short swig_types[11]
+#define SWIGTYPE_p_signed_char swig_types[12]
+#define SWIGTYPE_p_unsigned_char swig_types[13]
+#define SWIGTYPE_p_unsigned_int swig_types[14]
+#define SWIGTYPE_p_unsigned_long_long swig_types[15]
+#define SWIGTYPE_p_unsigned_short swig_types[16]
+static swig_type_info *swig_types[18];
+static swig_module_info swig_module = {swig_types, 17, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3047,7 +3053,11 @@ namespace swig {
 
 
 #define SWIG_FILE_WITH_INIT
-#include "pixy.h"
+#include "util.h"
+#include "TPixy2.h"
+#include "Pixy2Line.h"
+#include "Pixy2CCC.h"
+#include "libpixyusb2.h"
 
 
 typedef struct Block BlockArray;
@@ -3220,11 +3230,233 @@ SWIGINTERN BlockArray *BlockArray_frompointer(Block *t){
     return static_cast< BlockArray * >(t);
   }
 
+typedef struct Vector VectorArray;
+
+SWIGINTERN VectorArray *new_VectorArray(size_t nelements){
+    return (new struct Vector[nelements]);
+  }
+SWIGINTERN void delete_VectorArray(VectorArray *self){
+    delete[] self;
+  }
+SWIGINTERN Vector VectorArray___getitem__(VectorArray *self,size_t index){
+    return self[index];
+  }
+SWIGINTERN void VectorArray___setitem__(VectorArray *self,size_t index,Vector value){
+    self[index] = value;
+  }
+SWIGINTERN Vector *VectorArray_cast(VectorArray *self){
+    return self;
+  }
+SWIGINTERN VectorArray *VectorArray_frompointer(Vector *t){
+    return static_cast< VectorArray * >(t);
+  }
+
+typedef struct IntersectionLine IntersectionLineArray;
+
+SWIGINTERN IntersectionLineArray *new_IntersectionLineArray(size_t nelements){
+    return (new struct IntersectionLine[nelements]);
+  }
+SWIGINTERN void delete_IntersectionLineArray(IntersectionLineArray *self){
+    delete[] self;
+  }
+SWIGINTERN IntersectionLine IntersectionLineArray___getitem__(IntersectionLineArray *self,size_t index){
+    return self[index];
+  }
+SWIGINTERN void IntersectionLineArray___setitem__(IntersectionLineArray *self,size_t index,IntersectionLine value){
+    self[index] = value;
+  }
+SWIGINTERN IntersectionLine *IntersectionLineArray_cast(IntersectionLineArray *self){
+    return self;
+  }
+SWIGINTERN IntersectionLineArray *IntersectionLineArray_frompointer(IntersectionLine *t){
+    return static_cast< IntersectionLineArray * >(t);
+  }
+
+typedef struct Barcode BarcodeArray;
+
+SWIGINTERN BarcodeArray *new_BarcodeArray(size_t nelements){
+    return (new struct Barcode[nelements]);
+  }
+SWIGINTERN void delete_BarcodeArray(BarcodeArray *self){
+    delete[] self;
+  }
+SWIGINTERN Barcode BarcodeArray___getitem__(BarcodeArray *self,size_t index){
+    return self[index];
+  }
+SWIGINTERN void BarcodeArray___setitem__(BarcodeArray *self,size_t index,Barcode value){
+    self[index] = value;
+  }
+SWIGINTERN Barcode *BarcodeArray_cast(BarcodeArray *self){
+    return self;
+  }
+SWIGINTERN BarcodeArray *BarcodeArray_frompointer(Barcode *t){
+    return static_cast< BarcodeArray * >(t);
+  }
+
+extern int init();
+
+/*!
+  @brief       Select active running program on Pixy
+  @param[in]   program_name  "color_connected_components"  Block detection program
+                             "line"                        Line feature detection program
+*/
+extern int change_prog (const char *  program_name);
+
+/*!
+  @brief       Gets the Pixy sensor frame width.
+  @return      Returns Pixy sensor width (in number of pixels) that is being sent to the host.
+*/
+extern int get_frame_width ();
+
+/*!
+  @brief       Gets the Pixy sensor frame height.
+  @return      Returns Pixy sensor height (in number of pixels) that is being sent to the host.
+*/
+extern int get_frame_height ();
+
+/*!
+  @brief       Copy 'max_blocks' number of blocks to the address 'blocks'.
+  @param[in]   max_blocks  Maximum number of blocks that will be copied.
+  @param[out]  blocks      Address to copy the blocks data.
+  @return      Number of blocks copied to 'blocks'.
+*/
+extern int ccc_get_blocks (int  max_blocks, BlockArray *  blocks);
+
+extern void line_get_all_features ();
+
+extern void line_get_main_features ();
+
+/*!
+  @brief       Copy 'max_intersections' number of intersections to the address 'intersections'.
+  @param[in]   max_intersections  Maximum number of intersection objects that will be copied.
+  @param[out]  intersections      Address to copy the intersection data.
+  @return      Number of intersections copied to 'intersections'.
+*/
+extern int line_get_intersections (int  max_intersections, IntersectionLineArray *  intersections);
+
+/*!
+  @brief       Copy 'max_vectors' number of vectors to the address 'vectors'.
+  @param[in]   max_vectors        Maximum number of vector objects that will be copied.
+  @param[out]  vectors            Address to copy the vector data.
+  @return      Number of vectors copied to 'vectors'.
+*/
+extern int line_get_vectors (int max_vectors, VectorArray *  vectors);
+
+/*!
+  @brief       Copy 'max_barcode' number of barcodes to the address 'barcodes'.
+  @param[in]   max_barcodes  Maximum number of barcode objects that will be copied.
+  @param[out]  barcodes      Address to copy the barcode data.
+  @return      Number of barcode objects copied to 'barcodes'.
+*/
+extern int line_get_barcodes (int  max_barcodes, BarcodeArray *  barcodes);
+
+extern void set_lamp (int upper, int lower);
+
+/*!
+  @brief       Set servo position
+  @param[in]   S1_Position  Servo 1 position
+  @param[in]   S2_Position  Servo 2 position
+*/
+extern void set_servos (int  S1_Position, int  S2_Position);
+
+
 SWIGINTERNINLINE PyObject*
   SWIG_From_int  (int value)
 {
   return PyInt_FromLong((long) value);
 }
+
+
+SWIGINTERN swig_type_info*
+SWIG_pchar_descriptor(void)
+{
+  static int init = 0;
+  static swig_type_info* info = 0;
+  if (!init) {
+    info = SWIG_TypeQuery("_p_char");
+    init = 1;
+  }
+  return info;
+}
+
+
+SWIGINTERN int
+SWIG_AsCharPtrAndSize(PyObject *obj, char** cptr, size_t* psize, int *alloc)
+{
+#if PY_VERSION_HEX>=0x03000000
+  if (PyUnicode_Check(obj))
+#else  
+  if (PyString_Check(obj))
+#endif
+  {
+    char *cstr; Py_ssize_t len;
+#if PY_VERSION_HEX>=0x03000000
+    if (!alloc && cptr) {
+        /* We can't allow converting without allocation, since the internal
+           representation of string in Python 3 is UCS-2/UCS-4 but we require
+           a UTF-8 representation.
+           TODO(bhy) More detailed explanation */
+        return SWIG_RuntimeError;
+    }
+    obj = PyUnicode_AsUTF8String(obj);
+    PyBytes_AsStringAndSize(obj, &cstr, &len);
+    if(alloc) *alloc = SWIG_NEWOBJ;
+#else
+    PyString_AsStringAndSize(obj, &cstr, &len);
+#endif
+    if (cptr) {
+      if (alloc) {
+	/* 
+	   In python the user should not be able to modify the inner
+	   string representation. To warranty that, if you define
+	   SWIG_PYTHON_SAFE_CSTRINGS, a new/copy of the python string
+	   buffer is always returned.
+
+	   The default behavior is just to return the pointer value,
+	   so, be careful.
+	*/ 
+#if defined(SWIG_PYTHON_SAFE_CSTRINGS)
+	if (*alloc != SWIG_OLDOBJ) 
+#else
+	if (*alloc == SWIG_NEWOBJ) 
+#endif
+	  {
+	    *cptr = reinterpret_cast< char* >(memcpy((new char[len + 1]), cstr, sizeof(char)*(len + 1)));
+	    *alloc = SWIG_NEWOBJ;
+	  }
+	else {
+	  *cptr = cstr;
+	  *alloc = SWIG_OLDOBJ;
+	}
+      } else {
+        #if PY_VERSION_HEX>=0x03000000
+        assert(0); /* Should never reach here in Python 3 */
+        #endif
+	*cptr = SWIG_Python_str_AsChar(obj);
+      }
+    }
+    if (psize) *psize = len + 1;
+#if PY_VERSION_HEX>=0x03000000
+    Py_XDECREF(obj);
+#endif
+    return SWIG_OK;
+  } else {
+    swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+    if (pchar_descriptor) {
+      void* vptr = 0;
+      if (SWIG_ConvertPtr(obj, &vptr, pchar_descriptor, 0) == SWIG_OK) {
+	if (cptr) *cptr = (char *) vptr;
+	if (psize) *psize = vptr ? (strlen((char *)vptr) + 1) : 0;
+	if (alloc) *alloc = SWIG_OLDOBJ;
+	return SWIG_OK;
+      }
+    }
+  }
+  return SWIG_TypeError;
+}
+
+
+
 
 
 #include <limits.h>
@@ -3235,40 +3467,6 @@ SWIGINTERNINLINE PyObject*
 #   define ULLONG_MAX (LLONG_MAX * 2ULL + 1ULL)
 # endif
 #endif
-
-
-SWIGINTERN int
-SWIG_AsVal_unsigned_SS_short (PyObject * obj, unsigned short *val)
-{
-  unsigned long v;
-  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
-  if (SWIG_IsOK(res)) {
-    if ((v > USHRT_MAX)) {
-      return SWIG_OverflowError;
-    } else {
-      if (val) *val = static_cast< unsigned short >(v);
-    }
-  }  
-  return res;
-}
-
-
-  #define SWIG_From_long   PyLong_FromLong 
-
-
-SWIGINTERNINLINE PyObject* 
-SWIG_From_unsigned_SS_long  (unsigned long value)
-{
-  return (value > LONG_MAX) ?
-    PyLong_FromUnsignedLong(value) : PyLong_FromLong(static_cast< long >(value)); 
-}
-
-
-SWIGINTERNINLINE PyObject *
-SWIG_From_unsigned_SS_short  (unsigned short value)
-{    
-  return SWIG_From_unsigned_SS_long  (value);
-}
 
 
 SWIGINTERN int
@@ -3311,6 +3509,74 @@ SWIG_AsVal_long (PyObject *obj, long* val)
 
 
 SWIGINTERN int
+SWIG_AsVal_int (PyObject * obj, int *val)
+{
+  long v;
+  int res = SWIG_AsVal_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v < INT_MIN || v > INT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< int >(v);
+    }
+  }  
+  return res;
+}
+
+
+/*!
+  @brief       Get pixel color components at the (X, Y) position on Pixy's sensor.
+  @param[in]   X      X position of color pixel to get.
+  @param[in]   Y      Y position of color pixel to get.
+  @param[out]  Red    Memory address to write the Red color component value to.
+  @param[out]  Green  Memory address to write the Green color component value to.
+  @param[out]  Blue   Memory address to write the Blue color component value to.
+*/
+extern void video_get_RGB (int  X, int  Y, uint8_t *  Red, uint8_t *  Green, uint8_t *  Blue);
+
+
+  #define SWIG_From_long   PyLong_FromLong 
+
+
+SWIGINTERNINLINE PyObject* 
+SWIG_From_unsigned_SS_long  (unsigned long value)
+{
+  return (value > LONG_MAX) ?
+    PyLong_FromUnsignedLong(value) : PyLong_FromLong(static_cast< long >(value)); 
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_unsigned_SS_char  (unsigned char value)
+{    
+  return SWIG_From_unsigned_SS_long  (value);
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_short (PyObject * obj, unsigned short *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v > USHRT_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< unsigned short >(v);
+    }
+  }  
+  return res;
+}
+
+
+SWIGINTERNINLINE PyObject *
+SWIG_From_unsigned_SS_short  (unsigned short value)
+{    
+  return SWIG_From_unsigned_SS_long  (value);
+}
+
+
+SWIGINTERN int
 SWIG_AsVal_short (PyObject * obj, short *val)
 {
   long v;
@@ -3330,6 +3596,22 @@ SWIGINTERNINLINE PyObject *
 SWIG_From_short  (short value)
 {    
   return SWIG_From_long  (value);
+}
+
+
+SWIGINTERN int
+SWIG_AsVal_unsigned_SS_char (PyObject * obj, unsigned char *val)
+{
+  unsigned long v;
+  int res = SWIG_AsVal_unsigned_SS_long (obj, &v);
+  if (SWIG_IsOK(res)) {
+    if ((v > UCHAR_MAX)) {
+      return SWIG_OverflowError;
+    } else {
+      if (val) *val = static_cast< unsigned char >(v);
+    }
+  }  
+  return res;
 }
 
 #ifdef __cplusplus
@@ -3507,12 +3789,528 @@ SWIGINTERN PyObject *BlockArray_swigregister(PyObject *SWIGUNUSEDPARM(self), PyO
   return SWIG_Py_Void();
 }
 
-SWIGINTERN PyObject *_wrap_pixy_init(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_new_VectorArray(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  size_t arg1 ;
+  size_t val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  VectorArray *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_VectorArray",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_size_t(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_VectorArray" "', argument " "1"" of type '" "size_t""'");
+  } 
+  arg1 = static_cast< size_t >(val1);
+  result = (VectorArray *)new_VectorArray(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_VectorArray, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_VectorArray(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  VectorArray *arg1 = (VectorArray *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_VectorArray",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_VectorArray, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_VectorArray" "', argument " "1"" of type '" "VectorArray *""'"); 
+  }
+  arg1 = reinterpret_cast< VectorArray * >(argp1);
+  delete_VectorArray(arg1);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorArray___getitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  VectorArray *arg1 = (VectorArray *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Vector result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:VectorArray___getitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_VectorArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorArray___getitem__" "', argument " "1"" of type '" "VectorArray *""'"); 
+  }
+  arg1 = reinterpret_cast< VectorArray * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorArray___getitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  result = VectorArray___getitem__(arg1,arg2);
+  resultobj = SWIG_NewPointerObj((new Vector(static_cast< const Vector& >(result))), SWIGTYPE_p_Vector, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorArray___setitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  VectorArray *arg1 = (VectorArray *) 0 ;
+  size_t arg2 ;
+  Vector arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:VectorArray___setitem__",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_VectorArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorArray___setitem__" "', argument " "1"" of type '" "VectorArray *""'"); 
+  }
+  arg1 = reinterpret_cast< VectorArray * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "VectorArray___setitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  {
+    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_Vector,  0  | 0);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "VectorArray___setitem__" "', argument " "3"" of type '" "Vector""'"); 
+    }  
+    if (!argp3) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "VectorArray___setitem__" "', argument " "3"" of type '" "Vector""'");
+    } else {
+      Vector * temp = reinterpret_cast< Vector * >(argp3);
+      arg3 = *temp;
+      if (SWIG_IsNewObj(res3)) delete temp;
+    }
+  }
+  VectorArray___setitem__(arg1,arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorArray_cast(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  VectorArray *arg1 = (VectorArray *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Vector *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorArray_cast",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_VectorArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorArray_cast" "', argument " "1"" of type '" "VectorArray *""'"); 
+  }
+  arg1 = reinterpret_cast< VectorArray * >(argp1);
+  result = (Vector *)VectorArray_cast(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vector, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_VectorArray_frompointer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  VectorArray *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:VectorArray_frompointer",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "VectorArray_frompointer" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  result = (VectorArray *)VectorArray_frompointer(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_VectorArray, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *VectorArray_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_VectorArray, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_IntersectionLineArray(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  size_t arg1 ;
+  size_t val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  IntersectionLineArray *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_IntersectionLineArray",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_size_t(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_IntersectionLineArray" "', argument " "1"" of type '" "size_t""'");
+  } 
+  arg1 = static_cast< size_t >(val1);
+  result = (IntersectionLineArray *)new_IntersectionLineArray(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_IntersectionLineArray, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_IntersectionLineArray(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLineArray *arg1 = (IntersectionLineArray *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_IntersectionLineArray",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLineArray, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_IntersectionLineArray" "', argument " "1"" of type '" "IntersectionLineArray *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLineArray * >(argp1);
+  delete_IntersectionLineArray(arg1);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IntersectionLineArray___getitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLineArray *arg1 = (IntersectionLineArray *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  IntersectionLine result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IntersectionLineArray___getitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLineArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLineArray___getitem__" "', argument " "1"" of type '" "IntersectionLineArray *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLineArray * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntersectionLineArray___getitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  result = IntersectionLineArray___getitem__(arg1,arg2);
+  resultobj = SWIG_NewPointerObj((new IntersectionLine(static_cast< const IntersectionLine& >(result))), SWIGTYPE_p_IntersectionLine, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IntersectionLineArray___setitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLineArray *arg1 = (IntersectionLineArray *) 0 ;
+  size_t arg2 ;
+  IntersectionLine arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:IntersectionLineArray___setitem__",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLineArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLineArray___setitem__" "', argument " "1"" of type '" "IntersectionLineArray *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLineArray * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntersectionLineArray___setitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  {
+    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_IntersectionLine,  0  | 0);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "IntersectionLineArray___setitem__" "', argument " "3"" of type '" "IntersectionLine""'"); 
+    }  
+    if (!argp3) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "IntersectionLineArray___setitem__" "', argument " "3"" of type '" "IntersectionLine""'");
+    } else {
+      IntersectionLine * temp = reinterpret_cast< IntersectionLine * >(argp3);
+      arg3 = *temp;
+      if (SWIG_IsNewObj(res3)) delete temp;
+    }
+  }
+  IntersectionLineArray___setitem__(arg1,arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IntersectionLineArray_cast(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLineArray *arg1 = (IntersectionLineArray *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  IntersectionLine *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IntersectionLineArray_cast",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLineArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLineArray_cast" "', argument " "1"" of type '" "IntersectionLineArray *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLineArray * >(argp1);
+  result = (IntersectionLine *)IntersectionLineArray_cast(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_IntersectionLine, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IntersectionLineArray_frompointer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLine *arg1 = (IntersectionLine *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  IntersectionLineArray *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IntersectionLineArray_frompointer",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLineArray_frompointer" "', argument " "1"" of type '" "IntersectionLine *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLine * >(argp1);
+  result = (IntersectionLineArray *)IntersectionLineArray_frompointer(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_IntersectionLineArray, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *IntersectionLineArray_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_IntersectionLineArray, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_new_BarcodeArray(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  size_t arg1 ;
+  size_t val1 ;
+  int ecode1 = 0 ;
+  PyObject * obj0 = 0 ;
+  BarcodeArray *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:new_BarcodeArray",&obj0)) SWIG_fail;
+  ecode1 = SWIG_AsVal_size_t(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "new_BarcodeArray" "', argument " "1"" of type '" "size_t""'");
+  } 
+  arg1 = static_cast< size_t >(val1);
+  result = (BarcodeArray *)new_BarcodeArray(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_BarcodeArray, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_BarcodeArray(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  BarcodeArray *arg1 = (BarcodeArray *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_BarcodeArray",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_BarcodeArray, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_BarcodeArray" "', argument " "1"" of type '" "BarcodeArray *""'"); 
+  }
+  arg1 = reinterpret_cast< BarcodeArray * >(argp1);
+  delete_BarcodeArray(arg1);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BarcodeArray___getitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  BarcodeArray *arg1 = (BarcodeArray *) 0 ;
+  size_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  Barcode result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:BarcodeArray___getitem__",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_BarcodeArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BarcodeArray___getitem__" "', argument " "1"" of type '" "BarcodeArray *""'"); 
+  }
+  arg1 = reinterpret_cast< BarcodeArray * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BarcodeArray___getitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  result = BarcodeArray___getitem__(arg1,arg2);
+  resultobj = SWIG_NewPointerObj((new Barcode(static_cast< const Barcode& >(result))), SWIGTYPE_p_Barcode, SWIG_POINTER_OWN |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BarcodeArray___setitem__(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  BarcodeArray *arg1 = (BarcodeArray *) 0 ;
+  size_t arg2 ;
+  Barcode arg3 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  size_t val2 ;
+  int ecode2 = 0 ;
+  void *argp3 ;
+  int res3 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOO:BarcodeArray___setitem__",&obj0,&obj1,&obj2)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_BarcodeArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BarcodeArray___setitem__" "', argument " "1"" of type '" "BarcodeArray *""'"); 
+  }
+  arg1 = reinterpret_cast< BarcodeArray * >(argp1);
+  ecode2 = SWIG_AsVal_size_t(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "BarcodeArray___setitem__" "', argument " "2"" of type '" "size_t""'");
+  } 
+  arg2 = static_cast< size_t >(val2);
+  {
+    res3 = SWIG_ConvertPtr(obj2, &argp3, SWIGTYPE_p_Barcode,  0  | 0);
+    if (!SWIG_IsOK(res3)) {
+      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "BarcodeArray___setitem__" "', argument " "3"" of type '" "Barcode""'"); 
+    }  
+    if (!argp3) {
+      SWIG_exception_fail(SWIG_ValueError, "invalid null reference " "in method '" "BarcodeArray___setitem__" "', argument " "3"" of type '" "Barcode""'");
+    } else {
+      Barcode * temp = reinterpret_cast< Barcode * >(argp3);
+      arg3 = *temp;
+      if (SWIG_IsNewObj(res3)) delete temp;
+    }
+  }
+  BarcodeArray___setitem__(arg1,arg2,arg3);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BarcodeArray_cast(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  BarcodeArray *arg1 = (BarcodeArray *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  Barcode *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:BarcodeArray_cast",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_BarcodeArray, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BarcodeArray_cast" "', argument " "1"" of type '" "BarcodeArray *""'"); 
+  }
+  arg1 = reinterpret_cast< BarcodeArray * >(argp1);
+  result = (Barcode *)BarcodeArray_cast(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Barcode, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_BarcodeArray_frompointer(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Barcode *arg1 = (Barcode *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  BarcodeArray *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:BarcodeArray_frompointer",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Barcode, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "BarcodeArray_frompointer" "', argument " "1"" of type '" "Barcode *""'"); 
+  }
+  arg1 = reinterpret_cast< Barcode * >(argp1);
+  result = (BarcodeArray *)BarcodeArray_frompointer(arg1);
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_BarcodeArray, 0 |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *BarcodeArray_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_BarcodeArray, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_init(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   int result;
   
-  if (!PyArg_ParseTuple(args,(char *)":pixy_init")) SWIG_fail;
-  result = (int)pixy_init();
+  if (!PyArg_ParseTuple(args,(char *)":init")) SWIG_fail;
+  result = (int)init();
   resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
@@ -3520,11 +4318,62 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_pixy_get_blocks(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_change_prog(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
-  uint16_t arg1 ;
+  char *arg1 = (char *) 0 ;
+  int res1 ;
+  char *buf1 = 0 ;
+  int alloc1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:change_prog",&obj0)) SWIG_fail;
+  res1 = SWIG_AsCharPtrAndSize(obj0, &buf1, NULL, &alloc1);
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "change_prog" "', argument " "1"" of type '" "char const *""'");
+  }
+  arg1 = reinterpret_cast< char * >(buf1);
+  result = (int)change_prog((char const *)arg1);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return resultobj;
+fail:
+  if (alloc1 == SWIG_NEWOBJ) delete[] buf1;
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_get_frame_width(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":get_frame_width")) SWIG_fail;
+  result = (int)get_frame_width();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_get_frame_height(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)":get_frame_height")) SWIG_fail;
+  result = (int)get_frame_height();
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_ccc_get_blocks(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
   BlockArray *arg2 = (BlockArray *) 0 ;
-  unsigned short val1 ;
+  int val1 ;
   int ecode1 = 0 ;
   void *argp2 = 0 ;
   int res2 = 0 ;
@@ -3532,18 +4381,18 @@ SWIGINTERN PyObject *_wrap_pixy_get_blocks(PyObject *SWIGUNUSEDPARM(self), PyObj
   PyObject * obj1 = 0 ;
   int result;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:pixy_get_blocks",&obj0,&obj1)) SWIG_fail;
-  ecode1 = SWIG_AsVal_unsigned_SS_short(obj0, &val1);
+  if (!PyArg_ParseTuple(args,(char *)"OO:ccc_get_blocks",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
   if (!SWIG_IsOK(ecode1)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "pixy_get_blocks" "', argument " "1"" of type '" "uint16_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "ccc_get_blocks" "', argument " "1"" of type '" "int""'");
   } 
-  arg1 = static_cast< uint16_t >(val1);
+  arg1 = static_cast< int >(val1);
   res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_BlockArray, 0 |  0 );
   if (!SWIG_IsOK(res2)) {
-    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "pixy_get_blocks" "', argument " "2"" of type '" "BlockArray *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "ccc_get_blocks" "', argument " "2"" of type '" "BlockArray *""'"); 
   }
   arg2 = reinterpret_cast< BlockArray * >(argp2);
-  result = (int)pixy_get_blocks(arg1,arg2);
+  result = (int)ccc_get_blocks(arg1,arg2);
   resultobj = SWIG_From_int(static_cast< int >(result));
   return resultobj;
 fail:
@@ -3551,11 +4400,11 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_pixy_close(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_line_get_all_features(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   
-  if (!PyArg_ParseTuple(args,(char *)":pixy_close")) SWIG_fail;
-  pixy_close();
+  if (!PyArg_ParseTuple(args,(char *)":line_get_all_features")) SWIG_fail;
+  line_get_all_features();
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -3563,7 +4412,232 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_type_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_line_get_main_features(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  
+  if (!PyArg_ParseTuple(args,(char *)":line_get_main_features")) SWIG_fail;
+  line_get_main_features();
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_line_get_intersections(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  IntersectionLineArray *arg2 = (IntersectionLineArray *) 0 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:line_get_intersections",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "line_get_intersections" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_IntersectionLineArray, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "line_get_intersections" "', argument " "2"" of type '" "IntersectionLineArray *""'"); 
+  }
+  arg2 = reinterpret_cast< IntersectionLineArray * >(argp2);
+  result = (int)line_get_intersections(arg1,arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_line_get_vectors(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  VectorArray *arg2 = (VectorArray *) 0 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:line_get_vectors",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "line_get_vectors" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_VectorArray, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "line_get_vectors" "', argument " "2"" of type '" "VectorArray *""'"); 
+  }
+  arg2 = reinterpret_cast< VectorArray * >(argp2);
+  result = (int)line_get_vectors(arg1,arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_line_get_barcodes(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  BarcodeArray *arg2 = (BarcodeArray *) 0 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  void *argp2 = 0 ;
+  int res2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  int result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:line_get_barcodes",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "line_get_barcodes" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  res2 = SWIG_ConvertPtr(obj1, &argp2,SWIGTYPE_p_BarcodeArray, 0 |  0 );
+  if (!SWIG_IsOK(res2)) {
+    SWIG_exception_fail(SWIG_ArgError(res2), "in method '" "line_get_barcodes" "', argument " "2"" of type '" "BarcodeArray *""'"); 
+  }
+  arg2 = reinterpret_cast< BarcodeArray * >(argp2);
+  result = (int)line_get_barcodes(arg1,arg2);
+  resultobj = SWIG_From_int(static_cast< int >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_set_lamp(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  int arg2 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:set_lamp",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "set_lamp" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "set_lamp" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  set_lamp(arg1,arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_set_servos(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  int arg2 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:set_servos",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "set_servos" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "set_servos" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  set_servos(arg1,arg2);
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_video_get_RGB(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  int arg1 ;
+  int arg2 ;
+  uint8_t *arg3 = (uint8_t *) 0 ;
+  uint8_t *arg4 = (uint8_t *) 0 ;
+  uint8_t *arg5 = (uint8_t *) 0 ;
+  int val1 ;
+  int ecode1 = 0 ;
+  int val2 ;
+  int ecode2 = 0 ;
+  uint8_t temp3 ;
+  int res3 = SWIG_TMPOBJ ;
+  uint8_t temp4 ;
+  int res4 = SWIG_TMPOBJ ;
+  uint8_t temp5 ;
+  int res5 = SWIG_TMPOBJ ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  arg3 = &temp3;
+  arg4 = &temp4;
+  arg5 = &temp5;
+  if (!PyArg_ParseTuple(args,(char *)"OO:video_get_RGB",&obj0,&obj1)) SWIG_fail;
+  ecode1 = SWIG_AsVal_int(obj0, &val1);
+  if (!SWIG_IsOK(ecode1)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode1), "in method '" "video_get_RGB" "', argument " "1"" of type '" "int""'");
+  } 
+  arg1 = static_cast< int >(val1);
+  ecode2 = SWIG_AsVal_int(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "video_get_RGB" "', argument " "2"" of type '" "int""'");
+  } 
+  arg2 = static_cast< int >(val2);
+  video_get_RGB(arg1,arg2,arg3,arg4,arg5);
+  resultobj = SWIG_Py_Void();
+  if (SWIG_IsTmpObj(res3)) {
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_From_unsigned_SS_char((*arg3)));
+  } else {
+    int new_flags = SWIG_IsNewObj(res3) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_NewPointerObj((void*)(arg3), SWIGTYPE_p_unsigned_char, new_flags));
+  }
+  if (SWIG_IsTmpObj(res4)) {
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_From_unsigned_SS_char((*arg4)));
+  } else {
+    int new_flags = SWIG_IsNewObj(res4) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_NewPointerObj((void*)(arg4), SWIGTYPE_p_unsigned_char, new_flags));
+  }
+  if (SWIG_IsTmpObj(res5)) {
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_From_unsigned_SS_char((*arg5)));
+  } else {
+    int new_flags = SWIG_IsNewObj(res5) ? (SWIG_POINTER_OWN |  0 ) :  0 ;
+    resultobj = SWIG_Python_AppendOutput(resultobj, SWIG_NewPointerObj((void*)(arg5), SWIGTYPE_p_unsigned_char, new_flags));
+  }
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Block_m_signature_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   uint16_t arg2 ;
@@ -3574,18 +4648,18 @@ SWIGINTERN PyObject *_wrap_Block_type_set(PyObject *SWIGUNUSEDPARM(self), PyObje
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Block_type_set",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:Block_m_signature_set",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_type_set" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_signature_set" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_type_set" "', argument " "2"" of type '" "uint16_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_m_signature_set" "', argument " "2"" of type '" "uint16_t""'");
   } 
   arg2 = static_cast< uint16_t >(val2);
-  if (arg1) (arg1)->type = arg2;
+  if (arg1) (arg1)->m_signature = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -3593,7 +4667,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_type_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_signature_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   void *argp1 = 0 ;
@@ -3601,13 +4675,13 @@ SWIGINTERN PyObject *_wrap_Block_type_get(PyObject *SWIGUNUSEDPARM(self), PyObje
   PyObject * obj0 = 0 ;
   uint16_t result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:Block_type_get",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:Block_m_signature_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_type_get" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_signature_get" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
-  result = (uint16_t) ((arg1)->type);
+  result = (uint16_t) ((arg1)->m_signature);
   resultobj = SWIG_From_unsigned_SS_short(static_cast< unsigned short >(result));
   return resultobj;
 fail:
@@ -3615,7 +4689,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_signature_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_x_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   uint16_t arg2 ;
@@ -3626,18 +4700,18 @@ SWIGINTERN PyObject *_wrap_Block_signature_set(PyObject *SWIGUNUSEDPARM(self), P
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Block_signature_set",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:Block_m_x_set",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_signature_set" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_x_set" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_signature_set" "', argument " "2"" of type '" "uint16_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_m_x_set" "', argument " "2"" of type '" "uint16_t""'");
   } 
   arg2 = static_cast< uint16_t >(val2);
-  if (arg1) (arg1)->signature = arg2;
+  if (arg1) (arg1)->m_x = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -3645,7 +4719,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_signature_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_x_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   void *argp1 = 0 ;
@@ -3653,13 +4727,13 @@ SWIGINTERN PyObject *_wrap_Block_signature_get(PyObject *SWIGUNUSEDPARM(self), P
   PyObject * obj0 = 0 ;
   uint16_t result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:Block_signature_get",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:Block_m_x_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_signature_get" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_x_get" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
-  result = (uint16_t) ((arg1)->signature);
+  result = (uint16_t) ((arg1)->m_x);
   resultobj = SWIG_From_unsigned_SS_short(static_cast< unsigned short >(result));
   return resultobj;
 fail:
@@ -3667,7 +4741,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_x_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_y_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   uint16_t arg2 ;
@@ -3678,18 +4752,18 @@ SWIGINTERN PyObject *_wrap_Block_x_set(PyObject *SWIGUNUSEDPARM(self), PyObject 
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Block_x_set",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:Block_m_y_set",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_x_set" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_y_set" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_x_set" "', argument " "2"" of type '" "uint16_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_m_y_set" "', argument " "2"" of type '" "uint16_t""'");
   } 
   arg2 = static_cast< uint16_t >(val2);
-  if (arg1) (arg1)->x = arg2;
+  if (arg1) (arg1)->m_y = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -3697,7 +4771,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_x_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_y_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   void *argp1 = 0 ;
@@ -3705,13 +4779,13 @@ SWIGINTERN PyObject *_wrap_Block_x_get(PyObject *SWIGUNUSEDPARM(self), PyObject 
   PyObject * obj0 = 0 ;
   uint16_t result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:Block_x_get",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:Block_m_y_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_x_get" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_y_get" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
-  result = (uint16_t) ((arg1)->x);
+  result = (uint16_t) ((arg1)->m_y);
   resultobj = SWIG_From_unsigned_SS_short(static_cast< unsigned short >(result));
   return resultobj;
 fail:
@@ -3719,7 +4793,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_y_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_width_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   uint16_t arg2 ;
@@ -3730,18 +4804,18 @@ SWIGINTERN PyObject *_wrap_Block_y_set(PyObject *SWIGUNUSEDPARM(self), PyObject 
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Block_y_set",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:Block_m_width_set",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_y_set" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_width_set" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_y_set" "', argument " "2"" of type '" "uint16_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_m_width_set" "', argument " "2"" of type '" "uint16_t""'");
   } 
   arg2 = static_cast< uint16_t >(val2);
-  if (arg1) (arg1)->y = arg2;
+  if (arg1) (arg1)->m_width = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -3749,7 +4823,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_y_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_width_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   void *argp1 = 0 ;
@@ -3757,13 +4831,13 @@ SWIGINTERN PyObject *_wrap_Block_y_get(PyObject *SWIGUNUSEDPARM(self), PyObject 
   PyObject * obj0 = 0 ;
   uint16_t result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:Block_y_get",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:Block_m_width_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_y_get" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_width_get" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
-  result = (uint16_t) ((arg1)->y);
+  result = (uint16_t) ((arg1)->m_width);
   resultobj = SWIG_From_unsigned_SS_short(static_cast< unsigned short >(result));
   return resultobj;
 fail:
@@ -3771,7 +4845,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_width_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_height_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   uint16_t arg2 ;
@@ -3782,18 +4856,18 @@ SWIGINTERN PyObject *_wrap_Block_width_set(PyObject *SWIGUNUSEDPARM(self), PyObj
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Block_width_set",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:Block_m_height_set",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_width_set" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_height_set" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
   ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_width_set" "', argument " "2"" of type '" "uint16_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_m_height_set" "', argument " "2"" of type '" "uint16_t""'");
   } 
   arg2 = static_cast< uint16_t >(val2);
-  if (arg1) (arg1)->width = arg2;
+  if (arg1) (arg1)->m_height = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -3801,7 +4875,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_width_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_height_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   void *argp1 = 0 ;
@@ -3809,13 +4883,13 @@ SWIGINTERN PyObject *_wrap_Block_width_get(PyObject *SWIGUNUSEDPARM(self), PyObj
   PyObject * obj0 = 0 ;
   uint16_t result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:Block_width_get",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:Block_m_height_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_width_get" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_height_get" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
-  result = (uint16_t) ((arg1)->width);
+  result = (uint16_t) ((arg1)->m_height);
   resultobj = SWIG_From_unsigned_SS_short(static_cast< unsigned short >(result));
   return resultobj;
 fail:
@@ -3823,59 +4897,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_height_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Block *arg1 = (Block *) 0 ;
-  uint16_t arg2 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  unsigned short val2 ;
-  int ecode2 = 0 ;
-  PyObject * obj0 = 0 ;
-  PyObject * obj1 = 0 ;
-  
-  if (!PyArg_ParseTuple(args,(char *)"OO:Block_height_set",&obj0,&obj1)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_height_set" "', argument " "1"" of type '" "Block *""'"); 
-  }
-  arg1 = reinterpret_cast< Block * >(argp1);
-  ecode2 = SWIG_AsVal_unsigned_SS_short(obj1, &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_height_set" "', argument " "2"" of type '" "uint16_t""'");
-  } 
-  arg2 = static_cast< uint16_t >(val2);
-  if (arg1) (arg1)->height = arg2;
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Block_height_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
-  PyObject *resultobj = 0;
-  Block *arg1 = (Block *) 0 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  PyObject * obj0 = 0 ;
-  uint16_t result;
-  
-  if (!PyArg_ParseTuple(args,(char *)"O:Block_height_get",&obj0)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_height_get" "', argument " "1"" of type '" "Block *""'"); 
-  }
-  arg1 = reinterpret_cast< Block * >(argp1);
-  result = (uint16_t) ((arg1)->height);
-  resultobj = SWIG_From_unsigned_SS_short(static_cast< unsigned short >(result));
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_Block_angle_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_angle_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   int16_t arg2 ;
@@ -3886,18 +4908,18 @@ SWIGINTERN PyObject *_wrap_Block_angle_set(PyObject *SWIGUNUSEDPARM(self), PyObj
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OO:Block_angle_set",&obj0,&obj1)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OO:Block_m_angle_set",&obj0,&obj1)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_angle_set" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_angle_set" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
   ecode2 = SWIG_AsVal_short(obj1, &val2);
   if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_angle_set" "', argument " "2"" of type '" "int16_t""'");
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_m_angle_set" "', argument " "2"" of type '" "int16_t""'");
   } 
   arg2 = static_cast< int16_t >(val2);
-  if (arg1) (arg1)->angle = arg2;
+  if (arg1) (arg1)->m_angle = arg2;
   resultobj = SWIG_Py_Void();
   return resultobj;
 fail:
@@ -3905,7 +4927,7 @@ fail:
 }
 
 
-SWIGINTERN PyObject *_wrap_Block_angle_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+SWIGINTERN PyObject *_wrap_Block_m_angle_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   Block *arg1 = (Block *) 0 ;
   void *argp1 = 0 ;
@@ -3913,14 +4935,118 @@ SWIGINTERN PyObject *_wrap_Block_angle_get(PyObject *SWIGUNUSEDPARM(self), PyObj
   PyObject * obj0 = 0 ;
   int16_t result;
   
-  if (!PyArg_ParseTuple(args,(char *)"O:Block_angle_get",&obj0)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"O:Block_m_angle_get",&obj0)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_angle_get" "', argument " "1"" of type '" "Block *""'"); 
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_angle_get" "', argument " "1"" of type '" "Block *""'"); 
   }
   arg1 = reinterpret_cast< Block * >(argp1);
-  result = (int16_t) ((arg1)->angle);
+  result = (int16_t) ((arg1)->m_angle);
   resultobj = SWIG_From_short(static_cast< short >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Block_m_index_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Block *arg1 = (Block *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Block_m_index_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_index_set" "', argument " "1"" of type '" "Block *""'"); 
+  }
+  arg1 = reinterpret_cast< Block * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_m_index_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_index = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Block_m_index_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Block *arg1 = (Block *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Block_m_index_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_index_get" "', argument " "1"" of type '" "Block *""'"); 
+  }
+  arg1 = reinterpret_cast< Block * >(argp1);
+  result = (uint8_t) ((arg1)->m_index);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Block_m_age_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Block *arg1 = (Block *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Block_m_age_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_age_set" "', argument " "1"" of type '" "Block *""'"); 
+  }
+  arg1 = reinterpret_cast< Block * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Block_m_age_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_age = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Block_m_age_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Block *arg1 = (Block *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Block_m_age_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Block, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Block_m_age_get" "', argument " "1"" of type '" "Block *""'"); 
+  }
+  arg1 = reinterpret_cast< Block * >(argp1);
+  result = (uint8_t) ((arg1)->m_age);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
   return resultobj;
 fail:
   return NULL;
@@ -3968,6 +5094,556 @@ SWIGINTERN PyObject *Block_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject
   return SWIG_Py_Void();
 }
 
+SWIGINTERN PyObject *_wrap_Vector_m_x0_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Vector_m_x0_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_x0_set" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vector_m_x0_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_x0 = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_x0_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Vector_m_x0_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_x0_get" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  result = (uint8_t) ((arg1)->m_x0);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_y0_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Vector_m_y0_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_y0_set" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vector_m_y0_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_y0 = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_y0_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Vector_m_y0_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_y0_get" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  result = (uint8_t) ((arg1)->m_y0);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_x1_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Vector_m_x1_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_x1_set" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vector_m_x1_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_x1 = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_x1_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Vector_m_x1_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_x1_get" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  result = (uint8_t) ((arg1)->m_x1);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_y1_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Vector_m_y1_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_y1_set" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vector_m_y1_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_y1 = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_y1_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Vector_m_y1_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_y1_get" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  result = (uint8_t) ((arg1)->m_y1);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_index_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Vector_m_index_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_index_set" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vector_m_index_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_index = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_index_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Vector_m_index_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_index_get" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  result = (uint8_t) ((arg1)->m_index);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_flags_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:Vector_m_flags_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_flags_set" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "Vector_m_flags_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_flags = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_Vector_m_flags_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:Vector_m_flags_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "Vector_m_flags_get" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  result = (uint8_t) ((arg1)->m_flags);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_Vector(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_Vector")) SWIG_fail;
+  result = (Vector *)new Vector();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_Vector, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_Vector(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  Vector *arg1 = (Vector *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_Vector",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_Vector, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_Vector" "', argument " "1"" of type '" "Vector *""'"); 
+  }
+  arg1 = reinterpret_cast< Vector * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *Vector_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_Vector, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
+SWIGINTERN PyObject *_wrap_IntersectionLine_m_index_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLine *arg1 = (IntersectionLine *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IntersectionLine_m_index_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLine_m_index_set" "', argument " "1"" of type '" "IntersectionLine *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLine * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntersectionLine_m_index_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_index = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IntersectionLine_m_index_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLine *arg1 = (IntersectionLine *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IntersectionLine_m_index_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLine_m_index_get" "', argument " "1"" of type '" "IntersectionLine *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLine * >(argp1);
+  result = (uint8_t) ((arg1)->m_index);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IntersectionLine_m_reserved_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLine *arg1 = (IntersectionLine *) 0 ;
+  uint8_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  unsigned char val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IntersectionLine_m_reserved_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLine_m_reserved_set" "', argument " "1"" of type '" "IntersectionLine *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLine * >(argp1);
+  ecode2 = SWIG_AsVal_unsigned_SS_char(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntersectionLine_m_reserved_set" "', argument " "2"" of type '" "uint8_t""'");
+  } 
+  arg2 = static_cast< uint8_t >(val2);
+  if (arg1) (arg1)->m_reserved = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IntersectionLine_m_reserved_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLine *arg1 = (IntersectionLine *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  uint8_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IntersectionLine_m_reserved_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLine_m_reserved_get" "', argument " "1"" of type '" "IntersectionLine *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLine * >(argp1);
+  result = (uint8_t) ((arg1)->m_reserved);
+  resultobj = SWIG_From_unsigned_SS_char(static_cast< unsigned char >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IntersectionLine_m_angle_set(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLine *arg1 = (IntersectionLine *) 0 ;
+  int16_t arg2 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  short val2 ;
+  int ecode2 = 0 ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OO:IntersectionLine_m_angle_set",&obj0,&obj1)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLine_m_angle_set" "', argument " "1"" of type '" "IntersectionLine *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLine * >(argp1);
+  ecode2 = SWIG_AsVal_short(obj1, &val2);
+  if (!SWIG_IsOK(ecode2)) {
+    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "IntersectionLine_m_angle_set" "', argument " "2"" of type '" "int16_t""'");
+  } 
+  arg2 = static_cast< int16_t >(val2);
+  if (arg1) (arg1)->m_angle = arg2;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_IntersectionLine_m_angle_get(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLine *arg1 = (IntersectionLine *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  int16_t result;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:IntersectionLine_m_angle_get",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLine, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "IntersectionLine_m_angle_get" "', argument " "1"" of type '" "IntersectionLine *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLine * >(argp1);
+  result = (int16_t) ((arg1)->m_angle);
+  resultobj = SWIG_From_short(static_cast< short >(result));
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_IntersectionLine(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLine *result = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)":new_IntersectionLine")) SWIG_fail;
+  result = (IntersectionLine *)new IntersectionLine();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_IntersectionLine, SWIG_POINTER_NEW |  0 );
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_delete_IntersectionLine(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  IntersectionLine *arg1 = (IntersectionLine *) 0 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyObject * obj0 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"O:delete_IntersectionLine",&obj0)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_IntersectionLine, SWIG_POINTER_DISOWN |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "delete_IntersectionLine" "', argument " "1"" of type '" "IntersectionLine *""'"); 
+  }
+  arg1 = reinterpret_cast< IntersectionLine * >(argp1);
+  delete arg1;
+  resultobj = SWIG_Py_Void();
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *IntersectionLine_swigregister(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *obj;
+  if (!PyArg_ParseTuple(args,(char*)"O:swigregister", &obj)) return NULL;
+  SWIG_TypeNewClientData(SWIGTYPE_p_IntersectionLine, SWIG_NewClientData(obj));
+  return SWIG_Py_Void();
+}
+
 static PyMethodDef SwigMethods[] = {
 	 { (char *)"SWIG_PyInstanceMethod_New", (PyCFunction)SWIG_PyInstanceMethod_New, METH_O, NULL},
 	 { (char *)"new_BlockArray", _wrap_new_BlockArray, METH_VARARGS, NULL},
@@ -3977,34 +5653,97 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"BlockArray_cast", _wrap_BlockArray_cast, METH_VARARGS, NULL},
 	 { (char *)"BlockArray_frompointer", _wrap_BlockArray_frompointer, METH_VARARGS, NULL},
 	 { (char *)"BlockArray_swigregister", BlockArray_swigregister, METH_VARARGS, NULL},
-	 { (char *)"pixy_init", _wrap_pixy_init, METH_VARARGS, NULL},
-	 { (char *)"pixy_get_blocks", _wrap_pixy_get_blocks, METH_VARARGS, NULL},
-	 { (char *)"pixy_close", _wrap_pixy_close, METH_VARARGS, NULL},
-	 { (char *)"Block_type_set", _wrap_Block_type_set, METH_VARARGS, NULL},
-	 { (char *)"Block_type_get", _wrap_Block_type_get, METH_VARARGS, NULL},
-	 { (char *)"Block_signature_set", _wrap_Block_signature_set, METH_VARARGS, NULL},
-	 { (char *)"Block_signature_get", _wrap_Block_signature_get, METH_VARARGS, NULL},
-	 { (char *)"Block_x_set", _wrap_Block_x_set, METH_VARARGS, NULL},
-	 { (char *)"Block_x_get", _wrap_Block_x_get, METH_VARARGS, NULL},
-	 { (char *)"Block_y_set", _wrap_Block_y_set, METH_VARARGS, NULL},
-	 { (char *)"Block_y_get", _wrap_Block_y_get, METH_VARARGS, NULL},
-	 { (char *)"Block_width_set", _wrap_Block_width_set, METH_VARARGS, NULL},
-	 { (char *)"Block_width_get", _wrap_Block_width_get, METH_VARARGS, NULL},
-	 { (char *)"Block_height_set", _wrap_Block_height_set, METH_VARARGS, NULL},
-	 { (char *)"Block_height_get", _wrap_Block_height_get, METH_VARARGS, NULL},
-	 { (char *)"Block_angle_set", _wrap_Block_angle_set, METH_VARARGS, NULL},
-	 { (char *)"Block_angle_get", _wrap_Block_angle_get, METH_VARARGS, NULL},
+	 { (char *)"new_VectorArray", _wrap_new_VectorArray, METH_VARARGS, NULL},
+	 { (char *)"delete_VectorArray", _wrap_delete_VectorArray, METH_VARARGS, NULL},
+	 { (char *)"VectorArray___getitem__", _wrap_VectorArray___getitem__, METH_VARARGS, NULL},
+	 { (char *)"VectorArray___setitem__", _wrap_VectorArray___setitem__, METH_VARARGS, NULL},
+	 { (char *)"VectorArray_cast", _wrap_VectorArray_cast, METH_VARARGS, NULL},
+	 { (char *)"VectorArray_frompointer", _wrap_VectorArray_frompointer, METH_VARARGS, NULL},
+	 { (char *)"VectorArray_swigregister", VectorArray_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_IntersectionLineArray", _wrap_new_IntersectionLineArray, METH_VARARGS, NULL},
+	 { (char *)"delete_IntersectionLineArray", _wrap_delete_IntersectionLineArray, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLineArray___getitem__", _wrap_IntersectionLineArray___getitem__, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLineArray___setitem__", _wrap_IntersectionLineArray___setitem__, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLineArray_cast", _wrap_IntersectionLineArray_cast, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLineArray_frompointer", _wrap_IntersectionLineArray_frompointer, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLineArray_swigregister", IntersectionLineArray_swigregister, METH_VARARGS, NULL},
+	 { (char *)"new_BarcodeArray", _wrap_new_BarcodeArray, METH_VARARGS, NULL},
+	 { (char *)"delete_BarcodeArray", _wrap_delete_BarcodeArray, METH_VARARGS, NULL},
+	 { (char *)"BarcodeArray___getitem__", _wrap_BarcodeArray___getitem__, METH_VARARGS, NULL},
+	 { (char *)"BarcodeArray___setitem__", _wrap_BarcodeArray___setitem__, METH_VARARGS, NULL},
+	 { (char *)"BarcodeArray_cast", _wrap_BarcodeArray_cast, METH_VARARGS, NULL},
+	 { (char *)"BarcodeArray_frompointer", _wrap_BarcodeArray_frompointer, METH_VARARGS, NULL},
+	 { (char *)"BarcodeArray_swigregister", BarcodeArray_swigregister, METH_VARARGS, NULL},
+	 { (char *)"init", _wrap_init, METH_VARARGS, NULL},
+	 { (char *)"change_prog", _wrap_change_prog, METH_VARARGS, NULL},
+	 { (char *)"get_frame_width", _wrap_get_frame_width, METH_VARARGS, NULL},
+	 { (char *)"get_frame_height", _wrap_get_frame_height, METH_VARARGS, NULL},
+	 { (char *)"ccc_get_blocks", _wrap_ccc_get_blocks, METH_VARARGS, NULL},
+	 { (char *)"line_get_all_features", _wrap_line_get_all_features, METH_VARARGS, NULL},
+	 { (char *)"line_get_main_features", _wrap_line_get_main_features, METH_VARARGS, NULL},
+	 { (char *)"line_get_intersections", _wrap_line_get_intersections, METH_VARARGS, NULL},
+	 { (char *)"line_get_vectors", _wrap_line_get_vectors, METH_VARARGS, NULL},
+	 { (char *)"line_get_barcodes", _wrap_line_get_barcodes, METH_VARARGS, NULL},
+	 { (char *)"set_lamp", _wrap_set_lamp, METH_VARARGS, NULL},
+	 { (char *)"set_servos", _wrap_set_servos, METH_VARARGS, NULL},
+	 { (char *)"video_get_RGB", _wrap_video_get_RGB, METH_VARARGS, NULL},
+	 { (char *)"Block_m_signature_set", _wrap_Block_m_signature_set, METH_VARARGS, NULL},
+	 { (char *)"Block_m_signature_get", _wrap_Block_m_signature_get, METH_VARARGS, NULL},
+	 { (char *)"Block_m_x_set", _wrap_Block_m_x_set, METH_VARARGS, NULL},
+	 { (char *)"Block_m_x_get", _wrap_Block_m_x_get, METH_VARARGS, NULL},
+	 { (char *)"Block_m_y_set", _wrap_Block_m_y_set, METH_VARARGS, NULL},
+	 { (char *)"Block_m_y_get", _wrap_Block_m_y_get, METH_VARARGS, NULL},
+	 { (char *)"Block_m_width_set", _wrap_Block_m_width_set, METH_VARARGS, NULL},
+	 { (char *)"Block_m_width_get", _wrap_Block_m_width_get, METH_VARARGS, NULL},
+	 { (char *)"Block_m_height_set", _wrap_Block_m_height_set, METH_VARARGS, NULL},
+	 { (char *)"Block_m_height_get", _wrap_Block_m_height_get, METH_VARARGS, NULL},
+	 { (char *)"Block_m_angle_set", _wrap_Block_m_angle_set, METH_VARARGS, NULL},
+	 { (char *)"Block_m_angle_get", _wrap_Block_m_angle_get, METH_VARARGS, NULL},
+	 { (char *)"Block_m_index_set", _wrap_Block_m_index_set, METH_VARARGS, NULL},
+	 { (char *)"Block_m_index_get", _wrap_Block_m_index_get, METH_VARARGS, NULL},
+	 { (char *)"Block_m_age_set", _wrap_Block_m_age_set, METH_VARARGS, NULL},
+	 { (char *)"Block_m_age_get", _wrap_Block_m_age_get, METH_VARARGS, NULL},
 	 { (char *)"new_Block", _wrap_new_Block, METH_VARARGS, NULL},
 	 { (char *)"delete_Block", _wrap_delete_Block, METH_VARARGS, NULL},
 	 { (char *)"Block_swigregister", Block_swigregister, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_x0_set", _wrap_Vector_m_x0_set, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_x0_get", _wrap_Vector_m_x0_get, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_y0_set", _wrap_Vector_m_y0_set, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_y0_get", _wrap_Vector_m_y0_get, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_x1_set", _wrap_Vector_m_x1_set, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_x1_get", _wrap_Vector_m_x1_get, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_y1_set", _wrap_Vector_m_y1_set, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_y1_get", _wrap_Vector_m_y1_get, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_index_set", _wrap_Vector_m_index_set, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_index_get", _wrap_Vector_m_index_get, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_flags_set", _wrap_Vector_m_flags_set, METH_VARARGS, NULL},
+	 { (char *)"Vector_m_flags_get", _wrap_Vector_m_flags_get, METH_VARARGS, NULL},
+	 { (char *)"new_Vector", _wrap_new_Vector, METH_VARARGS, NULL},
+	 { (char *)"delete_Vector", _wrap_delete_Vector, METH_VARARGS, NULL},
+	 { (char *)"Vector_swigregister", Vector_swigregister, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLine_m_index_set", _wrap_IntersectionLine_m_index_set, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLine_m_index_get", _wrap_IntersectionLine_m_index_get, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLine_m_reserved_set", _wrap_IntersectionLine_m_reserved_set, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLine_m_reserved_get", _wrap_IntersectionLine_m_reserved_get, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLine_m_angle_set", _wrap_IntersectionLine_m_angle_set, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLine_m_angle_get", _wrap_IntersectionLine_m_angle_get, METH_VARARGS, NULL},
+	 { (char *)"new_IntersectionLine", _wrap_new_IntersectionLine, METH_VARARGS, NULL},
+	 { (char *)"delete_IntersectionLine", _wrap_delete_IntersectionLine, METH_VARARGS, NULL},
+	 { (char *)"IntersectionLine_swigregister", IntersectionLine_swigregister, METH_VARARGS, NULL},
 	 { NULL, NULL, 0, NULL }
 };
 
 
 /* -------- TYPE CONVERSION AND EQUIVALENCE RULES (BEGIN) -------- */
 
+static swig_type_info _swigt__p_Barcode = {"_p_Barcode", "Barcode *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_BarcodeArray = {"_p_BarcodeArray", "BarcodeArray *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_Block = {"_p_Block", "Block *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_BlockArray = {"_p_BlockArray", "BlockArray *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_IntersectionLine = {"_p_IntersectionLine", "IntersectionLine *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_IntersectionLineArray = {"_p_IntersectionLineArray", "IntersectionLineArray *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_Vector = {"_p_Vector", "Vector *", 0, 0, (void*)0, 0};
+static swig_type_info _swigt__p_VectorArray = {"_p_VectorArray", "VectorArray *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_int = {"_p_int", "intptr_t *|int *|int_least32_t *|int_fast32_t *|int32_t *|int_fast16_t *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_long_long = {"_p_long_long", "int_least64_t *|int_fast64_t *|int64_t *|long long *|intmax_t *", 0, 0, (void*)0, 0};
@@ -4016,8 +5755,14 @@ static swig_type_info _swigt__p_unsigned_long_long = {"_p_unsigned_long_long", "
 static swig_type_info _swigt__p_unsigned_short = {"_p_unsigned_short", "unsigned short *|uint_least16_t *|uint16_t *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
+  &_swigt__p_Barcode,
+  &_swigt__p_BarcodeArray,
   &_swigt__p_Block,
   &_swigt__p_BlockArray,
+  &_swigt__p_IntersectionLine,
+  &_swigt__p_IntersectionLineArray,
+  &_swigt__p_Vector,
+  &_swigt__p_VectorArray,
   &_swigt__p_char,
   &_swigt__p_int,
   &_swigt__p_long_long,
@@ -4029,8 +5774,14 @@ static swig_type_info *swig_type_initial[] = {
   &_swigt__p_unsigned_short,
 };
 
+static swig_cast_info _swigc__p_Barcode[] = {  {&_swigt__p_Barcode, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_BarcodeArray[] = {  {&_swigt__p_BarcodeArray, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_Block[] = {  {&_swigt__p_Block, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_BlockArray[] = {  {&_swigt__p_BlockArray, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_IntersectionLine[] = {  {&_swigt__p_IntersectionLine, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_IntersectionLineArray[] = {  {&_swigt__p_IntersectionLineArray, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_Vector[] = {  {&_swigt__p_Vector, 0, 0, 0},{0, 0, 0, 0}};
+static swig_cast_info _swigc__p_VectorArray[] = {  {&_swigt__p_VectorArray, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_int[] = {  {&_swigt__p_int, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_long_long[] = {  {&_swigt__p_long_long, 0, 0, 0},{0, 0, 0, 0}};
@@ -4042,8 +5793,14 @@ static swig_cast_info _swigc__p_unsigned_long_long[] = {  {&_swigt__p_unsigned_l
 static swig_cast_info _swigc__p_unsigned_short[] = {  {&_swigt__p_unsigned_short, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
+  _swigc__p_Barcode,
+  _swigc__p_BarcodeArray,
   _swigc__p_Block,
   _swigc__p_BlockArray,
+  _swigc__p_IntersectionLine,
+  _swigc__p_IntersectionLineArray,
+  _swigc__p_Vector,
+  _swigc__p_VectorArray,
   _swigc__p_char,
   _swigc__p_int,
   _swigc__p_long_long,

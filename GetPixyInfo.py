@@ -3,7 +3,6 @@ from ctypes import *
 from pixy import *
 from flask import jsonify
 from time import sleep
-import atexit
 
 # This code will  what the pixy camera sees in get sig and will not try to move it
 
@@ -18,35 +17,41 @@ class Blocks (Structure):
     ("m_index", c_uint),
     ("m_age", c_uint) ]
 
+
 blocks = BlockArray(100)
+frame = 0
+pixyCam = None
 
 def startup():
+  global pixyCam
 
-  pixy_init()
+  pixyCam = pixy.init ()
+  if pixyCam == -1:
+    print "Can't connect to pixycamera!!!!!"
+  else:
+    pixy.change_prog ("color_connected_components")
+
 
 def getSig():
-    global blocks
+    global pixyCam
     #jsonify({'some':'data'})
 
-    count = pixy_get_blocks(100, blocks)
+    if pixyCam == -1:
+      return "Can't connect to PixyCamera"
+    count = pixy.ccc_get_blocks (100, blocks)
+    ret =  {"C":count}
     
-    ret = {}
-    print "Count:" + str(count)
-    if count > 0:
-      for index in range (0, count):
-        if blocks[index].signature == 0:
-          continue
-        ret[blocks[index].signature] = { 
-                      "X" : blocks[index].x, 
-                      "Y" : blocks[index].y, 
-                      "W" : blocks[index].width, 
-                      "H" : blocks[index].height}
+    for i in range(count):
+      ret ["S"+str(i)] = blocks[i].m_signature
+      ret ["X"+str(i)] = blocks[i].m_x
+      ret ["Y"+str(i)] = blocks[i].m_y
+      ret ["W"+str(i)] = blocks[i].m_width
+      ret ["H"+str(i)] = blocks[i].m_height
     return ret
+
 
 if __name__ == "__main__":
   startup()
   while True:
     print str(getSig())
-    sleep(1)
-  
-atexit.register(pixy_close())
+    sleep(0.1)
