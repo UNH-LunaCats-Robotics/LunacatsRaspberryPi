@@ -67,6 +67,16 @@ correctly.
 
 #--------------------------------------------#
 '''
+from lidar_lite import Lidar_Lite
+from time import sleep
+from gpiozero import DigitalOutputDevice 
+
+lidarController = [DigitalOutputDevice(37), 
+                   DigitalOutputDevice(35),
+                   DigitalOutputDevice(33),
+                   DigitalOutputDevice(31)]
+
+
 
 lidar = Lidar_Lite()
 connected = lidar.connect(1)
@@ -77,9 +87,19 @@ if connected < -1:
 if __name__ == "__main__":
     print("Starting Test")
     while True:
-        try:
-            print "Distance: "+lidar.getDistance()
-            sleep(0.1)
-        except:
-            print "\tRemote I/O Error Occur, Check connection"
-            sleep(0.1)
+        for i in range(0,4):
+            if i == 0:
+                lidarController[3].off()
+            else:
+                lidarController[i-1].off()
+                lidarController[i].on()
+            j = 0
+            while j != 50
+                try:
+                    print "Distance: "+lidar.getDistance()
+                    sleep(0.1)
+                except:
+                    print "\tRemote I/O Error Occur, Check connection"
+                    sleep(0.1)
+                j += 1
+
