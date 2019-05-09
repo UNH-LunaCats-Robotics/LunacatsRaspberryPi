@@ -6,6 +6,10 @@ from time import sleep
 
 # This code will  what the pixy camera sees in get sig and will not try to move it
 
+FocalLengthHeight = 268.0
+FocalLengthWidth = 292.4
+widthOfObject  = 0.508 # Measured in meters, Used to get FocalLengthWidth
+heightOfObject = 0.4318 # Measured in meters, Used to get FocalLengthHeight
 
 class Blocks (Structure):
   _fields_ = [ ("m_signature", c_uint),
@@ -69,13 +73,7 @@ def getGoodSig():
 
     return ret
 
-pixelsWidth = 400
-pixelsHeight = 300
-boxWidth = 0.508  # Measurment in meters
-boxHeight = 0.4318 # Measurment in meters
 
-widthOfObject  = 0.508
-heightOfObject = 0.4318
 
 def getFocalLength(data,KnownDistance):
     global pixelsWidth,pixelsHeight,boxWidth,boxHeight,widthOfObject,heightOfObject,FocalLengthWidth,FocalLengthHeight
@@ -87,9 +85,6 @@ def getDistance(data):
     focalWidthMeasure  =  (widthOfObject * FocalLengthWidth) / data["W0"]
     focalHeightMeasure =  (heightOfObject * FocalLengthHeight) / data["H0"]
     return (focalWidthMeasure + focalHeightMeasure)/2
-
-FocalLengthHeight = 268.0
-FocalLengthWidth = 292.4
 
 if __name__ == "__main__":
   startup()
