@@ -65,16 +65,24 @@ Red: 6   Black: 4    Blue: 3    Green: 5
 use sudo i2cdetect -y 1 to verify if it is connected
 correctly. 
 
+PLEASE READ, values inside the DIGITALOUTPUTDEVICE is the
+GPIO pin numbers, NOT actual pin number!! (i.e.
+GPIO 26 = pin 37
+GPIO 19 = pin 35
+GPIO 13 = pin 33
+GPIO  6 = pin 31
+)
+
 #--------------------------------------------#
 '''
 from lidar_lite import Lidar_Lite
 from time import sleep
 from gpiozero import DigitalOutputDevice 
 
-lidarController = [DigitalOutputDevice(37), 
-                   DigitalOutputDevice(35),
-                   DigitalOutputDevice(33),
-                   DigitalOutputDevice(31)]
+lidarController = [DigitalOutputDevice(26), 
+                   DigitalOutputDevice(19),
+                   DigitalOutputDevice(13),
+                   DigitalOutputDevice(6)
 
 
 
@@ -92,14 +100,15 @@ if __name__ == "__main__":
                 lidarController[3].off()
             else:
                 lidarController[i-1].off()
-                lidarController[i].on()
+            lidarController[i].on()
+            print( str(i) + " " + str(lidarController[i].value))
+            
             j = 0
             while j != 50
                 try:
-                    print "Distance: "+lidar.getDistance()
-                    sleep(0.1)
+                    print "Distance: "+ str(i) + " " + lidar.getDistance()
+                    sleep(0.01)
                 except:
                     print "\tRemote I/O Error Occur, Check connection"
-                    sleep(0.1)
+                    sleep(0.01)
                 j += 1
-
