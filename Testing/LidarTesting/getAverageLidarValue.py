@@ -54,7 +54,7 @@ if __name__ == "__main__":
             print( str(i) + " " + str(lidarController[i].value) )
             
             j = 0
-            while j != 50:
+            while j != 50: 
                 try:
                     dist = lidar.getDistance()
                     avg = avgValues[i]
