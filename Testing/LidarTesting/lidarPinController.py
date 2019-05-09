@@ -79,10 +79,10 @@ from lidar_lite import Lidar_Lite
 from time import sleep
 from gpiozero import DigitalOutputDevice 
 
-lidarController = [DigitalOutputDevice(26), 
-                   DigitalOutputDevice(19),
-                   DigitalOutputDevice(13),
-                   DigitalOutputDevice(6) ]
+lidarController = [ DigitalOutputDevice(26), 
+                    DigitalOutputDevice(19),
+                    DigitalOutputDevice(13),
+                    DigitalOutputDevice(6) ]
 
 lidar = Lidar_Lite()
 

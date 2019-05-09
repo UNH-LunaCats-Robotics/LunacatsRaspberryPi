@@ -29,7 +29,7 @@ lidarController = [DigitalOutputDevice(26),
                    DigitalOutputDevice(13),
                    DigitalOutputDevice(6) ]
 
-avgValues = {0, 0, 0, 0}
+avgValues = [0, 0, 0, 0]
 
 lidar = Lidar_Lite()
 
@@ -53,17 +53,17 @@ if __name__ == "__main__":
             
             j = loopedVal
             while j != 50:
-                try:
-                    int dist = lidar.getDistance()
-                    int avg = avgValues[i]
-                    print("Distance: "+ str(i) + " " + str(dist))
-                    avgValues[i] = (avg+dist)/(j+loopedVal)
-                    print("Average Value for "+ str(i) + " " + str(avgValues[i]))
-                    sleep(0.01)
-                except:
+                #try:
+                dist = lidar.getDistance()
+                avg = avgValues[i]
+                print("Distance: "+ str(i) + " " + str(dist))
+                avgValues[i] = (avg+dist)/(j+loopedVal)
+                print("Average Value for "+ str(i) + " " + str(avgValues[i]))
+                sleep(0.01)
+                '''except:
                     #note that this error will cause problems for the average
                     print("\tRemote I/O Error Occur, Check connection")
-                    sleep(0.01)
+                    sleep(0.01)'''
                 j += 1
 
         for i in range(4):
