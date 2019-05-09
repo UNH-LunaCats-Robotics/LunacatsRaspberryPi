@@ -77,13 +77,13 @@ def getGoodSig():
 
 def getFocalLength(data,KnownDistance):
     global pixelsWidth,pixelsHeight,boxWidth,boxHeight,widthOfObject,heightOfObject,FocalLengthWidth,FocalLengthHeight
-    FocalLengthWidth =  (data["W0"]   * KnownDistance) / widthOfObject
-    FocalLengthHeight = (data["H0"]   * KnownDistance) / heightOfObject
+    FocalLengthWidth =  (data["W"]   * KnownDistance) / widthOfObject
+    FocalLengthHeight = (data["H"]   * KnownDistance) / heightOfObject
 
 def getDistance(data):
     global pixelsWidth,pixelsHeight,boxWidth,boxHeight,widthOfObject,heightOfObject,FocalLengthWidth,FocalLengthHeight
-    focalWidthMeasure  =  (widthOfObject * FocalLengthWidth) / data["W0"]
-    focalHeightMeasure =  (heightOfObject * FocalLengthHeight) / data["H0"]
+    focalWidthMeasure  =  (widthOfObject * FocalLengthWidth) / data["W"]
+    focalHeightMeasure =  (heightOfObject * FocalLengthHeight) / data["H"]
     return (focalWidthMeasure + focalHeightMeasure)/2
 
 if __name__ == "__main__":
