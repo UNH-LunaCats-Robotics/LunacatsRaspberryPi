@@ -2,13 +2,11 @@ from RobotCommunication import *
 import GetPixyInfo
 from time import sleep
 import json
-import threading
-import SerialMessages
 
 
 
 # The height that the picture should be at the target position
-posHeight = 20
+posHeight = 200
 posWidth  = 30
 
 # The allowed variation for the height
@@ -16,16 +14,6 @@ heightVary = 5
 widthVary = 5;
 
 
-taskInput = ""
-
-lidarDistance = 0
-objectDetected = False
-
-
-def terminTask():
-    global taskInput
-    while taskInput != "S":
-        taskInput = raw_input("Input")
 
 
 def faceTarget(angle,target):
@@ -38,47 +26,34 @@ def faceTarget(angle,target):
     return True
 
 def goForward():
-    SerialMessages.send_json({"c":0})
-
-
+    sendMessage({"c":0})
 def goBack():
-    SerialMessages.send_json({"c":1})
-
-def goLeft(angle):
-    SerialMessages.send_json({"c":2})
-
-def goRight(angle):
-    SerialMessages.send_json({"c":3})
-
+    sendMessage({"c":1})
+def goLeft():
+    sendMessage({"c":2})
+def goRight():
+    sendMessage({"c":3})
 def holdPos():
-    SerialMessages.send_json({"c":4})
+    sendMessage({"c":4})
 
-
-atGoodHeight = False
-
-def processHeight(data,i):
-    global atGoodHeight
-    height = data["H" + str(i)]
-    #print "getting Height:" + str(height)
+def processHeight(data):
+    height = data["H"]
 
     if height > posHeight + heightVary:
-        goBack()
-        atGoodHeight = False
-    elif height < posHeight - heightVary:
         goForward()
-        atGoodHeight = False
+    elif height < posHeight - heightVary:
+        goBack()
     else:
-        atGoodHeight = True
         holdPos()
+        
 
-def processWidth(data,i,angle):
-    width = data["W" + str(i)]
-    #print "getting Width:" + str(width)
+def processWidth(data):
+    width = data["W"]
 
     if width > posWidth + widthVary:
-        goLeft(angle)
+        goLeft()
     elif width < posWidth - widthVary:
-        goRight(angle)
+        goRight()
     else:
         holdPos()
 
@@ -90,26 +65,19 @@ if __name__ == '__main__':
 
     GetPixyInfo.startup()
 
-    while taskInput != "S":
+    while True:
+        allData = GetPixyInfo.getGoodSig();
         
-        data = GetPixyInfo.getSig()
+        if len(allData) == 0:
+            goLeft()
+            continue
+        
+        data = allData[0]
 
-        if objectDetected:
-            print "Object Detected!!!!!"
-            back(15)
-            sleep(0.5)
-            left(15)
-            sleep(2)
-            forward(15)
-            sleep(1.5)
-            objectDetected = False
-            print "Object evaded!"
-        if data["C"] == 0:
-            holdPos()
-        else:
-            for i in range(0,data["C"]):
-                if data["S"+str(i)] == 1:
-                    processHeight(data,i)
-                if data["S" + str(i)] == 1 and atGoodHeight:
-                    # processWidth(data, i,data["A"])
-                    print "Test"
+        if data["S"] == 1:
+            processHeight(data)
+        # if data["S"] == 1 and atGoodHeight:
+        #     processWidth(data, i,data["A"])
+
+
+        sleep(0.2)

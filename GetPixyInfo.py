@@ -49,6 +49,26 @@ def getSig():
       ret ["H"+str(i)] = blocks[i].m_height
     return ret
 
+def getGoodSig():
+    global pixyCam
+
+    if pixyCam == -1:
+      return "Can't connect to PixyCamera"
+    
+    count = pixy.ccc_get_blocks (100, blocks)
+    ret =  {}
+    
+    for i in range(count):
+      blk = {}
+      blk ["S"] = blocks[i].m_signature
+      blk ["X"] = blocks[i].m_x
+      blk ["Y"] = blocks[i].m_y
+      blk ["W"] = blocks[i].m_width
+      blk ["H"] = blocks[i].m_height
+      ret[i] = blk
+
+    return ret
+
 
 if __name__ == "__main__":
   startup()

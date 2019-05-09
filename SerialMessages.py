@@ -26,44 +26,13 @@ def send_json(data):
     mutex.acquire()
     try:
         writeToArduino(json.dumps(data))
-        rs1 = ser.readline()
-        print "Arduino Responded:" + json.dumps(rs1)
-        sleep(0.025) #give some buffer time for arduino
-        return rs1
+        # rs1 = ser.readline()
+        # print "Arduino Responded:" + json.dumps(rs1)
+        sleep(0.1) #give some buffer time for arduino
+        return "Sent!"
     finally:
         mutex.release()
 
-'''
-#testing main function
 if __name__ == "__main__":
-    #initArduino()
-    sleep(0.5)
-    for i in range(10):
-        t = Thread(target = processData, args = (i,))
-        t.start() 
-'''
-
-'''
-def startup():
-        thread = threading.Thread(target=send_task,args=())
-        thread.start()
-
-messageQueue = Queue(maxsize=2)
-
-
-def send_json(data):
-        global messageQueue;
-        messageQueue.put(data)
-
-def send_task():
-        while True:
-                global messageQueue;
-                item = messageQueue.get()
-                if item is None:
-                        break
-
-                print "Sending:" + json.dumps(item) 
-                ser.write(bytes(json.dumps(item),'utf-8'))
-                print "Arduino Responded:" + ser.read()
-                messageQueue.task_done()
-'''
+        for i in range (0, 100):
+                send_json({"c":4})
