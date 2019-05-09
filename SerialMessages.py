@@ -28,7 +28,7 @@ def send_json(data):
         writeToArduino(json.dumps(data))
         # rs1 = ser.readline()
         # print "Arduino Responded:" + json.dumps(rs1)
-        sleep(0.1) #give some buffer time for arduino
+        sleep(0.5) #give some buffer time for arduino
         return "Sent!"
     finally:
         mutex.release()
