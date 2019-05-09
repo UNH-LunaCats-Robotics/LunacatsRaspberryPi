@@ -100,6 +100,14 @@ if __name__ == "__main__":
             else:
                 lidarController[i-1].off()
             lidarController[i].on()
+            if i == 0:
+                self.getFR()
+            elif i == 1:
+                self.getFL()
+            elif i == 2:
+                self.getBL()
+            elif i == 3:
+                self.getBR()
             print( str(i) + " " + str(lidarController[i].value))
             
             j = 0
@@ -111,3 +119,19 @@ if __name__ == "__main__":
                     print("\tRemote I/O Error Occur, Check connection")
                     sleep(0.01)
                 j += 1
+
+def getFR():
+    print("FRONT RIGHT")
+    return lidar.getDistance()
+
+def getFL():
+    print("FRONT LEFT")
+    return lidar.getDistance()
+
+def getBL():
+    print("BACK LEFT")
+    return lidar.getDistance()
+
+def getBR():
+    print("BACK RIGHT")
+    return lidar.getDistance()

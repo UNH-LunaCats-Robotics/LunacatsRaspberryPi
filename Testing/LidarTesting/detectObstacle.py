@@ -78,9 +78,14 @@ if __name__ == "__main__":
     print("Starting Test")
     while True:
         try:
-            
-            print "Distance: "+lidar.getDistance()
+            if lidar.getDistance() == 50: #Double check this value
+                print("OBJECT FOUND DONT PROCEED")
+                return True
+            elif lidar.getDistance() == 100: #Double check this value
+                print("HOLE DETECTED DO NOT PROCEED")
+                if(lidar)
+            print( "Distance: "+lidar.getDistance())
             sleep(0.1)
         except:
-            print "\tRemote I/O Error Occur, Check connection"
+            print( "\tRemote I/O Error Occur, Check connection")
             sleep(0.1)
