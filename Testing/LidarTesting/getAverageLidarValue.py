@@ -1,3 +1,4 @@
+from __future__ import division
 '''
 #-----------------!!NOTICE!!-----------------#
 
@@ -23,7 +24,6 @@ GPIO  6 = pin 31
 from lidar_lite import Lidar_Lite
 from time import sleep
 from gpiozero import DigitalOutputDevice 
-from __future__ import division
 
 lidarController = [DigitalOutputDevice(26), 
                    DigitalOutputDevice(19),
@@ -42,7 +42,7 @@ if connected < -1:
 if __name__ == "__main__":
     print("Starting Test")
 
-    count = 1000
+    count = 10
     c = 0
     while c != count:
         for i in range(0,4):
@@ -58,17 +58,16 @@ if __name__ == "__main__":
                 try:
                     dist = lidar.getDistance()
                     avg = avgValues[i]
-                    print("Distance: "+ str(i) + " " + str(dist))
                     avgValues[i] = avg+dist
                     #print("Average Value for "+ str(i) + " " + str(avgValues[i]))
                     sleep(0.01)
+                    print("Distance: "+ str(i) + " " + str(dist))
                 except:
-                    #note that this error will cause problems for the average
                     print("\tRemote I/O Error Occur, Check connection")
                     sleep(0.01)
                 j += 1
         c += 1
 
     for i in range(4):
-        print("Average Value for Lidar "+str(i)+": "+str(double(avgValues[i]/(count*50)))
+        print("Average Value for Lidar "+str(i)+": "+str(avgValues[i]/(count*50)))
     #loopedVal += 50
