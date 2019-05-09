@@ -6,17 +6,34 @@ import json
 
 
 # The height that the picture should be at the target position
-miningZoneHeight = 30
-miningZoneWidth  = 20
+miningZoneDistance = 3
+miningZoneXOffset = 100
+
 
 # The height that the picture should be at the target position
-depositBoxHeight = 60
-depositBoxWidth  = 45
+depositBoxDistance = 0.8
+depositBoxXOffset = 50
 
 
 # The allowed variation for the height
-heightVary = 5
-widthVary = 5;
+heightVary = 0.3
+OffsetVary = 25
+
+
+LidarObstacleDistance = 30
+LidarHoleDistance     = 70
+
+def getLidarFL():
+    return 50
+
+def getLidarFR():
+    return 50
+
+def getLidarBL():
+    return 50
+
+def getLidarBR():
+    return 50
 
 
 
@@ -25,22 +42,49 @@ def faceTarget(angle,target):
     if angle - 50 > target:
         right(15)
         return False
+
     elif angle + 50 < target:
         left(15)
         return False
+
     return True
 
 def goForward():
-    sendMessage({"c":0})
+    if getLidarFL() > LidarHoleDistance or getLidarFR() < LidarObstacleDistance:
+        goLeft()
+        sleep(1.7)
+
+        goForward()
+
+        goRight()
+        sleep(1.7)
+
+        goForward()
+    else:
+        sendMessage({"c":0})
+
+
 def goBack():
-    sendMessage({"c":1})
+    if getLidarFL() > LidarHoleDistance or getLidarFR() < LidarObstacleDistance:
+        goLeft()
+        sleep(1.7)
+
+        goForward()
+
+        goRight()
+        sleep(1.7)
+
+        goBack()
+    else:
+        sendMessage({"c":1})
+
 def goLeft():
     sendMessage({"c":2})
 def goRight():
     sendMessage({"c":3})
+
 def holdPos():
     sendMessage({"c":4})
-
 
 def raiseFrame():
     sendMessage({"c":11})
@@ -50,19 +94,19 @@ def lowerFrame():
 def depositMaterials():
     sendMessage({"c":14})
 
-
 def processHeight(processHeight):
 
-    data = findBin()
-    height = data["H"]
+    height = GetPixyInfo.getDistance(findBin())
+    print "Height At:" + str(height)
 
     if height > processHeight + heightVary:
-        goForward()
-    elif height < processHeight - heightVary:
         goBack()
+    elif height < processHeight - heightVary:
+        goForward()
     else:
         holdPos()
         return True
+    return False
         
 
 def processWidth(processWidth):
@@ -81,9 +125,9 @@ def findBin():
     allData = GetPixyInfo.getGoodSig();
     while len(allData) == 0:
             goLeft()
-            sleep(0.1)
             allData = GetPixyInfo.getGoodSig()
     return allData[0]
+
 
 
 def goToPos(positionHeight):
@@ -98,7 +142,7 @@ def goToPos(positionHeight):
 
 def driveToMiningZone():
     print "Driving To Mining Zone"
-    goToPos(miningZoneHeight)
+    goToPos(miningZoneDistance)
     
 def mineAtMiningZone():
     print "Mining At Mining Zone"
@@ -112,7 +156,7 @@ def mineAtMiningZone():
 
 def returnToBox():
     print "Driving Back from Mining Zone"
-    goToPos(depositBoxHeight)
+    goToPos(depositBoxDistance)
 
 def Deposit():
     print "Depositing"
@@ -127,7 +171,7 @@ def Deposit():
     sleep(1.7)
 
     goBack()
-    sleep(3.5)
+    sleep(2.5)
 
     goLeft()
     sleep(1.7)
@@ -150,7 +194,7 @@ def backToPlack():
     sleep(1.7)
 
     goForward()
-    sleep(3.5)
+    sleep(2.5)
 
     goRight()
     sleep(1.7)
