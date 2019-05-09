@@ -36,7 +36,7 @@ floorValue = [72, 38, 43, 33]
 
 detectObjects = [False, False, False, False]
 
-offset = 10
+offset = 25
 
 lidar = Lidar_Lite()
 
