@@ -65,27 +65,10 @@ Red: 6   Black: 4    Blue: 3    Green: 5
 use sudo i2cdetect -y 1 to verify if it is connected
 correctly. 
 
-PLEASE READ, values inside the DIGITALOUTPUTDEVICE is the
-GPIO pin numbers, NOT actual pin number!! (i.e.
-GPIO 26 = pin 37
-GPIO 19 = pin 35
-GPIO 13 = pin 33
-GPIO  6 = pin 31
-)
-
 #--------------------------------------------#
 '''
-from lidar_lite import Lidar_Lite
-from time import sleep
-from gpiozero import DigitalOutputDevice 
-
-lidarController = [ DigitalOutputDevice(26), 
-                    DigitalOutputDevice(19),
-                    DigitalOutputDevice(13),
-                    DigitalOutputDevice(6) ]
 
 lidar = Lidar_Lite()
-
 connected = lidar.connect(1)
 
 if connected < -1:
@@ -94,44 +77,10 @@ if connected < -1:
 if __name__ == "__main__":
     print("Starting Test")
     while True:
-        for i in range(0,4):
-            if i == 0:
-                lidarController[3].off()
-            else:
-                lidarController[i-1].off()
-            lidarController[i].on()
-            if i == 0:
-                self.getFR()
-            elif i == 1:
-                self.getFL()
-            elif i == 2:
-                self.getBL()
-            elif i == 3:
-                self.getBR()
-            print( str(i) + " " + str(lidarController[i].value))
+        try:
             
-            j = 0
-            while j != 50:
-                try:
-                    print("Distance: "+ str(i) + " " + str(lidar.getDistance()))
-                    sleep(0.01)
-                except:
-                    print("\tRemote I/O Error Occur, Check connection")
-                    sleep(0.01)
-                j += 1
-
-def getFR():
-    print("FRONT RIGHT")
-    return lidar.getDistance()
-
-def getFL():
-    print("FRONT LEFT")
-    return lidar.getDistance()
-
-def getBL():
-    print("BACK LEFT")
-    return lidar.getDistance()
-
-def getBR():
-    print("BACK RIGHT")
-    return lidar.getDistance()
+            print "Distance: "+lidar.getDistance()
+            sleep(0.1)
+        except:
+            print "\tRemote I/O Error Occur, Check connection"
+            sleep(0.1)

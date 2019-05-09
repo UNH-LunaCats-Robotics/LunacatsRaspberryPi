@@ -78,6 +78,7 @@ if __name__ == "__main__":
     print("Starting Test")
     while True:
         try:
+            
             print "Distance: "+lidar.getDistance()
             sleep(0.1)
         except:
