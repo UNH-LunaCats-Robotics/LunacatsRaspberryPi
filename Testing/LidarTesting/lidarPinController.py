@@ -82,11 +82,10 @@ from gpiozero import DigitalOutputDevice
 lidarController = [DigitalOutputDevice(26), 
                    DigitalOutputDevice(19),
                    DigitalOutputDevice(13),
-                   DigitalOutputDevice(6)
-
-
+                   DigitalOutputDevice(6) ]
 
 lidar = Lidar_Lite()
+
 connected = lidar.connect(1)
 
 if connected < -1:
@@ -104,11 +103,11 @@ if __name__ == "__main__":
             print( str(i) + " " + str(lidarController[i].value))
             
             j = 0
-            while j != 50
+            while j != 50:
                 try:
-                    print "Distance: "+ str(i) + " " + lidar.getDistance()
+                    print("Distance: "+ str(i) + " " + str(lidar.getDistance()))
                     sleep(0.01)
                 except:
-                    print "\tRemote I/O Error Occur, Check connection"
+                    print("\tRemote I/O Error Occur, Check connection")
                     sleep(0.01)
                 j += 1
