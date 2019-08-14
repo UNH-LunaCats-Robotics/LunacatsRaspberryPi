@@ -1,3 +1,4 @@
+  
 #include "Headers/ArduinoSerial.h"
 
 #define BUF_SIZE 1024
@@ -13,8 +14,11 @@ int main() {
         char response[BUF_SIZE];
         memset(response, '\0', sizeof response);
         
-        serial.writeString(cmd);
-        serial.readString(response, BUF_SIZE);
+        while(true) {
+            serial.writeString(cmd);
+            serial.readString(response, BUF_SIZE);
+        }
+        
     } catch( invalid_argument e ) {
         printf("Error: %s", e.what());
     }

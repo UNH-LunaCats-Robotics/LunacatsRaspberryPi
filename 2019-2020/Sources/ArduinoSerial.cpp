@@ -2,6 +2,8 @@
 
 //-------------------------------// INITIALIZATION //-------------------------------//
 
+#define TIMEOUT 500
+
 //list of all possible baud rates given from <termios.h>
 unordered_map<double, speed_t> ArduinoSerial::BaudRate::baudRateList = {
 	{0, 	B0},     //Hand up
@@ -95,10 +97,17 @@ bool ArduinoSerial::initializePort(bool force) {
 	termios tty;
 	memset (&tty, 0, sizeof tty);
 
+	if(flock(USB, LOCK_EX | LOCK_NB) != 0) {
+		close(USB);
+		throw invalid_argument("Another process is using the port\n");
+	}
+
 	// Error Handling 
 	if ( tcgetattr ( USB, &tty ) != 0 ) {
 	   //std::cout << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
-		throw invalid_argument("Error opening port\n");
+		close(USB);
+		flock(USB, LOCK_UN); 
+		throw invalid_argument("Error getting port settings\n");
 	}
 
 	// Save old tty parameters 
@@ -108,27 +117,51 @@ bool ArduinoSerial::initializePort(bool force) {
 	cfsetospeed (&tty, baudRate);
 	cfsetispeed (&tty, baudRate);
 
-	// Setting other Port Stuff 
-	tty.c_cflag     &=  ~PARENB;            // Make 8n1
-	tty.c_cflag     &=  ~CSTOPB;
-	tty.c_cflag     &=  ~CSIZE;
-	tty.c_cflag     |=  CS8;
+	// Make 8n1
+	int cpar = 0, bstop = 0;
+	tty.c_cflag = CS8 | cpar | bstop | CLOCAL | CREAD;
+	tty.c_iflag = IGNPAR;
+	tty.c_oflag = 0;
+	tty.c_lflag &= ~(ICANON|ECHO);
 
 	tty.c_cflag     &=  ~CRTSCTS;           // no flow control
 	tty.c_cc[VMIN]   =  0;                  // read doesn't block
 	tty.c_cc[VTIME]  =  0.5;                // 0.5 seconds read timeout
-	tty.c_cflag     |=  CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
+	//tty.c_cflag     |=  CREAD | CLOCAL;     // turn on READ & ignore ctrl lines
 
 	// Make raw 
 	cfmakeraw(&tty);
 
-	// Flush Port, then applies attributes 
-	tcflush( USB, TCIFLUSH );
-	if ( tcsetattr ( USB, TCSANOW, &tty ) != 0) {
+	if ( tcsetattr ( USB, TCSAFLUSH, &tty ) != 0) {
 	   //std::cout << "Error " << errno << " from tcsetattr" << std::endl;
-		printf("Error from tcsetattr\n");
-		return false;
+		close(USB);
+		flock(USB, LOCK_UN);
+		throw invalid_argument("Error setting new port settings");
 	}
+	
+	//Set the modem to data terminal ready and ready to send
+	if(ioctl(USB, TIOCMGET, &status_old) == -1) {
+		tcsetattr(USB, TCSANOW, &tty_old);
+		flock(USB, LOCK_UN);
+		throw invalid_argument("Error Setting Port Status");
+	}
+	
+	printf("Status is %x\n", status_old & TIOCM_RNG);
+	
+	/*
+	int status = status_old;
+	status |= TIOCM_DTR;    // turn on DTR 
+	status |= TIOCM_RTS;    // turn on RTS 
+	
+	
+	if(ioctl(USB, TIOCMSET, &status) == -1) {
+		tcsetattr(USB, TCSANOW, &tty_old);
+		flock(USB, LOCK_UN);
+		throw invalid_argument("Error Setting Port Status");
+	}
+	*/
+	
+	tcflush(USB, TCIOFLUSH);
 	
 	return true;
 }
@@ -144,9 +177,18 @@ bool ArduinoSerial::resetPort() {
 	tcflush( USB, TCIFLUSH );
 	if ( tcsetattr ( USB, TCSANOW, &tty_old ) != 0) {
 	   //std::cout << "Error " << errno << " from tcsetattr" << std::endl;
-		printf("Error from tcsetattr\n");
-		return false;
+		printf("Error Setting Old Port Settings\n");
 	}
+	
+	/*
+	// Set the Port Status back to before
+	if(ioctl(USB, TIOCMSET, &status_old) == -1) {
+		printf("Error Setting Old Port Status");
+	}
+	*/
+	close(USB);
+	flock(USB, LOCK_UN);
+	
 	initialized = false;
 	return true;
 }
@@ -157,12 +199,12 @@ bool ArduinoSerial::resetPort() {
  * @char* responce - character array to read into
  * @int buf_size - max size of the responce character array
  * @char terminator - the terminating character to end the array at(\n, \r, etc)
- * 
+ * @return read success or fail
  * - Reads a character at a time from the serial port into the responce array
  * until the terminator character is reached or it has reached the end of the array.
  */
-void ArduinoSerial::readString( char* response, int buf_size, char terminator ) {
-	if(!isInitialized()) return;
+bool ArduinoSerial::readString( char* response, int buf_size, char terminator ) {
+	if(!isInitialized()) return false;
 	
 	//read 
 	int n = 0, spot = 0;
@@ -186,6 +228,8 @@ void ArduinoSerial::readString( char* response, int buf_size, char terminator ) 
 		printf("Received %i bytes: '%s'\n", spot, (char *)response);
 		//std::cout << "Response: " << response << std::endl;
 	}
+	
+	return true;
 }
 
 /** Read a Character
@@ -200,19 +244,23 @@ char ArduinoSerial::readChar() {
 
 /** Write a String to the Arduino 
  * @const unsigned char* cmd - command string to be sent to the arduino
+ * @return write string success or fail
  * 
  * Write a string to the serial port for the arduino to recieve. 
  */
-void ArduinoSerial::writeString( const unsigned char* cmd  ) {
-	if(!isInitialized()) return;
+bool ArduinoSerial::writeString( const unsigned char* cmd  ) {
+	if(!isInitialized()) return false;
 	
-	int n_written = 0, spot = 0;
+	int n_written = 0, spot = 0, timeout = ((int)TIMEOUT)*2;
 	printf("Sending the message '%s'\n", (char *)cmd);
 
 	do {
 		n_written = write( USB, &cmd[spot], 1 );
 		spot += n_written;
-	} while (cmd[spot-1] != '\0' && n_written > 0);
+	} while (cmd[spot-1] != '\0' && n_written > 0 );
+
+	
+	return true;
 }
 
 /** Write a Character

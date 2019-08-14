@@ -2,7 +2,9 @@
 #include <cstring>
 #include <unordered_map>
 #include <stdexcept>
+#include <sys/file.h>
 #include <cstdio>      // standard input / output functions
+#include <sys/ioctl.h>
 #include <string>     // string function definitions
 #include <unistd.h>     // UNIX standard function definitions
 #include <fcntl.h>      // File control definitions
@@ -12,20 +14,42 @@
 using namespace std;
 typedef struct termios termios;
 
-enum Port {ttyACM0 = 0, ttyACM1 = 1};
+#define RS232_PORTNR  38
+
+enum Port {
+	ttyS0 = 0,   ttyS1 = 1,   ttyS2 = 2,   ttyS3 = 3,   
+	ttyS4 = 4,   ttyS5 = 5,   ttyS6 = 6,   ttyS7 = 7,   
+	ttyS8 = 8,   ttyS9 = 9,   ttyS10 = 10, ttyS11 = 11,
+	ttyS12 = 12, ttyS13 = 13, ttyS14 = 14, ttyS15 = 15,
+	ttyUSB0 = 16, ttyUSB1 = 17, ttyUSB2 = 18, tyUSB3 = 19, 
+	ttyUSB4 = 20, ttyUSB5 = 21,
+	ttyAMA0 = 22, ttyAMA1 = 23,
+	ttyACM0 = 24, ttyACM1 = 25,
+	rfcomm0 = 26, rfcomm1 = 27,
+	ircomm0 = 28, ircomm1 = 29,
+	cuau0 = 30, cuau1 = 31, cuau2 = 32, cuau3 = 33,
+	cuaU0 = 30, cuaU1 = 31, cuaU2 = 32, cuaU3 = 33};
 
 class ArduinoSerial{
 private: 
 	//all current possible ports to select from
-	string ports[2] = { "/dev/ttyACM0", "/dev/ttyACM1"};
-	
+	string ports[RS232_PORTNR] = {"/dev/ttyS0","/dev/ttyS1","/dev/ttyS2","/dev/ttyS3","/dev/ttyS4","/dev/ttyS5",
+                       "/dev/ttyS6","/dev/ttyS7","/dev/ttyS8","/dev/ttyS9","/dev/ttyS10","/dev/ttyS11",
+                       "/dev/ttyS12","/dev/ttyS13","/dev/ttyS14","/dev/ttyS15","/dev/ttyUSB0",
+                       "/dev/ttyUSB1","/dev/ttyUSB2","/dev/ttyUSB3","/dev/ttyUSB4","/dev/ttyUSB5",
+                       "/dev/ttyAMA0","/dev/ttyAMA1","/dev/ttyACM0","/dev/ttyACM1",
+                       "/dev/rfcomm0","/dev/rfcomm1","/dev/ircomm0","/dev/ircomm1",
+                       "/dev/cuau0","/dev/cuau1","/dev/cuau2","/dev/cuau3",
+                       "/dev/cuaU0","/dev/cuaU1","/dev/cuaU2","/dev/cuaU3"};
+                       
 	//port descriptors
 	int USB = -1; 				//port integer value
 	string port;				//port location
 	speed_t baudRate;           //baud rate used
 	termios tty_old; 			//old port settings
+	int status_old = 0;			//old modem settings	
 	bool initialized = false;   //if initializaion has happened
-
+				
 	//prints error msg if in debug mode.
 	bool isInitialized(); 	   
 	bool isNotInitialized(); 
@@ -62,9 +86,9 @@ public:
 	bool resetPort();
 	
 	//perform read/write operations with arduino
-	void readString( char* response, int buf_size, char terminator = '\n' );
+	bool readString( char* response, int buf_size, char terminator = '\n' );
 	char readChar();
-	void writeString( const unsigned char* cmd );
+	bool writeString( const unsigned char* cmd );
 	void writeChar(char c);
 	
 	//get descriptor information 

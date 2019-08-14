@@ -21,13 +21,14 @@ include_directories(Headers Sources)
 #list of sources (src) - ONLY CPP FILES TO COMPILE GO HERE
 set( SOURCES 
     Sources/ArduinoSerial.cpp
-
     main.cpp
 )
 
 set( HEADERS
     Headers/ArduinoSerial.h
 )
+
+add_compile_options("-Wno-psabi")
 
 #create the executable for the project
 add_executable(main ${SOURCES} ${HEADERS})
