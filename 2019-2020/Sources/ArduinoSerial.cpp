@@ -1,12 +1,24 @@
-#include "./ArduinoSerial.h"
+#include "../Headers/ArduinoSerial.h"
 
 //-------------------------------// INITIALIZATION //-------------------------------//
 
-#define TIMEOUT 500
+string ArduinoSerial::ports[RS232_PORTNR]  = 
+	{"/dev/ttyS0",	"/dev/ttyS1",	"/dev/ttyS2",	"/dev/ttyS3",	
+	"/dev/ttyS4",	"/dev/ttyS5",	"/dev/ttyS6",	"/dev/ttyS7",	
+	"/dev/ttyS8",	"/dev/ttyS9",	"/dev/ttyS10",	"/dev/ttyS11",
+	"/dev/ttyS12",	"/dev/ttyS13",	"/dev/ttyS14",	"/dev/ttyS15",	
+	"/dev/ttyUSB0", "/dev/ttyUSB1",	"/dev/ttyUSB2",	"/dev/ttyUSB3",	
+	"/dev/ttyUSB4",	"/dev/ttyUSB5",
+	"/dev/ttyAMA0",	"/dev/ttyAMA1",	
+	"/dev/ttyACM0",	"/dev/ttyACM1",
+	"/dev/rfcomm0",	"/dev/rfcomm1",	
+	"/dev/ircomm0",	"/dev/ircomm1",
+	"/dev/cuau0",	"/dev/cuau1",	"/dev/cuau2",	"/dev/cuau3",
+	"/dev/cuaU0",	"/dev/cuaU1",	"/dev/cuaU2",	"/dev/cuaU3"};
 
 //list of all possible baud rates given from <termios.h>
-unordered_map<double, speed_t> ArduinoSerial::BaudRate::baudRateList = {
-	{0, 	B0},     //Hand up
+unordered_map<double, speed_t> BaudRate::baudRateList = {
+	{0, 	B0},     //Hang up
 	{50, 	B50},    //50 baud
 	{110, 	B110},   //110 baud
 	{134.5, B134},   //134.5 baud
@@ -25,53 +37,27 @@ unordered_map<double, speed_t> ArduinoSerial::BaudRate::baudRateList = {
 
 /** ArduinoSerial Constructor (Port Only)
  * @Port p - the port where the arduino is connected
+ * @speed_t baud - the baud rate for communication.
  * 
- * - Establish the port location and baud rate at 9600
+ * - Establish the port location and baud rate 
+ * 	 	with a default timeout of two seconds
  * - Calibrate the settings of the serial port
  */
-ArduinoSerial::ArduinoSerial(Port p) {
+ArduinoSerial::ArduinoSerial(Port p, speed_t baud): baudRate(baud) {
 	port = ports[p];
-	baudRate = (speed_t)B9600;
 	initialized = initializePort();
 	printf("Port is %s, baud rate is 9600, initialized is %d\n", port.c_str(), initialized);
 }
 
 /** ArduinoSerial Constructor (Port Only)
  * @Port p - the port where the arduino is connected
- * @double baud - the baud rate for communication.
- * 
- * - Establish the port location and baud rate given a double
- * - Calibrate the settings of the serial port
- */
-ArduinoSerial::ArduinoSerial(Port p, double baud){
-	port = ports[p];
-	baudRate = BaudRate::getBaudRate(baud);
-	initialized = initializePort(); 
-}
-
-/** ArduinoSerial Constructor (Port Only)
- * @Port p - the port where the arduino is connected
- * @int baud - the baud rate for communication.
- * 
- * - Establish the port location and baud rate given an int
- * - Calibrate the settings of the serial port
- */
-ArduinoSerial::ArduinoSerial(Port p, int baud){
-	port = ports[p];
-	baudRate =  BaudRate::getBaudRate(baud);
-	initialized = initializePort();
-}
-
-/** ArduinoSerial Constructor (Port Only)
- * @Port p - the port where the arduino is connected
  * @speed_t baud - the baud rate for communication.
  * 
- * - Establish the port location and baud rate
+ * - Establish the port location, baud rate, and timeout
  * - Calibrate the settings of the serial port
  */
-ArduinoSerial::ArduinoSerial(Port p, speed_t baud){
+ArduinoSerial::ArduinoSerial(Port p, speed_t baud, chrono::seconds tout): timeout(tout), baudRate(baud){
 	port = ports[p];
-	baudRate = baud;
 	initialized = initializePort();  
 }
 
@@ -94,6 +80,10 @@ bool ArduinoSerial::initializePort(bool force) {
 
 	USB = open( port.c_str(), O_RDWR| O_NOCTTY );
 	
+	if(USB == -1) {
+		throw invalid_argument("Cannot find serial port to open\n");
+	}
+
 	termios tty;
 	memset (&tty, 0, sizeof tty);
 
@@ -138,7 +128,7 @@ bool ArduinoSerial::initializePort(bool force) {
 		flock(USB, LOCK_UN);
 		throw invalid_argument("Error setting new port settings");
 	}
-	
+	/*
 	//Set the modem to data terminal ready and ready to send
 	if(ioctl(USB, TIOCMGET, &status_old) == -1) {
 		tcsetattr(USB, TCSANOW, &tty_old);
@@ -148,7 +138,7 @@ bool ArduinoSerial::initializePort(bool force) {
 	
 	printf("Status is %x\n", status_old & TIOCM_RNG);
 	
-	/*
+	
 	int status = status_old;
 	status |= TIOCM_DTR;    // turn on DTR 
 	status |= TIOCM_RTS;    // turn on RTS 
@@ -195,27 +185,85 @@ bool ArduinoSerial::resetPort() {
 
 //-------------------------------// READING / WRITING //-------------------------------//
 
-/** Read a String sent from the Arduino
- * @char* responce - character array to read into
- * @int buf_size - max size of the responce character array
+/** Read an array of bytes from the serial port
+ * @int USBB		- Serial port to read from. 
+ * @char* response 	- character array to read into
+ * @int buf_size 	- max size of the responce character array
  * @char terminator - the terminating character to end the array at(\n, \r, etc)
- * @return read success or fail
- * - Reads a character at a time from the serial port into the responce array
- * until the terminator character is reached or it has reached the end of the array.
- */
-bool ArduinoSerial::readString( char* response, int buf_size, char terminator ) {
-	if(!isInitialized()) return false;
-	
+ * @return int		- return length of string
+ *  
+ *  Keep reading characters from the serial port until 
+ *  the terminating character has been reached. 
+ */ 
+int ArduinoSerial::readBytes( int USBB, char* response, int buf_size, char terminator) {
 	//read 
 	int n = 0, spot = 0;
 	char buf = '\0';
 	
 	do {
-		n = read( USB, &buf, 1 );
+		n = read( USBB, &buf, 1 );
 		sprintf( &response[spot], "%c", buf );
 		spot += n;
 	} while( buf != terminator && n > 0);
 
+	if(n < 0) return -1;
+
+	return spot;
+}
+
+/** Performs readBytes in another thread with timeout
+ * @char* response 	- character array to read into
+ * @int buf_size 	- max size of the responce character array
+ * @char terminator - the terminating character to end the array at(\n, \r, etc)
+ * @return int		- return length of string
+ *  
+ *  Start the readBytes function in another thread until terminator is reached
+ *  or if timeout is reached of which the thread is killed. 
+ */ 
+int ArduinoSerial::readBytes_wrapper( char* response, int buf_size, char terminator) {
+	mutex m;
+	condition_variable cv;
+
+	int n = 0, usbTemp = USB;
+	auto func = &ArduinoSerial::readBytes;
+
+	thread t( [&n, &response, &buf_size, &terminator, &usbTemp, func, &cv ] {
+		n = func(usbTemp, response, buf_size, terminator);
+		cv.notify_one();
+	});
+	
+	t.detach();
+
+	{
+		unique_lock<mutex> l(m);
+		if(cv.wait_for(l, timeout) == cv_status::timeout) 
+			throw runtime_error("Timeout");
+	}
+
+	return n;
+}
+
+/** Read a String sent from the Arduino
+ * @char* response 	- character array to read into
+ * @int buf_size 	- max size of the responce character array
+ * @char terminator - the terminating character to end the array at(\n, \r, etc)
+ * @return int		- return length of string
+ *  
+ *  Reads a character at a time from the serial port into the responce array
+ *  until the terminator character is reached or it has reached the end of the array.
+ */
+int ArduinoSerial::readString( char* response, int buf_size, char terminator ) {
+	if(!isInitialized()) return 0;
+	
+	int n = 0;
+
+	try {
+		n = readBytes_wrapper(response, buf_size, terminator);
+	} catch(runtime_error &e) {
+		printf("Read Request Timed Out\n");
+		return n;
+	}
+	
 	if (n < 0) {
 		//std::cout << "Error reading: " << strerror(errno) << std::endl;
 		printf("Error Reading.\n");
@@ -225,21 +273,58 @@ bool ArduinoSerial::readString( char* response, int buf_size, char terminator ) 
 		printf("Read nothing! \n");
 	}
 	else {
-		printf("Received %i bytes: '%s'\n", spot, (char *)response);
+		printf("Received %i bytes: '%s'\n", n, (char *)response);
 		//std::cout << "Response: " << response << std::endl;
 	}
+
+	return n;
+}
+
+/** Read a Byte
+ * @int USBB 		Port to read from
+ * @return char 	char read from serial
+ * 
+ * Start another thread and try to read a byte.
+ * Timeout after x declared seconds, and kill the thread.
+*/
+char ArduinoSerial::readByte( int USBB ) {
+	mutex m;
+	condition_variable cv;
+
+	char c;
+	auto func = &ArduinoSerial::readByte;
+
+	thread t( [ USBB, &c, func, &cv ] {
+		read( USBB, &c, 1);
+		cv.notify_one();
+	});
 	
-	return true;
+	t.detach();
+
+	{
+		unique_lock<mutex> l(m);
+		if(cv.wait_for(l, timeout) == cv_status::timeout)
+			throw runtime_error("Timeout");
+	}
+
+	return c;
 }
 
 /** Read a Character
- * - Read a character sent from the arduino. 
+ * @return char 	char read from serial
+ * 
+ * Read a character from the serial port with
+ * a timeout of x given seconds. 
  */
 char ArduinoSerial::readChar() {
-	char r = '\0';
-	if(!isInitialized()) return r;
+	if(!isInitialized()) return '\0';
 
-	return read( USB, &r, 1);
+	try {
+		return readByte(USB);
+	} catch(runtime_error &e) {
+		printf("Read Request Timed Out\n");
+		return '\0';
+	}
 }
 
 /** Write a String to the Arduino 
@@ -251,7 +336,7 @@ char ArduinoSerial::readChar() {
 bool ArduinoSerial::writeString( const unsigned char* cmd  ) {
 	if(!isInitialized()) return false;
 	
-	int n_written = 0, spot = 0, timeout = ((int)TIMEOUT)*2;
+	int n_written = 0, spot = 0;
 	printf("Sending the message '%s'\n", (char *)cmd);
 
 	do {
@@ -259,7 +344,6 @@ bool ArduinoSerial::writeString( const unsigned char* cmd  ) {
 		spot += n_written;
 	} while (cmd[spot-1] != '\0' && n_written > 0 );
 
-	
 	return true;
 }
 
@@ -325,12 +409,12 @@ double ArduinoSerial::getBaudRate_double(){
 //-------------------------------// BAUD RATE FUNCTIONS //-------------------------------// 
 
 /** Get the baud rate value when given an integer */
-speed_t ArduinoSerial::BaudRate::getBaudRate(int baud) {
+speed_t BaudRate::getBaudRate(int baud) {
 	return getBaudRate((double) baud);
 }
 
 /** Get the baud rate value when given a double */
-speed_t ArduinoSerial::BaudRate::getBaudRate(double baud) {
+speed_t BaudRate::getBaudRate(double baud) {
 	unordered_map<double, speed_t>::const_iterator got = baudRateList.find(baud);
 
 	if( got == baudRateList.end())
@@ -340,12 +424,12 @@ speed_t ArduinoSerial::BaudRate::getBaudRate(double baud) {
 }
 
 /** Get the integer value when given a baud rate */
-int ArduinoSerial::BaudRate::getBaudRate_int(speed_t baud) {
+int BaudRate::getBaudRate_int(speed_t baud) {
 	return (int) getBaudRate_double(baud);
 }
 
 /** Get the double value when given a baud rate */
-double ArduinoSerial::BaudRate::getBaudRate_double(speed_t baud) {
+double BaudRate::getBaudRate_double(speed_t baud) {
 	for(unordered_map<double, speed_t>::const_iterator it = baudRateList.begin(); 
 		it != baudRateList.end(); ++it) {
 		

@@ -3,10 +3,9 @@
 
 #define BUF_SIZE 1024
 
-
 int main() {
     try {
-	    ArduinoSerial serial(ttyACM0);
+	    ArduinoSerial serial(ttyACM0, B9600);
 
         unsigned char cmd[] = "Lets test this messenger!";
 	

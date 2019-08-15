@@ -15,8 +15,8 @@ cmake_minimum_required (VERSION "3.10")
 #title the project
 project("LunaCats")
 
-#specify the directories used to compile the project
-include_directories(Headers Sources)
+#The directories are included privately since they are in
+#the source directory. 
 
 #list of sources (src) - ONLY CPP FILES TO COMPILE GO HERE
 set( SOURCES 
@@ -30,8 +30,13 @@ set( HEADERS
 
 add_compile_options("-Wno-psabi")
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 #create the executable for the project
 add_executable(main ${SOURCES} ${HEADERS})
+
+target_link_libraries(main Threads::Threads)
 
 #check if linux (includes raspberry pi)
 if(UNIX AND NOT APPLE)
