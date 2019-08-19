@@ -16,42 +16,38 @@ cmake_minimum_required (VERSION "3.10")
 project("LunaCats")
 
 #The directories are included privately since they are in
-#the source directory. 
 
-#list of sources (src) - ONLY CPP FILES TO COMPILE GO HERE
-set( SOURCES 
-    Sources/ArduinoSerial.cpp
-    main.cpp
-)
-
-set( HEADERS
-    Headers/ArduinoSerial.h
-)
-
+#add compiler flags
 add_compile_options("-Wno-psabi")
 
+#require cmake to be aware of pthreads
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 #create the executable for the project
-add_executable(main ${SOURCES} ${HEADERS})
+add_executable(main main.cpp
+    Sources/ArduinoSerial.cpp	Headers/ArduinoSerial.h
+   #Sources/[className].cpp     Headers/[className].h
+			       #Headers/[declarations].h
+)
 
+#add linked library to compiled result 
 target_link_libraries(main Threads::Threads)
 
 #check if linux (includes raspberry pi)
 if(UNIX AND NOT APPLE)
-    #Check Build_Instructions/Linux.txt for how to run this project
-    #Linux specific commands can go here
+    #Check Build_Instructions/Linux/Linux.txt for how to run this project
+    	#Linux specific commands can go here
 endif()
 
 #check if windows
 if(WIN32)
-    # Check Build_Instructions/Windows.txt for how to run this project
+    # Check Build_Instructions/Windows/Windows.txt for how to run this project
 	# Windows specific commands can go here
 endif()
 
 #check if mac
 if(APPLE)
-    # Check Build_Instructions/Mac.txt for how to run this project
-	# Windows specific commands can go here
+    # Check Build_Instructions/Mac/Mac.txt for how to run this project
+	# Mac specific commands can go here
 endif()
