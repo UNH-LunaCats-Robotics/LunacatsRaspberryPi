@@ -4,13 +4,13 @@ Welcome to the LunaCats Robotics Raspberry Pi Repository! This repository is the
 
 If you have just joined the club or are interested in trying to run the code, you can find instructions for how to set up the code in the folder Build_Instructions.
 
+*[Join our Discord](https://discord.gg/q4r8ZTM) if you would like to participate in discussions about the code!*
+
 ## Project Properties
 
 - **LANGUAGE:**       C++
 - **BUILDING:**       CMake
 - **TESTING:**        Google Test
-
-*[Join our Discord](https://discord.gg/q4r8ZTM) if you would like to participate in discussions about the code!*
 
 ## Other Current Repositories
 
