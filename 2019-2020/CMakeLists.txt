@@ -2,11 +2,6 @@
 # Make sure you build the project in a folder called 'build'.
 #   If you change the name of the build folder, add it to .gitignore
 #
-# Make sure you have a local version of googletest cloned from
-#   github, and the contents are in a folder called 'googletest'.
-#   If you change the name of the googletest folder, add it to .gitignore 
-#       Here is the link: https://github.com/google/googletest
-#
 # This file will be on the .gitignore after you clone it. 
 #   If you wish to make global changes to this file, remove it from
 #   .gitignore. 
@@ -21,7 +16,10 @@ cmake_minimum_required (VERSION "3.10")
 #title the project
 project("LunaCats" CXX)
 
-#The directories are included privately since they are in
+#enable testing
+option(PACKAGE_TESTS "Build the tests" ON)
+
+include(FetchContent)
 
 #add compiler flags
 add_compile_options("-Wno-psabi")
@@ -49,9 +47,6 @@ target_link_libraries(main PUBLIC
     Threads::Threads
 )
 
-#includes the googletest directory and Testing Directory
-add_subdirectory(googletest Testing)
-
 #check if linux (includes raspberry pi)
 if(UNIX AND NOT APPLE)
     #Check Build_Instructions/Linux/Linux.txt for how to run this project
@@ -69,3 +64,36 @@ if(APPLE)
     # Check Build_Instructions/Mac/Mac.txt for how to run this project
 	# Mac specific commands can go here
 endif()
+
+#includes the googletest directory and Testing Directory
+if(PACKAGE_TESTS)
+
+    FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG        release-1.8.0
+    )
+    
+    FetchContent_GetProperties(googletest)
+    if(NOT googletest_POPULATED)
+        FetchContent_Populate(googletest)
+        add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+    endif()
+  
+    add_subdirectory(Testing)
+
+endif()
+
+#keeps cache cleaner
+mark_as_advanced(
+    BUILD_GMOCK BUILD_GTEST BUILD_SHARED_LIBS
+    gmock_build_tests gtest_build_samples gtest_build_tests
+    gtest_disable_pthreads gtest_force_shared_crt gtest_hide_internal_symbols
+)
+
+#keeping IDEs that support folders clean
+set_target_properties(gtest PROPERTIES FOLDER extern)
+set_target_properties(gtest_main PROPERTIES FOLDER extern)
+set_target_properties(gmock PROPERTIES FOLDER extern)
+set_target_properties(gmock_main PROPERTIES FOLDER extern)
+

@@ -14,6 +14,29 @@ cmake_minimum_required (VERSION "3.10")
 #title the project
 project("AllTests" CXX)
 
+macro(package_add_test TESTNAME)
+    add_executable(${TESTNAME} ${ARGN})
+    target_link_libraries(${TESTNAME} gtest gmock gtest_main)
+    add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
+    set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
+endmacro()
+
+package_add_test(${PROJECT_NAME}
+    ArduinoSerialTest.cpp
+)
+
+#[[
+
+#Add Separate Tests
+package_add_test( ${TEST_NAME} #replace with custom executable name
+    TestFile1.cpp
+    TestFile2.cpp
+    ...
+)
+
+]]
+
+#[[
 #create testing executable
 add_executable(${PROJECT_NAME} 
     ArduinoSerialTest.cpp
@@ -32,24 +55,4 @@ add_test(
     NAME ${PROJECT_NAME}
     COMMAND ${PROJECT_NAME}
 )
-
-#[[  create a single class test executable example 
-
-add_executable(${TEST_NAME}  #replace ${TEST_NAME} with executable name
-#   TestFile1.cpp
-#   TestFile2.cpp
-#   ...
-)
-
-target_link_libraries(${TEST_NAME} PUBLIC 
-    gtest_main 
-    RobotSourceCode
-    Threads::Threads
-)
-
-add_test(
-    NAME ${TEST_NAME}
-    COMMAND ${TEST_NAME}
-)
-
 ]]
