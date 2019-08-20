@@ -1,19 +1,25 @@
 #-----------------------# NOTE #-----------------------#
-# make sure you build the project in a folder called 'build'.
-# if you change the name of the build folder, add it to .gitignore
-
-# if you plan on making changes to this file as well that are  
-# only for local use, add this file to .gitignore as well
-
-# if you make platform-specific changes, add them in the 
-# appropriate if statement as to not mess with other platforms
+# Make sure you build the project in a folder called 'build'.
+#   If you change the name of the build folder, add it to .gitignore
+#
+# Make sure you have a local version of googletest cloned from
+#   github, and the contents are in a folder called 'googletest'.
+#   If you change the name of the googletest folder, add it to .gitignore 
+#       Here is the link: https://github.com/google/googletest
+#
+# This file will be on the .gitignore after you clone it. 
+#   If you wish to make global changes to this file, remove it from
+#   .gitignore. 
+#
+# If you make platform-specific changes, add them in the 
+#   appropriate if statement as to not mess with other platforms
 #------------------------------------------------------#
 
 #define the min version of cmake
 cmake_minimum_required (VERSION "3.10")
 
 #title the project
-project("LunaCats")
+project("LunaCats" CXX)
 
 #The directories are included privately since they are in
 
@@ -24,15 +30,27 @@ add_compile_options("-Wno-psabi")
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-#create the executable for the project
-add_executable(main main.cpp
+#allows us to run tests
+enable_testing()
+
+#create the libraries used by the main file.
+add_library( RobotSourceCode STATIC 
     Sources/ArduinoSerial.cpp	Headers/ArduinoSerial.h
-   #Sources/[className].cpp     Headers/[className].h
-			       #Headers/[declarations].h
+#   Sources/[className].cpp     Headers/[className].h
+#                               Headers/[declarations].h
 )
 
-#add linked library to compiled result 
-target_link_libraries(main Threads::Threads)
+#create the executable for the project
+add_executable(main main.cpp)
+
+#add linked libraries to the compiled result 
+target_link_libraries(main PUBLIC 
+    RobotSourceCode
+    Threads::Threads
+)
+
+#includes the googletest directory and Testing Directory
+add_subdirectory(googletest Testing)
 
 #check if linux (includes raspberry pi)
 if(UNIX AND NOT APPLE)

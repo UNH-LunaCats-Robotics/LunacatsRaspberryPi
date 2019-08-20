@@ -1,2 +1,5 @@
 #ignore the build folder
 build/
+
+#ignore the googletest imported library
+googletest/
