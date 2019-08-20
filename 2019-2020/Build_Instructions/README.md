@@ -6,9 +6,12 @@ If you have not ran this code before on the machine that you are cloning from, t
 
 ## Code Dependencies
 
-* (version: 7.4.0)  C++ Programming Language
-* (version: 3.15.1) CMake
+* C++ Programming Language (version: 11)
+* G++ Compiler (version: 7.4.0)
+* CMake (version 3.15.0)
 
 The CMake Installation instructions (using g++) are in the CMake_Instructions folder where you can find instructions for the OS you are using.
 
-You can find out how to install C++ through tutorials online for the OS you are using. If you need help with installation, your fellow club members can help you.
+You can find out how to install C++ and G++ through tutorials online for the OS you are using. 
+
+If you need help at any part with installation, your fellow club members will help you.
