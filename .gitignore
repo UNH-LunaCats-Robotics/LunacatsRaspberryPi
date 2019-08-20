@@ -3,3 +3,6 @@ build/
 
 #ignore the googletest imported library
 googletest/
+
+#ignore an experimental directory made
+Other/
