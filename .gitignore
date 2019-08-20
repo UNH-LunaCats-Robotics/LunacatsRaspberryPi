@@ -6,3 +6,6 @@ googletest/
 
 #ignore an experimental directory made
 Other/
+
+#ignore .vscode folder
+.vscode/

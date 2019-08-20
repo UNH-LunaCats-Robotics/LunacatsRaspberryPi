@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "unordered_map": "cpp",
-        "condition_variable": "cpp",
-        "thread": "cpp",
-        "chrono": "cpp"
-    }
-}
