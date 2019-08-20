@@ -10,10 +10,10 @@ If you have just joined the club or are interested in trying to run the code, yo
 - **BUILDING:**       CMake
 - **TESTING:**        Google Test
 
+*[Join our Discord](https://discord.gg/q4r8ZTM) if you would like to participate in discussions about the code!*
+
 ## Other Current Repositories
 
 - **Arduino Library:** <https://github.com/lunacats/LunacatsArduino>
 - **Client Node Server:** <https://github.com/lunacats/LunacatsNodeServer>
 - **Controller Code:** <https://github.com/lunacats/Controller>
-
-*[Join our Discord](https://discord.gg/q4r8ZTM) if you would like to participate in discussions about the code!*
