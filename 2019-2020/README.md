@@ -9,3 +9,5 @@ If you have just joined the club or are interested in trying to run the code, yo
 - **LANGUAGE:**       C++
 - **BUILDING:**       CMake
 - **TESTING:**        Google Test
+
+Join our [Discord](https://discord.gg/q4r8ZTM) if you would like to join in on discussions about the code!
