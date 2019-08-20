@@ -12,6 +12,6 @@ If you have not ran this code before on the machine that you are cloning from, t
 
 The CMake Installation instructions (using g++) are in the CMake_Instructions folder where you can find instructions for the OS you are using.
 
-You can find out how to install C++ and G++ through tutorials online for the OS you are using. 
+You can find out how to install C++ and G++ through tutorials online for the OS you are using.
 
 If you need help at any part with installation, your fellow club members will help you.

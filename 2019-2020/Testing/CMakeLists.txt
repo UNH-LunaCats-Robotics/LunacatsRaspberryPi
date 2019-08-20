@@ -23,6 +23,7 @@ endmacro()
 
 package_add_test(${PROJECT_NAME}
     ArduinoSerialTest.cpp
+#   [className]Test.cpp
 )
 
 #[[
@@ -34,25 +35,4 @@ package_add_test( ${TEST_NAME} #replace with custom executable name
     ...
 )
 
-]]
-
-#[[
-#create testing executable
-add_executable(${PROJECT_NAME} 
-    ArduinoSerialTest.cpp
-#   [className]Test.cpp
-)
-
-#target libraries to test and for testing
-target_link_libraries(${PROJECT_NAME} PUBLIC
-    gtest_main 
-    RobotSourceCode
-    Threads::Threads
-)
-
-#add the executable as a test
-add_test(
-    NAME ${PROJECT_NAME}
-    COMMAND ${PROJECT_NAME}
-)
 ]]
