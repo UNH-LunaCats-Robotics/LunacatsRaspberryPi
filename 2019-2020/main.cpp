@@ -4,21 +4,34 @@
 #define BUF_SIZE 1024
 
 int main() {
-    try {
-	    ArduinoSerial serial(ttyACM0, B9600);
+    ArduinoSerial serial(ttyACM0, B9600);
 
+    try {
+        serial.initializePort();
+        
         unsigned char cmd[] = "Lets test this messenger!";
-	
+        //printf("Writing %s\n", cmd);
+
         /* Whole response*/
         char response[BUF_SIZE];
         memset(response, '\0', sizeof response);
         
         while(true) {
+            //printf("Writing %s\n", cmd);
             serial.writeString(cmd);
-            serial.readString(response, BUF_SIZE);
+            //printf("Reading Response... \n");
+            int n = serial.readString(response, BUF_SIZE);
+            /*
+            if(n != 0) {
+                printf("\tResponce Recieved: %s\n\n", response);
+            }
+            else {
+                printf("\tResponce Timed Out\n\n");
+            }
+            */
         }
         
-    } catch( invalid_argument e ) {
+    } catch( const invalid_argument &e ) {
         printf("Error: %s", e.what());
     }
 

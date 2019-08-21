@@ -12,14 +12,14 @@ For each component that is created, there should be tests made for it. This help
 Here is an example of a test file:
 
 ```C++
-File Name: ArduinoSerialTest.cpp
+File Name: ArduinoSerialTests/ArduinoSerialTest.cpp
 //------------------------------//
 
 //include the google testing repo
 #include <gtest/gtest.h>
 
 //include the class that you'd like to test
-#include "../Headers/ArduinoSerial.h"
+#include "../../Headers/ArduinoSerial.h"
 
 //create individual tests within the test suite ArduinoSerialTest
 TEST(ArduinoSerialTest, ConnectToArduino) {
@@ -36,6 +36,8 @@ TEST(ArduinoSerialTest, DisconnectFromArduino) {
     //put test code here
 }
 ```
+
+Make sure that the test file is in the appropriate folder so you can also include dependent sources (for example, in this case, arduino code to perform tests against).
 
 All of the tests will be executed when the executable created from cmake is ran after it is added to CMakeLists.txt.
 

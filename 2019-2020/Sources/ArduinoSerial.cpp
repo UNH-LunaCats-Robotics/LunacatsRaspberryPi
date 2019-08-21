@@ -1,7 +1,7 @@
 #include "../Headers/ArduinoSerial.h"
 
 //-------------------------------// INITIALIZATION //-------------------------------//
-
+/*
 string ArduinoSerial::ports[RS232_PORTNR]  = 
 	{"/dev/ttyS0",	"/dev/ttyS1",	"/dev/ttyS2",	"/dev/ttyS3",	
 	"/dev/ttyS4",	"/dev/ttyS5",	"/dev/ttyS6",	"/dev/ttyS7",	
@@ -15,6 +15,7 @@ string ArduinoSerial::ports[RS232_PORTNR]  =
 	"/dev/ircomm0",	"/dev/ircomm1",
 	"/dev/cuau0",	"/dev/cuau1",	"/dev/cuau2",	"/dev/cuau3",
 	"/dev/cuaU0",	"/dev/cuaU1",	"/dev/cuaU2",	"/dev/cuaU3"};
+*/
 
 //list of all possible baud rates given from <termios.h>
 unordered_map<double, speed_t> BaudRate::baudRateList = {
@@ -45,8 +46,8 @@ unordered_map<double, speed_t> BaudRate::baudRateList = {
  */
 ArduinoSerial::ArduinoSerial(Port p, speed_t baud): baudRate(baud) {
 	port = ports[p];
-	initialized = initializePort();
-	printf("Port is %s, baud rate is 9600, initialized is %d\n", port.c_str(), initialized);
+
+	printf("Port: %s\n", port.c_str());
 }
 
 /** ArduinoSerial Constructor (Port Only)
@@ -55,11 +56,11 @@ ArduinoSerial::ArduinoSerial(Port p, speed_t baud): baudRate(baud) {
  * 
  * - Establish the port location, baud rate, and timeout
  * - Calibrate the settings of the serial port
- */
+ 
 ArduinoSerial::ArduinoSerial(Port p, speed_t baud, chrono::seconds tout): timeout(tout), baudRate(baud){
-	port = ports[p];
-	initialized = initializePort();  
+	port = ports[p]; 
 }
+*/
 
 /**
  * Re-establish the previous port settings on destruction.
@@ -77,6 +78,8 @@ ArduinoSerial::~ArduinoSerial(){
 bool ArduinoSerial::initializePort(bool force) {
 	//do not initialize port if already done unless forced
 	if(!force && !isNotInitialized()) return false;
+
+	printf("Port: %s\n", port.c_str());
 
 	USB = open( port.c_str(), O_RDWR| O_NOCTTY );
 	
@@ -164,10 +167,12 @@ bool ArduinoSerial::resetPort() {
 	cfmakeraw(&tty_old);
 
 	// Flush Port, then applies attributes 
-	tcflush( USB, TCIFLUSH );
+	tcflush( USB, TCIOFLUSH );
 	if ( tcsetattr ( USB, TCSANOW, &tty_old ) != 0) {
 	   //std::cout << "Error " << errno << " from tcsetattr" << std::endl;
+#ifdef DEBUG
 		printf("Error Setting Old Port Settings\n");
+#endif
 	}
 	
 	/*
@@ -260,7 +265,9 @@ int ArduinoSerial::readString( char* response, int buf_size, char terminator ) {
 	try {
 		n = readBytes_wrapper(response, buf_size, terminator);
 	} catch(runtime_error &e) {
+#ifdef DEBUG
 		printf("Read Request Timed Out\n");
+#endif
 		return n;
 	}
 	
@@ -322,7 +329,9 @@ char ArduinoSerial::readChar() {
 	try {
 		return readByte(USB);
 	} catch(runtime_error &e) {
+#ifdef DEBUG
 		printf("Read Request Timed Out\n");
+#endif
 		return '\0';
 	}
 }
@@ -337,7 +346,10 @@ bool ArduinoSerial::writeString( const unsigned char* cmd  ) {
 	if(!isInitialized()) return false;
 	
 	int n_written = 0, spot = 0;
+
+#ifdef DEBUG
 	printf("Sending the message '%s'\n", (char *)cmd);
+#endif
 
 	do {
 		n_written = write( USB, &cmd[spot], 1 );
@@ -362,7 +374,9 @@ void ArduinoSerial::writeChar(char c) {
  * Check if the status of the serial port is initialized. (different error msg)
  */
 bool ArduinoSerial::isInitialized() {
+#ifdef DEBUG
 	if(!initialized) printf("Port Not Initialized\n");
+#endif
 	return initialized;
 }
 
@@ -370,7 +384,9 @@ bool ArduinoSerial::isInitialized() {
  * Check if the status of the serial port is not initialized. (different error msg)
  */
 bool ArduinoSerial::isNotInitialized() {
+#ifdef DEBUG
 	if(initialized) printf("Port Already Initialized\n");
+#endif
 	return !initialized;
 }
 

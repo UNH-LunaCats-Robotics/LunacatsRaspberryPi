@@ -9,3 +9,6 @@ Other/
 
 #ignore .vscode folder
 .vscode/
+
+#arduino build code
+build-uno/
