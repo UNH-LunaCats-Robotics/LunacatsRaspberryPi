@@ -9,9 +9,12 @@ If you have not ran this code before on the machine that you are cloning from, t
 * C++ Programming Language (version: 11)
 * G++ Compiler (version: 7.4.0)
 * CMake (version 3.15.0)
+* [Arduino Makefile](https://github.com/sudar/Arduino-Makefile)
 
 The CMake Installation instructions (using g++) are in the CMake_Instructions folder where you can find instructions for the OS you are using.
 
 You can find out how to install C++ and G++ through tutorials online for the OS you are using.
+
+The main page for Arduino Makefile explains the installation process for the OS you are using which is linked here. 
 
 If you need help at any part with installation, your fellow club members will help you.
