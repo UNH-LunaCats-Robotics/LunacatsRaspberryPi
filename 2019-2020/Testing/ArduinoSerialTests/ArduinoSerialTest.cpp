@@ -33,6 +33,8 @@ void waitForUser(string reason);
 //                              TESTS                              //
 //-----------------------------------------------------------------//
 TEST(ArduinoSerialTest_Initialization, ConnectToArduino) {
+    //writeArduinoFile_w();
+    
     try {
         serial.initializePort();
     } catch( const exception &e) {
@@ -98,9 +100,9 @@ TEST(ArduinoSerialTest_Initialization, ConnectWithCorrectSettings) {
 //--------------------------- READING -----------------------------//
 
 TEST(ArduinoSerialTest_Reading, ReadSingleByteFromArduino) {
-    //writeArduinoFile_w();
+    writeArduinoFile_w();
 
-    usleep(1000000);
+    //usleep(1000000);
 
     ASSERT_TRUE(serial.getInitialized());
 
@@ -108,7 +110,7 @@ TEST(ArduinoSerialTest_Reading, ReadSingleByteFromArduino) {
     c = serial.readChar();
     assert(c != 0);
 }
-
+//
 //-----------------------------------------------------------------//
 
 //-----------------------------------------------------------------//

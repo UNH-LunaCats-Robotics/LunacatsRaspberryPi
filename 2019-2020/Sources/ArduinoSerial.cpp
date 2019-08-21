@@ -38,23 +38,20 @@ ArduinoSerial::ArduinoSerial(Port p, speed_t baud): baudRate(baud), port(p) {
 #endif
 }
 
-/** ArduinoSerial Constructor (Port Only)
- * @Port p - the port where the arduino is connected
- * @speed_t baud - the baud rate for communication.
- * 
- * - Establish the port location, baud rate, and timeout
- * - Calibrate the settings of the serial port
- 
-ArduinoSerial::ArduinoSerial(Port p, speed_t baud, chrono::seconds tout): timeout(tout), baudRate(baud){
-	port = ports[p]; 
-}
-*/
-
 /**
  * Re-establish the previous port settings on destruction.
  */
 ArduinoSerial::~ArduinoSerial(){
 	resetPort();
+}
+
+void copyTermios( termios *tty_old, termios *tty  ) {
+	tty_old->c_cc[VMIN] 	= tty->c_cc[VMIN];
+	tty_old->c_cc[VTIME] = tty->c_cc[VTIME];
+	tty_old->c_cflag 	= tty->c_cflag;
+	tty_old->c_iflag 	= tty->c_iflag;
+	tty_old->c_oflag 	= tty->c_oflag;
+	tty_old->c_lflag 	= tty->c_lflag;
 }
 
 /** Initialize the Port
@@ -68,6 +65,8 @@ bool ArduinoSerial::initializePort(bool force) {
 	if(!force && !isNotInitialized()) return false;
 
 	string portStr = ports[port];
+	termios tty;
+	memset (&tty, 0, sizeof tty);
 
 	USB = open( portStr.c_str(), O_RDWR| O_NOCTTY );
 	
@@ -77,9 +76,6 @@ bool ArduinoSerial::initializePort(bool force) {
 		throw invalid_argument("Cannot find serial port to open\n");
 	}
 
-	termios tty;
-	memset (&tty, 0, sizeof tty);
-
 	if(flock(USB, LOCK_EX | LOCK_NB) != 0) {
 		close(USB);
 		throw invalid_argument("Another process is using the port\n");
@@ -87,22 +83,25 @@ bool ArduinoSerial::initializePort(bool force) {
 
 	// Error Handling 
 	if ( tcgetattr ( USB, &tty ) != 0 ) {
-	   //std::cout << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
+	    //std::cout << "Error " << errno << " from tcgetattr: " << strerror(errno) << std::endl;
 		close(USB);
 		flock(USB, LOCK_UN); 
 		throw invalid_argument("Error getting port settings\n");
 	}
 
 	// Save old tty parameters 
-	if(initialized != true) tty_old = tty;
+	if(initialized != true) {
+		copyTermios(&tty_old, &tty);
+	}
 
 	// Set Baud Rate 
 	cfsetospeed (&tty, baudRate);
 	cfsetispeed (&tty, baudRate);
 
-	// Make 8n1
-	int cpar = 0, bstop = 0;
-	tty.c_cflag = CS8 | cpar | bstop | CLOCAL | CREAD;
+	//NOTE: We need to figure out how this number is retrieved
+	//		it is currently the trailing settings from SerialMonitor
+	tty.c_cflag = 2237;
+
 	tty.c_iflag = IGNPAR;
 	tty.c_oflag = 0;
 	tty.c_lflag &= ~(ICANON|ECHO);
@@ -143,7 +142,7 @@ bool ArduinoSerial::initializePort(bool force) {
 		throw invalid_argument("Error Setting Port Status");
 	}
 	*/
-	
+
 	tcflush(USB, TCIOFLUSH);
 	
 	initialized = true;
