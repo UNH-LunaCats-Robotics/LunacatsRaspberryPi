@@ -14,11 +14,13 @@ cmake_minimum_required (VERSION "3.10")
 #title the project
 project("AllTests" CXX)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 macro(package_add_test TESTNAME)
     add_executable(${TESTNAME} ${ARGN})
     target_link_libraries(${TESTNAME} RobotSourceCode gtest gmock gtest_main)
-    add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
-    set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
+    add_test(NAME ${TESTNAME} COMMAND ${TESTNAME} )
+    set_target_properties(${TESTNAME} PROPERTIES FOLDER Testing)
 endmacro()
 
 package_add_test(${PROJECT_NAME}

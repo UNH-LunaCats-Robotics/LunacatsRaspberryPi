@@ -21,18 +21,18 @@ typedef struct termios termios;
 #define RS232_PORTNR  38
 
 enum Port {
-	ttyS0 = 0,   ttyS1 = 1,   ttyS2 = 2,   ttyS3 = 3,   
-	ttyS4 = 4,   ttyS5 = 5,   ttyS6 = 6,   ttyS7 = 7,   
-	ttyS8 = 8,   ttyS9 = 9,   ttyS10 = 10, ttyS11 = 11,
-	ttyS12 = 12, ttyS13 = 13, ttyS14 = 14, ttyS15 = 15,
-	ttyUSB0 = 16, ttyUSB1 = 17, ttyUSB2 = 18, tyUSB3 = 19, 
-	ttyUSB4 = 20, ttyUSB5 = 21,
-	ttyAMA0 = 22, ttyAMA1 = 23,
-	ttyACM0 = 24, ttyACM1 = 25,
-	rfcomm0 = 26, rfcomm1 = 27,
-	ircomm0 = 28, ircomm1 = 29,
-	cuau0 = 30, cuau1 = 31, cuau2 = 32, cuau3 = 33,
-	cuaU0 = 30, cuaU1 = 31, cuaU2 = 32, cuaU3 = 33};
+	ttyS0   = 0,  	ttyS1   = 1,  	ttyS2   = 2,  	ttyS3  = 3,   
+	ttyS4   = 4,  	ttyS5   = 5,  	ttyS6   = 6,  	ttyS7  = 7,   
+	ttyS8   = 8,  	ttyS9   = 9,  	ttyS10  = 10, 	ttyS11 = 11,
+	ttyS12  = 12, 	ttyS13  = 13, 	ttyS14  = 14, 	ttyS15 = 15,
+	ttyUSB0 = 16, 	ttyUSB1 = 17, 	ttyUSB2 = 18, 	tyUSB3 = 19, 
+	ttyUSB4 = 20, 	ttyUSB5 = 21,
+	ttyAMA0 = 22, 	ttyAMA1 = 23,
+	ttyACM0 = 24, 	ttyACM1 = 25,
+	rfcomm0 = 26, 	rfcomm1 = 27,
+	ircomm0 = 28, 	ircomm1 = 29,
+	cuau0   = 30, 	cuau1   = 31, 	cuau2   = 32, 	cuau3  = 33,
+	cuaU0   = 30, 	cuaU1   = 31, 	cuaU2   = 32, 	cuaU3  = 33};
 
 /** Baud Rate Conversion Class
  *  - Shows the list of possible baud rates (in cpp file)
@@ -71,7 +71,7 @@ private:
                        
 	//port descriptors
 	int USB = -1; 				//port integer value
-	string port;				//port location
+	Port port;				//port location
 	speed_t baudRate;           //baud rate used
 	termios tty_old; 			//old port settings
 	int status_old = 0;			//old modem settings	
@@ -107,14 +107,27 @@ public:
 	
 	//set descriptor information
 	void setTimeout(chrono::seconds s);
+	bool setBaudRate( speed_t baud );
+	bool setBaudRate( double baud );
+	bool setBaudRate( int baud );
+	bool setPort( Port p );
 
 	//get descriptor information 
 	bool getInitialized();
 	int getUSB();
-	string getPort();
+	Port getPort();
 	speed_t getBaudRate();
 	int getBaudRate_int();
 	double getBaudRate_double();
 	chrono::seconds getTimeout();
+
+	void operator<<(const unsigned char* cmd) {
+		writeString( cmd );
+	}
+
+	//NOTE: This assumes a buf_size of 1024 and a terminator of '\n'
+	void operator>>(char* response) {
+		readString( response, 1024 );
+	}
 };
 #endif

@@ -1,30 +1,9 @@
 #include "../Headers/ArduinoSerial.h"
 
 //-------------------------------// INITIALIZATION //-------------------------------//
-/*
-string ArduinoSerial::ports[RS232_PORTNR]  = 
-	{"/dev/ttyS0",	"/dev/ttyS1",	"/dev/ttyS2",	"/dev/ttyS3",	
-	"/dev/ttyS4",	"/dev/ttyS5",	"/dev/ttyS6",	"/dev/ttyS7",	
-	"/dev/ttyS8",	"/dev/ttyS9",	"/dev/ttyS10",	"/dev/ttyS11",
-	"/dev/ttyS12",	"/dev/ttyS13",	"/dev/ttyS14",	"/dev/ttyS15",	
-	"/dev/ttyUSB0", "/dev/ttyUSB1",	"/dev/ttyUSB2",	"/dev/ttyUSB3",	
-	"/dev/ttyUSB4",	"/dev/ttyUSB5",
-	"/dev/ttyAMA0",	"/dev/ttyAMA1",	
-	"/dev/ttyACM0",	"/dev/ttyACM1",
-	"/dev/rfcomm0",	"/dev/rfcomm1",	
-	"/dev/ircomm0",	"/dev/ircomm1",
-	"/dev/cuau0",	"/dev/cuau1",	"/dev/cuau2",	"/dev/cuau3",
-	"/dev/cuaU0",	"/dev/cuaU1",	"/dev/cuaU2",	"/dev/cuaU3"};
-*/
 
 //list of all possible baud rates given from <termios.h>
 unordered_map<double, speed_t> BaudRate::baudRateList = {
-	{0, 	B0},     //Hang up
-	{50, 	B50},    //50 baud
-	{110, 	B110},   //110 baud
-	{134.5, B134},   //134.5 baud
-	{150, 	B150},   //150 baud
-	{200, 	B200},   //200 baud
 	{300, 	B300},   //300 baud
 	{600, 	B600},   //600 baud
 	{1200, 	B1200},  //1200 baud
@@ -33,7 +12,16 @@ unordered_map<double, speed_t> BaudRate::baudRateList = {
 	{4800, 	B4800},  //4800 baud
 	{9600, 	B9600},  //9600 baud
 	{19200, B19200}, //19200 baud
-	{38400, B38400}  //38400 baud
+	{38400, B38400},  //38400 baud
+	{57600, B38400},  //38400 baud
+	{115200, B38400},  //38400 baud
+	{230400, B38400},  //38400 baud
+	{460800, B38400},  //38400 baud
+	{500000, B38400},  //38400 baud
+	{576000, B38400},  //38400 baud
+	{921600, B38400},  //38400 baud
+	{1000000, B38400},  //38400 baud
+	{2000000, B38400},  //38400 baud
 };
 
 /** ArduinoSerial Constructor (Port Only)
@@ -44,10 +32,10 @@ unordered_map<double, speed_t> BaudRate::baudRateList = {
  * 	 	with a default timeout of two seconds
  * - Calibrate the settings of the serial port
  */
-ArduinoSerial::ArduinoSerial(Port p, speed_t baud): baudRate(baud) {
-	port = ports[p];
-
-	printf("Port: %s\n", port.c_str());
+ArduinoSerial::ArduinoSerial(Port p, speed_t baud): baudRate(baud), port(p) {
+#ifdef DEBUG
+	printf("Port: %s, Baud Rate: %d\n", ports[port].c_str(), baudRate);
+#endif
 }
 
 /** ArduinoSerial Constructor (Port Only)
@@ -79,10 +67,12 @@ bool ArduinoSerial::initializePort(bool force) {
 	//do not initialize port if already done unless forced
 	if(!force && !isNotInitialized()) return false;
 
-	printf("Port: %s\n", port.c_str());
+	string portStr = ports[port];
 
-	USB = open( port.c_str(), O_RDWR| O_NOCTTY );
+	USB = open( portStr.c_str(), O_RDWR| O_NOCTTY );
 	
+	//printf("USB Value: %d\n", USB);
+
 	if(USB == -1) {
 		throw invalid_argument("Cannot find serial port to open\n");
 	}
@@ -156,6 +146,8 @@ bool ArduinoSerial::initializePort(bool force) {
 	
 	tcflush(USB, TCIOFLUSH);
 	
+	initialized = true;
+
 	return true;
 }
 
@@ -392,6 +384,34 @@ bool ArduinoSerial::isNotInitialized() {
 
 //-------------------------------// DESCRIPTOR FUNCTIONS //-------------------------------//
 
+void ArduinoSerial::setTimeout(chrono::seconds s) {
+	timeout = s;
+}
+
+bool ArduinoSerial::setBaudRate( speed_t baud ) {
+	if(!isNotInitialized()) return false;
+	baudRate = baud;
+	return true;
+}
+
+bool ArduinoSerial::setBaudRate( double baud ) {
+	if(!isNotInitialized()) return false;
+	baudRate = BaudRate::getBaudRate(baud);
+	return true;
+}
+
+bool ArduinoSerial::setBaudRate( int baud ) {
+	if(!isNotInitialized()) return false;
+	baudRate = BaudRate::getBaudRate(baud);
+	return true;
+}
+
+bool ArduinoSerial::setPort( Port p ) {
+	if(!isNotInitialized()) return false;
+	port = p;
+	return true;
+}	
+
 /** Get the status of the Arduino Serial Port */
 bool ArduinoSerial::getInitialized() {
 	return initialized;
@@ -403,7 +423,7 @@ int ArduinoSerial::getUSB(){
 }
 
 /** Get the string path to the port */
-string ArduinoSerial::getPort(){
+Port ArduinoSerial::getPort(){
 	return port;
 }
 
@@ -420,6 +440,10 @@ int ArduinoSerial::getBaudRate_int(){
 /** Get the double value of the baud rate used to establish a connection */
 double ArduinoSerial::getBaudRate_double(){
 	return BaudRate::getBaudRate_double(baudRate);
+}
+
+chrono::seconds ArduinoSerial::getTimeout() {
+	return timeout;
 }
 
 //-------------------------------// BAUD RATE FUNCTIONS //-------------------------------// 
