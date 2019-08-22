@@ -376,7 +376,7 @@ if(selfUploadArduinoCode) {
 
 void waitForUser(string reason) {
     printf("%s\n\nPress any key to continue...", reason.c_str());
-    char c = getchar();
+    getchar();
     printf("\n");
 }
 

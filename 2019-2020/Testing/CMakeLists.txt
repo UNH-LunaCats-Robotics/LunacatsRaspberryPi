@@ -14,6 +14,9 @@ cmake_minimum_required (VERSION "3.10")
 #title the project
 project("AllTests" CXX)
 
+set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
+set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
+
 set(CMAKE_BUILD_TYPE Debug)
 
 macro(package_add_test TESTNAME)
@@ -25,6 +28,7 @@ endmacro()
 
 package_add_test(${PROJECT_NAME}
     ArduinoSerialTests/ArduinoSerialTest.cpp
+    ../Sources/ArduinoSerial.cpp
 #   [className]Tests/[className]Test.cpp
 )
 

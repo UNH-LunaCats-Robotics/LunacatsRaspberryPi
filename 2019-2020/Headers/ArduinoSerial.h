@@ -126,12 +126,12 @@ public:
 	}
 
 	bool operator<<(const unsigned char* cmd) {
-		writeString( cmd );
+		return writeString( cmd );
 	}
 
 	//NOTE: This assumes a buf_size of 1024 and a terminator of '\n'
 	int operator>>(char* response) {
-		readString( response, 1024 );
+		return readString( response, 1024 );
 	}
 };
 #endif
