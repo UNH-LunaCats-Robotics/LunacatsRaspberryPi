@@ -102,6 +102,7 @@ bool ArduinoSerial::initializePort(bool force) {
 	//		it is currently the trailing settings from SerialMonitor
 	tty.c_cflag = 2237;
 
+	//these numbers are ok
 	tty.c_iflag = IGNPAR;
 	tty.c_oflag = 0;
 	tty.c_lflag &= ~(ICANON|ECHO);
@@ -193,7 +194,7 @@ bool ArduinoSerial::resetPort() {
  */ 
 int ArduinoSerial::readBytes( int USBB, char* response, int buf_size, char terminator) {
 	//read 
-	int n = 0, spot = 0;
+	int n = -1, spot = 0;
 	char buf = '\0';
 	
 	do {
@@ -220,7 +221,7 @@ int ArduinoSerial::readBytes_wrapper( char* response, int buf_size, char termina
 	mutex m;
 	condition_variable cv;
 
-	int n = 0, usbTemp = USB;
+	int n = -1, usbTemp = USB;
 	auto func = &ArduinoSerial::readBytes;
 
 	thread t( [&n, &response, &buf_size, &terminator, &usbTemp, func, &cv ] {
@@ -249,9 +250,9 @@ int ArduinoSerial::readBytes_wrapper( char* response, int buf_size, char termina
  *  until the terminator character is reached or it has reached the end of the array.
  */
 int ArduinoSerial::readString( char* response, int buf_size, char terminator ) {
-	if(!isInitialized()) return 0;
+	if(!isInitialized()) return -1;
 	
-	int n = 0;
+	int n = -1;
 
 	try {
 		n = readBytes_wrapper(response, buf_size, terminator);

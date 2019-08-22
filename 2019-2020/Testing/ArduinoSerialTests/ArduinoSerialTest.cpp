@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <fstream>
+#include <iostream>
 
 typedef struct ArduinoSettings ArduinoSettings;
 
@@ -11,6 +12,8 @@ struct ArduinoSettings {
     speed_t baudRate;
     chrono::seconds timeout;
 };
+
+#define BUF_SIZE 1024
 
 ArduinoSettings settings{ ttyACM0, (speed_t)B9600, 2s };
 ArduinoSerial serial = ArduinoSerial( settings.port, settings.baudRate );
@@ -24,16 +27,18 @@ bool selfUploadArduinoCode = true;
 //helper functions 
 //try to minimize uploads to the arduino if you can.
 void writeArduinoFile_w( int speed = 1000 );
-void writeArduinoFile_wr( int speed = 0 ); 
-void writeArduinoFile( string funcName, int delay );
+void writeArduinoFile_wr( int speed = 0 );
+void writeArduinoFile_noTask(); 
+void writeArduinoFile( string funcName, int delay, bool init = true);
 void uploadChanges();
 void waitForUser(string reason);
+void testRead( int speed, int count );
 
 //-----------------------------------------------------------------//
 //                              TESTS                              //
 //-----------------------------------------------------------------//
 TEST(ArduinoSerialTest_Initialization, ConnectToArduino) {
-    //writeArduinoFile_w();
+    writeArduinoFile_w();
     
     try {
         serial.initializePort();
@@ -74,7 +79,7 @@ TEST(ArduinoSerialTest_Initialization, CanChangeSettingsWhenNotInitialized) {
 TEST(ArduinoSerialTest_Initialization, FailToConnectWithWrongPort) {
     try {
         serial.initializePort();
-    } catch( const exception &e) {
+    } catch( const exception &e ) {
         printf("Successfully failed with reason: %s", e.what());
         ASSERT_FALSE(serial.getInitialized());
         return;
@@ -99,18 +104,116 @@ TEST(ArduinoSerialTest_Initialization, ConnectWithCorrectSettings) {
 
 //--------------------------- READING -----------------------------//
 
-TEST(ArduinoSerialTest_Reading, ReadSingleByteFromArduino) {
+TEST(ArduinoSerialTest_Reading, InitializeArduinoForReading) {
     writeArduinoFile_w();
+}
 
-    //usleep(1000000);
-
+TEST(ArduinoSerialTest_Reading, ReadSingleByteFromArduino) {
     ASSERT_TRUE(serial.getInitialized());
 
     char c = 0;
     c = serial.readChar();
     assert(c != 0);
 }
-//
+
+TEST(ArduinoSerialTest_Reading, ReadStringOfBytesFromArduino) {
+    ASSERT_TRUE(serial.getInitialized());
+
+    // Whole response
+    char response[BUF_SIZE];
+    memset(response, '\0', sizeof response);
+
+    int n = serial.readString(response, BUF_SIZE);
+    assert( n > 0 );
+}
+
+TEST(ArduinoSerialTest_Reading, FailToReadWhenNotInitialized) {
+    serial.resetPort();
+
+    // Whole response
+    char response[BUF_SIZE];
+    memset(response, '\0', sizeof response);
+
+    int n = serial.readString(response, BUF_SIZE);
+    assert( n == -1 );
+
+    try {
+        serial.initializePort();
+    } catch( const exception &e ) {
+        FAIL() << e.what();
+    }
+}
+
+TEST(ArduinoSerialTest_Reading, ReadTimeoutSucceeedsWithCorrectTime) {
+    serial.resetPort();
+
+    writeArduinoFile_noTask();
+
+    // Whole response
+    char response[BUF_SIZE];
+    memset(response, '\0', sizeof response);
+
+    auto start = chrono::high_resolution_clock::now();
+    int n = serial.readString(response, BUF_SIZE);
+    auto finish = chrono::high_resolution_clock::now();
+
+    chrono::duration<double> elapsed = finish - start; 
+    double tolerance = 0.1;
+
+    printf("ellapsed time: %f\n", elapsed.count());
+
+    assert( n == -1  &&
+            ((settings.timeout.count()-0.1) < elapsed.count()) &&
+            ((settings.timeout.count()+0.1) > elapsed.count()) );
+
+    try {
+        serial.initializePort();
+    } catch( const exception &e ) {
+        FAIL() << e.what();
+    }
+}
+
+TEST(ArduinoSerialTest_Reading, ReadStringFromArduino_Slow) {
+    testRead(1000, 10);
+}
+
+TEST(ArduinoSerialTest_Reading, ReadStringFromArduino_Moderate) {
+    testRead(500, 20);
+}
+
+TEST(ArduinoSerialTest_Reading, ReadStringFromArduino_Fast) {
+    testRead(100, 50);
+}
+
+TEST(ArduinoSerialTest_Reading, ReadStringFromArduino_NoDelay) {
+    auto start = chrono::high_resolution_clock::now();
+    testRead(0, 1000);
+    auto finish = chrono::high_resolution_clock::now();
+
+    chrono::duration<double> elapsed = finish - start; 
+
+    printf("ellapsed time: %f\n", elapsed.count());
+}
+
+void testRead( int speed, int count ) {
+    ASSERT_TRUE(serial.getInitialized());
+    
+    // Whole response
+    char response[BUF_SIZE];
+    memset(response, '\0', sizeof response);
+
+    writeArduinoFile_w(speed);
+
+    int n = serial.readString(response, BUF_SIZE);
+    assert( n != 0 && strstr(response, "init"));
+
+    for(int i = 0; i < count; i++) {
+        printf("\t%d: ",i);
+        n = serial.readString(response, BUF_SIZE);
+        assert( n != 0 && strstr(response, "Pong"));
+    }
+}
+//*/
 //-----------------------------------------------------------------//
 
 //-----------------------------------------------------------------//
@@ -133,6 +236,11 @@ void waitForUser(string reason) {
     printf("\n");
 }
 
+void writeArduinoFile_noTask() {
+    writeArduinoFile( "//", 0, false );
+    uploadChanges();
+}
+
 //An arduino file that only writes Pong every 1 second. 
 void writeArduinoFile_w( int speed ) {
     writeArduinoFile( "test_w", speed );
@@ -145,7 +253,7 @@ void writeArduinoFile_rw( int speed ) {
     uploadChanges();
 }
 
-void writeArduinoFile( string funcName, int delay ) {
+void writeArduinoFile( string funcName, int delay, bool init ) {
     ofstream ardFile;
 
     ardFile.open(
@@ -160,8 +268,9 @@ void writeArduinoFile( string funcName, int delay ) {
 
     ardFile <<  "void setup() {\n"                                  << 
                 "    Serial.begin( "<< BaudRate::getBaudRate_int(settings.baudRate) <<" );\n"  <<
-                "    Serial.setTimeout(20);\n"                      <<
-                "}\n\n"                                             <<
+                "    Serial.setTimeout(20);\n";
+    if(init) ardFile << "    Serial.println(\" init\");\n";
+    ardFile <<  "}\n\n"                                             <<
 
                 "void test_w() {\n"                                 <<
                 "    Serial.println(\"Pong\");\n"                   <<
@@ -195,29 +304,49 @@ void uploadChanges() {
     
     serial.resetPort();
     
-    //kind of a dangerous way to perform this task
-    //no way to really check to see if it worked or not
     if(fork() == 0) {
-        if(execl("/usr/bin/make", 
+        if(system(NULL)) {
+            printf("Command Processor Exists\n");
+            system("make upload --directory=../../Testing/ArduinoSerialTests/ArduinoCode/ > ArduinoMakeLog.txt");
+        }
+        else {
+            printf("Command Processor Does Not Exists\n");
+            
+            ofstream file("ArduinoMakeLog.txt");
+            file << "do_upload"; 
+            file.close();
+            
+            if(execl("/usr/bin/make", 
                 "make", 
                 "--directory=../../Testing/ArduinoSerialTests/ArduinoCode/",  
                 "upload", NULL) == -1) 
-        {
-            printf("ERROR: did not use execl right\n");
+            {
+                printf("ERROR: did not use execl right\n");
+            }
         }
-
-        exit(-1);
+        exit(0);
     }
-    printf("\n\nWriting to Arduino...\n\n");
+    printf("\nWriting to Arduino...\n\n");
     int status;
     wait(&status);
     printf("\nFinished writing to arduino with exit status: %d\n\n", status);
 
-    try {
-        serial.initializePort();
-    } catch( const exception &e ) {
-        printf("Failed to reinitialize the port: %s", e.what());
+    ifstream file("ArduinoMakeLog.txt");
+    char aWord[BUF_SIZE];
+    while( file.good() ) {
+        file >> aWord;
+        if( file.good() && strcmp(aWord, "do_upload") == 0) {
+            try {
+                serial.initializePort();
+            } catch( const exception &e ) {
+                printf("Failed to reinitialize the port: %s", e.what());
+            }
+
+            file.close();
+            return;
+        }
     }
 
+    FAIL() << "Failed to upload arduino code.";
 }
 //----------------------------------------------------------------//
