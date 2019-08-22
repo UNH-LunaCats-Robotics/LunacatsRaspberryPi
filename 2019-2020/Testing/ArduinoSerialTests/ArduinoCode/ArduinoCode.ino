@@ -17,5 +17,5 @@ void test_wr() {
 }
 
 void loop() {
-    test_w();
+    test_wr();
 }

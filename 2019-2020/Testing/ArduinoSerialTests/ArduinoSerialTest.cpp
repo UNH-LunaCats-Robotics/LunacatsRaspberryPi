@@ -26,13 +26,16 @@ bool selfUploadArduinoCode = true;
 
 //helper functions 
 //try to minimize uploads to the arduino if you can.
+void testRead( int speed, int count );
+void testWrite( int speed, int count );
+
 void writeArduinoFile_w( int speed = 1000 );
-void writeArduinoFile_wr( int speed = 0 );
+void writeArduinoFile_wr( int speed = 1000 );
 void writeArduinoFile_noTask(); 
 void writeArduinoFile( string funcName, int delay, bool init = true);
 void uploadChanges();
+
 void waitForUser(string reason);
-void testRead( int speed, int count );
 
 //-----------------------------------------------------------------//
 //                              TESTS                              //
@@ -129,6 +132,11 @@ TEST(ArduinoSerialTest_Reading, ReadStringOfBytesFromArduino) {
 
 TEST(ArduinoSerialTest_Reading, FailToReadWhenNotInitialized) {
     serial.resetPort();
+    ASSERT_FALSE(serial.getInitialized());
+
+    char c = 'c'; //why would anyone do this though...
+    c = serial.readChar();
+    assert(c == 0);
 
     // Whole response
     char response[BUF_SIZE];
@@ -139,13 +147,25 @@ TEST(ArduinoSerialTest_Reading, FailToReadWhenNotInitialized) {
 
     try {
         serial.initializePort();
+        ASSERT_TRUE(serial.getInitialized());
     } catch( const exception &e ) {
         FAIL() << e.what();
     }
 }
 
+TEST(ArduinoSerialTest_Reading, ReadStringOfBytesFromArduinoUsingOperator) {
+    ASSERT_TRUE(serial.getInitialized());
+
+    char response[BUF_SIZE];
+    memset(response, '\0', sizeof response);
+
+    int n = serial >> response;
+    assert( n > 0 );
+}
+
 TEST(ArduinoSerialTest_Reading, ReadTimeoutSucceeedsWithCorrectTime) {
     serial.resetPort();
+    ASSERT_FALSE(serial.getInitialized());
 
     writeArduinoFile_noTask();
 
@@ -158,16 +178,17 @@ TEST(ArduinoSerialTest_Reading, ReadTimeoutSucceeedsWithCorrectTime) {
     auto finish = chrono::high_resolution_clock::now();
 
     chrono::duration<double> elapsed = finish - start; 
-    double tolerance = 0.1;
+    double tol = 0.1;
 
     printf("ellapsed time: %f\n", elapsed.count());
 
     assert( n == -1  &&
-            ((settings.timeout.count()-0.1) < elapsed.count()) &&
-            ((settings.timeout.count()+0.1) > elapsed.count()) );
+          ((settings.timeout.count()-tol) < elapsed.count()) &&
+          ((settings.timeout.count()+tol) > elapsed.count()) );
 
     try {
         serial.initializePort();
+        ASSERT_TRUE(serial.getInitialized());
     } catch( const exception &e ) {
         FAIL() << e.what();
     }
@@ -213,9 +234,132 @@ void testRead( int speed, int count ) {
         assert( n != 0 && strstr(response, "Pong"));
     }
 }
-//*/
+
 //-----------------------------------------------------------------//
 
+//-------------------------// WRITING //---------------------------//
+// unlike reading where we can check if it's successful or not, 
+// there's no garuntee that the arduino picked up what was sent
+// if it was sent before it started reading sadly. 
+
+// we can check if its ready to read, however, by when it sends an 
+// init message. 
+
+TEST(ArduinoSerialTest_Writing, InitializeArduinoForWriting) {
+    printf("\ninitializing...\n");
+
+    // Whole response
+    char response[BUF_SIZE];
+    memset(response, '\0', sizeof response);
+
+    writeArduinoFile_wr();
+    ASSERT_TRUE(serial.getInitialized());
+
+    int n = serial.readString(response, BUF_SIZE);
+    assert( n != 0 && strstr(response, "init"));
+    printf("ready to read written responce!\n\n");
+}
+
+TEST(ArduinoSerialTest_Writing, WriteSingleBiteToArduino) {
+    ASSERT_TRUE(serial.getInitialized());
+
+    ASSERT_TRUE( serial.writeChar('c') );
+    char c = serial.readChar();
+    assert(c == 'c');
+
+    usleep(10000);
+
+    //we only want to read this one char
+    serial.flushPort();
+}
+
+TEST(ArduinoSerialTest_Writing, WriteStringOfBitesToArduino) {
+    ASSERT_TRUE(serial.getInitialized());
+
+    unsigned char cmd[] = "Lets test this messenger!";
+
+    char response[BUF_SIZE];
+    memset(response, '\0', sizeof response);
+
+    ASSERT_TRUE( serial.writeString(cmd) );
+
+    int n = serial.readString(response, BUF_SIZE);
+    assert( n != 0 && strstr(response, (char*)cmd));
+}
+
+TEST(ArduinoSerialTest_Writing, WriteStringOfBytesToArduinoUsingOperator) {
+    ASSERT_TRUE(serial.getInitialized());
+
+    unsigned char cmd[] = "Lets test this messenger!";
+
+    char response[BUF_SIZE];
+    memset(response, '\0', sizeof response);
+
+    ASSERT_TRUE( serial << cmd );
+    int n = serial.readString(response, BUF_SIZE);
+    assert( n != 0 && strstr(response, (char*)cmd));
+}
+
+TEST(ArduinoSerialTest_Writing, FailToReadWhenNotInitialized) {
+    serial.resetPort();
+
+    unsigned char cmd[] = "Lets test this messenger!";
+
+    ASSERT_FALSE( serial.writeChar('c') );
+    ASSERT_FALSE( serial.writeString(cmd) );
+
+    try {
+        serial.initializePort();
+    } catch( const exception &e) {
+        FAIL() << e.what();
+    }
+}
+
+TEST(ArduinoSerialTest_Writing, WriteStringToArduino_Slow) {
+    testWrite(1000, 10);
+}
+
+TEST(ArduinoSerialTest_Writing, WriteStringToArduino_Moderate) {
+    testWrite(500, 20);
+}
+
+TEST(ArduinoSerialTest_Writing, WriteStringToArduino_Fast) {
+    testWrite(100, 50);
+}
+
+TEST(ArduinoSerialTest_Writing, WriteStringToArduino_NoDelay) {
+    auto start = chrono::high_resolution_clock::now();
+    testWrite(0, 100);
+    auto finish = chrono::high_resolution_clock::now();
+
+    chrono::duration<double> elapsed = finish - start; 
+
+    printf("ellapsed time: %f\n", elapsed.count());
+}
+
+void testWrite( int speed, int count ) {
+    ASSERT_TRUE(serial.getInitialized());
+    
+    unsigned char cmd[] = "Pong";
+
+    // Whole response
+    char response[BUF_SIZE];
+    memset(response, '\0', sizeof response);
+
+    writeArduinoFile_wr(speed);
+
+    int n = serial.readString(response, BUF_SIZE);
+    assert( n != 0 && strstr(response, "init"));
+
+    for(int i = 0; i < count; i++) {
+        ASSERT_TRUE( serial.writeString(cmd) );
+        printf("\t%d: ",i);
+        n = serial.readString(response, BUF_SIZE);
+        assert( n != 0 && strstr(response, (char*)cmd));
+    }
+}
+
+//*/
 //-----------------------------------------------------------------//
 /*
 if(selfUploadArduinoCode) {
@@ -248,7 +392,7 @@ void writeArduinoFile_w( int speed ) {
 }
 
 //An arduino file that writes what it reads
-void writeArduinoFile_rw( int speed ) {
+void writeArduinoFile_wr( int speed ) {
     writeArduinoFile( "test_wr", speed );
     uploadChanges();
 }
@@ -301,21 +445,22 @@ void writeArduinoFile( string funcName, int delay, bool init ) {
 // structure.                                                     //
 //----------------------------------------------------------------//
 void uploadChanges() {
-    
+    printf("\nWriting to Arduino...\n\n");
     serial.resetPort();
-    
-    if(fork() == 0) {
-        if(system(NULL)) {
-            printf("Command Processor Exists\n");
-            system("make upload --directory=../../Testing/ArduinoSerialTests/ArduinoCode/ > ArduinoMakeLog.txt");
-        }
-        else {
+
+    if(system(NULL)) {
+        printf("Command Processor Exists\n");
+        system("make upload --directory=../../Testing/ArduinoSerialTests/ArduinoCode/ > ArduinoMakeLog.txt");
+        printf("\nFinished writing to arduino.\n\n");
+    }
+    else {
+        if(fork() == 0) {
             printf("Command Processor Does Not Exists\n");
-            
+            /*
             ofstream file("ArduinoMakeLog.txt");
             file << "do_upload"; 
             file.close();
-            
+            */
             if(execl("/usr/bin/make", 
                 "make", 
                 "--directory=../../Testing/ArduinoSerialTests/ArduinoCode/",  
@@ -323,14 +468,21 @@ void uploadChanges() {
             {
                 printf("ERROR: did not use execl right\n");
             }
-        }
-        exit(0);
-    }
-    printf("\nWriting to Arduino...\n\n");
-    int status;
-    wait(&status);
-    printf("\nFinished writing to arduino with exit status: %d\n\n", status);
 
+            exit(0);
+        }
+        int status;
+        wait(&status);
+        printf("\nFinished writing to arduino with exit status: %d\n\n", status);
+    }
+    
+    try {
+        serial.initializePort();
+    } catch( const exception &e ) {
+        FAIL() << e.what();
+    }
+
+/*
     ifstream file("ArduinoMakeLog.txt");
     char aWord[BUF_SIZE];
     while( file.good() ) {
@@ -348,5 +500,6 @@ void uploadChanges() {
     }
 
     FAIL() << "Failed to upload arduino code.";
+*/
 }
 //----------------------------------------------------------------//

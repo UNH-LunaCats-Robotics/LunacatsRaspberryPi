@@ -103,7 +103,7 @@ public:
 	int readString( char* response, int buf_size, char terminator = '\n' );
 	char readChar();
 	bool writeString( const unsigned char* cmd );
-	void writeChar(char c);
+	bool writeChar(char c);
 	
 	//set descriptor information
 	void setTimeout(chrono::seconds s);
@@ -121,12 +121,16 @@ public:
 	double getBaudRate_double();
 	chrono::seconds getTimeout();
 
-	void operator<<(const unsigned char* cmd) {
+	void flushPort() {
+		tcflush(USB, TCIOFLUSH);
+	}
+
+	bool operator<<(const unsigned char* cmd) {
 		writeString( cmd );
 	}
 
 	//NOTE: This assumes a buf_size of 1024 and a terminator of '\n'
-	void operator>>(char* response) {
+	int operator>>(char* response) {
 		readString( response, 1024 );
 	}
 };

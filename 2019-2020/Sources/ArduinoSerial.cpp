@@ -227,14 +227,18 @@ int ArduinoSerial::readBytes_wrapper( char* response, int buf_size, char termina
 	thread t( [&n, &response, &buf_size, &terminator, &usbTemp, func, &cv ] {
 		n = func(usbTemp, response, buf_size, terminator);
 		cv.notify_one();
+		return;
 	});
 	
+	auto tm_ = t.native_handle();
 	t.detach();
 
 	{
 		unique_lock<mutex> l(m);
-		if(cv.wait_for(l, timeout) == cv_status::timeout) 
+		if(cv.wait_for(l, timeout) == cv_status::timeout) {
+			pthread_cancel(tm_);
 			throw runtime_error("Timeout");
+		}
 	}
 
 	return n;
@@ -354,10 +358,12 @@ bool ArduinoSerial::writeString( const unsigned char* cmd  ) {
 /** Write a Character
  * Write a character sent to the aduino
  */
-void ArduinoSerial::writeChar(char c) {
-	if(!isInitialized()) return;
+bool ArduinoSerial::writeChar(char c) {
+	if(!isInitialized()) return false;
 	
 	write( USB, &c, 1 );
+
+	return true;
 }
 
 //-------------------------------// PRIVATE FUNCTIONS //-------------------------------//
