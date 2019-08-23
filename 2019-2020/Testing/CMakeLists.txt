@@ -14,8 +14,8 @@ cmake_minimum_required (VERSION "3.10")
 #title the project
 project("AllTests" CXX)
 
-set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
-set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
+#set(CMAKE_CXX_FLAGS "-g -O0 -Wall -fprofile-arcs -ftest-coverage")
+#set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
 
 set(CMAKE_BUILD_TYPE Debug)
 

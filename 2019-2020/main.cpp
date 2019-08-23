@@ -4,7 +4,7 @@
 #define BUF_SIZE 1024
 
 int main() {
-    ArduinoSerial serial(ttyACM0, B9600);
+    ArduinoSerial serial("/dev/cu.usbmodem1451101", (speed_t)B9600);
 
     try {
         serial.initializePort();

@@ -20,7 +20,7 @@ typedef struct termios termios;
 
 #define RS232_PORTNR  38
 
-enum Port {
+enum Port { custom = -1,
 	ttyS0   = 0,  	ttyS1   = 1,  	ttyS2   = 2,  	ttyS3  = 3,   
 	ttyS4   = 4,  	ttyS5   = 5,  	ttyS6   = 6,  	ttyS7  = 7,   
 	ttyS8   = 8,  	ttyS9   = 9,  	ttyS10  = 10, 	ttyS11 = 11,
@@ -32,7 +32,8 @@ enum Port {
 	rfcomm0 = 26, 	rfcomm1 = 27,
 	ircomm0 = 28, 	ircomm1 = 29,
 	cuau0   = 30, 	cuau1   = 31, 	cuau2   = 32, 	cuau3  = 33,
-	cuaU0   = 30, 	cuaU1   = 31, 	cuaU2   = 32, 	cuaU3  = 33};
+	cuaU0   = 30, 	cuaU1   = 31, 	cuaU2   = 32, 	cuaU3  = 33
+};
 
 /** Baud Rate Conversion Class
  *  - Shows the list of possible baud rates (in cpp file)
@@ -72,13 +73,14 @@ private:
 	//port descriptors
 	int USB = -1; 				//port integer value
 	Port port;				//port location
+    string portStr;             //non traditional port
 	speed_t baudRate;           //baud rate used
 	termios tty_old; 			//old port settings
-	int status_old = 0;			//old modem settings	
+	///int status_old = 0;			//old modem settings
 	bool initialized = false;   //if initializaion has happened
 	
 	//timeout for readBytes
-	chrono::seconds timeout = 2s;
+    chrono::seconds timeout = chrono::seconds(2);
 	int static readBytes( int USBB, char* response, int buf_size, char terminator);
 	int readBytes_wrapper( char* response, int buf_size, char terminator);
 
@@ -86,10 +88,13 @@ private:
 
 	//prints error msg if in debug mode.
 	bool isInitialized(); 	   
-	bool isNotInitialized(); 
+	bool isNotInitialized();
+    
 public:
 	//create the connection
 	ArduinoSerial(Port p, speed_t baud); //default timeout = 2s
+    ArduinoSerial(string p, speed_t baud); //default timeout = 2s
+    
 	//ArduinoSerial(Port p, speed_t baud, chrono::seconds tout);
 	~ArduinoSerial();
 
@@ -111,11 +116,13 @@ public:
 	bool setBaudRate( double baud );
 	bool setBaudRate( int baud );
 	bool setPort( Port p );
+    bool setPort( string p );
 
 	//get descriptor information 
 	bool getInitialized();
 	int getUSB();
-	Port getPort();
+	string getPortStr();
+    Port getPort();
 	speed_t getBaudRate();
 	int getBaudRate_int();
 	double getBaudRate_double();
