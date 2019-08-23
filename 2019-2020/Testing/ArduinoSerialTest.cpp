@@ -1,9 +1,10 @@
 #include <gtest/gtest.h>
-#include "../../Headers/ArduinoSerial.h"
+#include "../Headers/ArduinoSerial.h"
 
 #include <stdlib.h>
 #include <fstream>
 #include <iostream>
+#include <sys/stat.h>
 
 typedef struct ArduinoSettings ArduinoSettings;
 
@@ -16,7 +17,7 @@ struct ArduinoSettings {
 #define BUF_SIZE 1024
 
 ArduinoSettings settings{ "/dev/cu.usbmodem1451101", (speed_t)B9600, chrono::seconds(2) };
-ArduinoSerial serial = ArduinoSerial( settings.port, settings.baudRate );
+ArduinoSerial serial( settings.port, settings.baudRate );
 
 void resetPort() {
     serial.resetPort();
@@ -29,6 +30,7 @@ bool selfUploadArduinoCode = true;
 void testRead( int speed, int count );
 void testWrite( int speed, int count );
 
+void initializeFiles();
 void writeArduinoFile_w( int speed = 1000 );
 void writeArduinoFile_wr( int speed = 1000 );
 void writeArduinoFile_noTask(); 
@@ -41,7 +43,8 @@ void waitForUser(string reason);
 //                              TESTS                              //
 //-----------------------------------------------------------------//
 TEST(ArduinoSerialTest_Initialization, ConnectToArduino) {
-    writeArduinoFile_w();
+    //writeArduinoFile_w();
+    initializeFiles();
     
     try {
         serial.initializePort();
@@ -57,7 +60,7 @@ TEST(ArduinoSerialTest_Initialization, ConnectToArduino) {
 TEST(ArduinoSerialTest_Initialization, CantChangeSettingsWhenInitialized) {
     ASSERT_FALSE(serial.setBaudRate(1152000));
     assert( serial.getBaudRate_int() != 1152000);
-
+    
     ASSERT_FALSE(serial.setPort(ttyACM1));
     assert( serial.getPort() != ttyACM1 );
 }
@@ -69,9 +72,13 @@ TEST(ArduinoSerialTest_Initialization, DisconnectFromArduino) {
 }
 
 TEST(ArduinoSerialTest_Initialization, CanChangeSettingsWhenNotInitialized) {
-    ASSERT_FALSE(serial.setBaudRate(1152000));
-    assert( serial.getBaudRate_int() == 1152000);
-
+    try {
+        ASSERT_TRUE(serial.setBaudRate(115200));
+        assert( serial.getBaudRate_int() == 115200);
+    } catch(const exception &e) {
+        FAIL() << e.what();
+    }
+    
     ASSERT_TRUE(serial.setPort(ttyACM1));
     assert( serial.getPort() == ttyACM1 );
 
@@ -373,6 +380,37 @@ if(selfUploadArduinoCode) {
         waitForUser("Please change the function in loop() to test_w() in ArduinoRead/ArduinoRead.ino, and upload the changes");    
     }
 */
+int dirExists(const char *path)
+{
+    struct stat info;
+    
+    if(stat( path, &info ) != 0)
+        return -1;
+    else if(info.st_mode & S_IFDIR)
+        return 1;
+    else
+        return 0;
+}
+
+void initializeFiles() {
+    if(dirExists("./ArduinoCode/") != 1) {
+        mkdir("ArduinoCode", 0777);
+    }
+    ofstream mkFile("./ArduinoCode/Makefile");
+    
+    if(!mkFile.is_open()) {
+        printf("failed to make makefile");
+        exit(-1);
+    }
+    
+    mkFile <<   "ARDUINO_DIR = /Applications/Arduino.app/Contents/Java\n"    <<
+    "ARDUINO_PORT = "<< settings.port << "\n\n"                 <<
+    "USER_LIB_PATH = ./\n"                                      <<
+    "BOARD_TAG = uno\n"                                         <<
+    "include /usr/local/opt/arduino-mk/Arduino.mk\n";
+    
+    mkFile.close();
+}
 
 void waitForUser(string reason) {
     printf("%s\n\nPress any key to continue...", reason.c_str());
@@ -400,13 +438,10 @@ void writeArduinoFile_wr( int speed ) {
 void writeArduinoFile( string funcName, int delay, bool init ) {
     ofstream ardFile;
 
-    ardFile.open(
-        "../../Testing/ArduinoSerialTests/ArduinoCode/ArduinoCode.ino", 
-        fstream::trunc
-    );
+    ardFile.open("./ArduinoCode/ArduinoCode.ino");
 
     if(!ardFile.is_open()) {
-        printf("ERROR: Could not write to arduino file");
+        printf("ERROR: Could not write to arduino file\n");
         exit(-1);
     }
 
@@ -450,7 +485,7 @@ void uploadChanges() {
 
     if(system(NULL)) {
         printf("Command Processor Exists\n");
-        system("make upload --directory=../../Testing/ArduinoSerialTests/ArduinoCode/ > ArduinoMakeLog.txt");
+        system("make upload --directory=./ArduinoCode/ > ArduinoMakeLog.txt");
         printf("\nFinished writing to arduino.\n\n");
     }
     else {
@@ -463,7 +498,7 @@ void uploadChanges() {
             */
             if(execl("/usr/bin/make", 
                 "make", 
-                "--directory=../../Testing/ArduinoSerialTests/ArduinoCode/",  
+                "--directory=./ArduinoCode/",
                 "upload", NULL) == -1) 
             {
                 printf("ERROR: did not use execl right\n");

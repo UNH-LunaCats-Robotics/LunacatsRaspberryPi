@@ -27,8 +27,8 @@ macro(package_add_test TESTNAME)
 endmacro()
 
 package_add_test(${PROJECT_NAME}
-    ArduinoSerialTests/ArduinoSerialTest.cpp
-    ../Sources/ArduinoSerial.cpp
+    ArduinoSerialTest.cpp
+#    ../Sources/ArduinoSerial.cpp
 #   [className]Tests/[className]Test.cpp
 )
 
