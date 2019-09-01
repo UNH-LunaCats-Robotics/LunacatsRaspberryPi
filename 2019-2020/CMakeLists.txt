@@ -20,13 +20,26 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=300")
-   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-   set(CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
-   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3" )
-   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=300")
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    set(CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3" )
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++
  -dead_strip")
+
+#check if linux (includes raspberry pi)
+elif(UNIX AND NOT APPLE)
+    #Check Build_Instructions/Linux/Linux.txt for how to run this project
+    
+#check if windows
+elif(WIN32)
+    # Check Build_Instructions/Windows/Windows.txt for how to run this project
+    
+#check if mac
+elif(APPLE)
+    # Check Build_Instructions/Mac/Mac.txt for how to run this project
+    
 endif()
 
 #enable testing
@@ -59,24 +72,6 @@ target_link_libraries(main PUBLIC
     RobotSourceCode
     Threads::Threads
 )
-
-#check if linux (includes raspberry pi)
-if(UNIX AND NOT APPLE)
-    #Check Build_Instructions/Linux/Linux.txt for how to run this project
-    	#Linux specific commands can go here
-endif()
-
-#check if windows
-if(WIN32)
-    # Check Build_Instructions/Windows/Windows.txt for how to run this project
-	# Windows specific commands can go here
-endif()
-
-#check if mac
-if(APPLE)
-    # Check Build_Instructions/Mac/Mac.txt for how to run this project
-	# Mac specific commands can go here
-endif()
 
 #includes the googletest directory and Testing Directory
 if(PACKAGE_TESTS)

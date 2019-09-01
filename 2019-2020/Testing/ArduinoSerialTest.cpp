@@ -403,12 +403,22 @@ void initializeFiles() {
         exit(-1);
     }
     
-    mkFile <<   "ARDUINO_DIR = /Applications/Arduino.app/Contents/Java\n"    <<
+    mkFile <<
+#ifdef MAC
+    "ARDUINO_DIR = /Applications/Arduino.app/Contents/Java\n"   <<
+#endif
+#ifdef LINUX
+    "ARDUINO_DIR = /usr/share/arduino\n"                        <<
+#endif
     "ARDUINO_PORT = "<< settings.port << "\n\n"                 <<
     "USER_LIB_PATH = ./\n"                                      <<
-    "BOARD_TAG = uno\n"                                         <<
-    "include /usr/local/opt/arduino-mk/Arduino.mk\n";
-    
+    "BOARD_TAG = uno\n\n";
+#ifdef MAC
+    mkFile << "include /usr/local/opt/arduino-mk/Arduino.mk\n";
+#endif
+#ifdef LINUX
+    mkFile << "include /usr/share/arduino/Arduino.mk";
+#endif
     mkFile.close();
 }
 
