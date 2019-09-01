@@ -276,6 +276,7 @@ int ArduinoSerial::readString( char* response, int buf_size, char terminator ) {
 		return n;
 	}
 	
+#ifdef DEBUG
 	if (n < 0) {
 		//std::cout << "Error reading: " << strerror(errno) << std::endl;
 		printf("Error Reading.\n");
@@ -288,6 +289,7 @@ int ArduinoSerial::readString( char* response, int buf_size, char terminator ) {
 		printf("Received %i bytes: '%s'\n", n, (char *)response);
 		//std::cout << "Response: " << response << std::endl;
 	}
+#endif
 
 	return n;
 }

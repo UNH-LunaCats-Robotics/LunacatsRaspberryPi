@@ -16,7 +16,13 @@ struct ArduinoSettings {
 
 #define BUF_SIZE 1024
 
-ArduinoSettings settings{ "/dev/cu.usbmodem1451101", (speed_t)B9600, chrono::seconds(2) };
+string port = "/dev/ttyACM0";
+
+#ifdef MAC
+port = "/dev/cu.usbmodem1451101"
+#endif
+
+ArduinoSettings settings{ port, (speed_t)B9600, chrono::seconds(2) };
 ArduinoSerial serial( settings.port, settings.baudRate );
 
 void resetPort() {
@@ -54,7 +60,7 @@ TEST(ArduinoSerialTest_Initialization, ConnectToArduino) {
         FAIL() << e.what();
     }
 
-    ASSERT_TRUE(serial.getInitialized());
+    assert(serial.getInitialized());
 }
 
 TEST(ArduinoSerialTest_Initialization, CantChangeSettingsWhenInitialized) {

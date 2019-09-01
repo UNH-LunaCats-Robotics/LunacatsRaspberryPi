@@ -16,6 +16,9 @@ cmake_minimum_required (VERSION "3.10")
 #title the project
 project("LunaCats" CXX)
 
+#comment this out to get rid of debug comments
+set(DEBUG 1)
+
 #check if linux (includes raspberry pi)
 if(UNIX AND NOT APPLE)
     #Check Build_Instructions/Linux/Linux.txt for how to run this project
