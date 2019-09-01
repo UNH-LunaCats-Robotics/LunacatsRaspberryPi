@@ -16,6 +16,26 @@ cmake_minimum_required (VERSION "3.10")
 #title the project
 project("LunaCats" CXX)
 
+#check if linux (includes raspberry pi)
+if(UNIX AND NOT APPLE)
+    #Check Build_Instructions/Linux/Linux.txt for how to run this project
+    set(LINUX 1)
+endif()
+
+#check if windows
+if(WIN32)
+    # Check Build_Instructions/Windows/Windows.txt for how to run this project
+	set(WINDOWS 1)
+endif()
+
+#check if mac
+if(APPLE)
+    # Check Build_Instructions/Mac/Mac.txt for how to run this project
+	set(MAC 1)
+endif()
+
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Headers/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/Headers/config.h)
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
