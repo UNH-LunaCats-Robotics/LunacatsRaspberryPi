@@ -16,6 +16,26 @@ cmake_minimum_required (VERSION "3.10")
 #title the project
 project("LunaCats" CXX)
 
+#check if linux (includes raspberry pi)
+if(UNIX AND NOT APPLE)
+    #Check Build_Instructions/Linux/Linux.txt for how to run this project
+    set(LINUX 1)
+endif()
+
+#check if windows
+if(WIN32)
+    # Check Build_Instructions/Windows/Windows.txt for how to run this project
+	set(WINDOWS 1)
+endif()
+
+#check if mac
+if(APPLE)
+    # Check Build_Instructions/Mac/Mac.txt for how to run this project
+	set(MAC 1)
+endif()
+
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Headers/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/Headers/config.h)
+
 #enable testing
 option(PACKAGE_TESTS "Build the tests" ON)
 
@@ -46,24 +66,6 @@ target_link_libraries(main PUBLIC
     RobotSourceCode
     Threads::Threads
 )
-
-#check if linux (includes raspberry pi)
-if(UNIX AND NOT APPLE)
-    #Check Build_Instructions/Linux/Linux.txt for how to run this project
-    	#Linux specific commands can go here
-endif()
-
-#check if windows
-if(WIN32)
-    # Check Build_Instructions/Windows/Windows.txt for how to run this project
-	# Windows specific commands can go here
-endif()
-
-#check if mac
-if(APPLE)
-    # Check Build_Instructions/Mac/Mac.txt for how to run this project
-	# Mac specific commands can go here
-endif()
 
 #includes the googletest directory and Testing Directory
 if(PACKAGE_TESTS)

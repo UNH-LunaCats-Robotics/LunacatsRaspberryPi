@@ -1,6 +1,8 @@
 #ifndef ARDUINO_SERIAL
 #define ARDUINO_SERIAL 
 
+#include "config.h"
+
 #include <cstring>		// string function definitions
 #include <unordered_map>
 #include <sys/file.h>
