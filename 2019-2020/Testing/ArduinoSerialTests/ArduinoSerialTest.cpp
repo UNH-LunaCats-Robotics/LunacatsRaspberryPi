@@ -8,14 +8,14 @@
 typedef struct ArduinoSettings ArduinoSettings;
 
 struct ArduinoSettings {
-    Port port;
+    string port;
     speed_t baudRate;
     chrono::seconds timeout;
 };
 
 #define BUF_SIZE 1024
 
-ArduinoSettings settings{ ttyACM0, (speed_t)B9600, 2s };
+ArduinoSettings settings{ "/dev/cu.usbmodem1451101", (speed_t)B9600, chrono::seconds(2) };
 ArduinoSerial serial = ArduinoSerial( settings.port, settings.baudRate );
 
 void resetPort() {
@@ -46,7 +46,7 @@ TEST(ArduinoSerialTest_Initialization, ConnectToArduino) {
     try {
         serial.initializePort();
     } catch( const exception &e) {
-        printf("ERROR: %s\n", e.what());
+        printf("ERROR: %s\n\n", e.what());
 
         FAIL() << e.what();
     }
@@ -55,8 +55,8 @@ TEST(ArduinoSerialTest_Initialization, ConnectToArduino) {
 }
 
 TEST(ArduinoSerialTest_Initialization, CantChangeSettingsWhenInitialized) {
-    ASSERT_FALSE(serial.setBaudRate((speed_t)B1152000));
-    assert( serial.getBaudRate() != (speed_t)B1152000);
+    ASSERT_FALSE(serial.setBaudRate(1152000));
+    assert( serial.getBaudRate_int() != 1152000);
 
     ASSERT_FALSE(serial.setPort(ttyACM1));
     assert( serial.getPort() != ttyACM1 );
@@ -69,14 +69,14 @@ TEST(ArduinoSerialTest_Initialization, DisconnectFromArduino) {
 }
 
 TEST(ArduinoSerialTest_Initialization, CanChangeSettingsWhenNotInitialized) {
-    ASSERT_TRUE(serial.setBaudRate( (speed_t)B1152000));
-    assert( serial.getBaudRate() == (speed_t)B1152000);
+    ASSERT_FALSE(serial.setBaudRate(1152000));
+    assert( serial.getBaudRate_int() == 1152000);
 
     ASSERT_TRUE(serial.setPort(ttyACM1));
     assert( serial.getPort() == ttyACM1 );
 
-    serial.setTimeout(10s);
-    assert( serial.getTimeout() == 10s );
+    serial.setTimeout(chrono::seconds(10));
+    assert( serial.getTimeout() == chrono::seconds(10) );
 }
 
 TEST(ArduinoSerialTest_Initialization, FailToConnectWithWrongPort) {

@@ -21,7 +21,7 @@ unordered_map<double, speed_t> BaudRate::baudRateList = {
 	{576000, B38400},  //38400 baud
 	{921600, B38400},  //38400 baud
 	{1000000, B38400},  //38400 baud
-	{2000000, B38400},  //38400 baud
+	{2000000, B38400}  //38400 baud
 };
 
 /** ArduinoSerial Constructor (Port Only)
@@ -32,9 +32,25 @@ unordered_map<double, speed_t> BaudRate::baudRateList = {
  * 	 	with a default timeout of two seconds
  * - Calibrate the settings of the serial port
  */
-ArduinoSerial::ArduinoSerial(Port p, speed_t baud): baudRate(baud), port(p) {
+ArduinoSerial::ArduinoSerial(Port p, speed_t baud): port(p), baudRate(baud) {
+    portStr = ports[p];
 #ifdef DEBUG
 	printf("Port: %s, Baud Rate: %d\n", ports[port].c_str(), baudRate);
+#endif
+}
+
+/** ArduinoSerial Constructor (Port Only)
+ * @Port p - the port where the arduino is connected
+ * @speed_t baud - the baud rate for communication.
+ *
+ * - Establish the port location and baud rate
+ *          with a default timeout of two seconds
+ * - Calibrate the settings of the serial port
+ */
+ArduinoSerial::ArduinoSerial(string p, speed_t baud): portStr(p), baudRate(baud) {
+    port = custom;
+#ifdef DEBUG
+    printf("Port: %s, Baud Rate: %d\n", ports[port].c_str(), baudRate);
 #endif
 }
 
@@ -63,8 +79,7 @@ void copyTermios( termios *tty_old, termios *tty  ) {
 bool ArduinoSerial::initializePort(bool force) {
 	//do not initialize port if already done unless forced
 	if(!force && !isNotInitialized()) return false;
-
-	string portStr = ports[port];
+    
 	termios tty;
 	memset (&tty, 0, sizeof tty);
 
@@ -224,7 +239,7 @@ int ArduinoSerial::readBytes_wrapper( char* response, int buf_size, char termina
 	int n = -1, usbTemp = USB;
 	auto func = &ArduinoSerial::readBytes;
 
-	thread t( [&n, &response, &buf_size, &terminator, &usbTemp, func, &cv ] {
+	thread t( [ &n, &response, &buf_size, &terminator, &usbTemp, func, &cv ](){
 		n = func(usbTemp, response, buf_size, terminator);
 		cv.notify_one();
 		return;
@@ -295,19 +310,22 @@ char ArduinoSerial::readByte( int USBB ) {
 	condition_variable cv;
 
 	char c;
-	auto func = &ArduinoSerial::readByte;
-
-	thread t( [ USBB, &c, func, &cv ] {
+    
+    thread t( [ USBB, &c, &cv ](){
 		read( USBB, &c, 1);
 		cv.notify_one();
+        return;
 	});
 	
+    auto tm_ = t.native_handle();
 	t.detach();
 
 	{
 		unique_lock<mutex> l(m);
-		if(cv.wait_for(l, timeout) == cv_status::timeout)
-			throw runtime_error("Timeout");
+        if(cv.wait_for(l, timeout) == cv_status::timeout){
+            pthread_cancel(tm_);
+            throw runtime_error("Timeout");
+        }
 	}
 
 	return c;
@@ -415,8 +433,16 @@ bool ArduinoSerial::setBaudRate( int baud ) {
 bool ArduinoSerial::setPort( Port p ) {
 	if(!isNotInitialized()) return false;
 	port = p;
+    portStr = ports[p];
 	return true;
 }	
+
+bool ArduinoSerial::setPort( string p ) {
+    if(!isNotInitialized()) return false;
+    port = custom;
+    portStr = p;
+    return true;
+}
 
 /** Get the status of the Arduino Serial Port */
 bool ArduinoSerial::getInitialized() {
@@ -426,6 +452,10 @@ bool ArduinoSerial::getInitialized() {
 /** Get the number representing the port */
 int ArduinoSerial::getUSB(){
 	return USB;
+}
+
+string ArduinoSerial::getPortStr() {
+    return portStr;
 }
 
 /** Get the string path to the port */

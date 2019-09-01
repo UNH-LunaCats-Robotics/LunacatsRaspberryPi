@@ -36,6 +36,19 @@ endif()
 
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Headers/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/Headers/config.h)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ftemplate-depth=300")
+   #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++98")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+   set(CMAKE_CXX_FLAGS_DEBUG "-g -O0" )
+   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3" )
+   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++
+ -dead_strip")
+endif()
+
 #enable testing
 option(PACKAGE_TESTS "Build the tests" ON)
 
