@@ -81,7 +81,7 @@ find_package(Threads REQUIRED)
 enable_testing()
 
 #create the libraries used by the main file.
-add_library( RobotSourceCode STATIC 
+add_library( RobotSourceCode STATIC Headers/config.h
     Sources/ArduinoSerial.cpp	Headers/ArduinoSerial.h
 #   Sources/[className].cpp     Headers/[className].h
 #                               Headers/[declarations].h

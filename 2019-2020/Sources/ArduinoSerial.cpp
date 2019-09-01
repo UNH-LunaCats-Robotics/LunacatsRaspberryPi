@@ -2,6 +2,7 @@
 
 //-------------------------------// INITIALIZATION //-------------------------------//
 
+#ifndef WINDOWS
 //list of all possible baud rates given from <termios.h>
 unordered_map<double, speed_t> BaudRate::baudRateList = {
 	{300, 	B300},   //300 baud
@@ -47,6 +48,7 @@ ArduinoSerial::ArduinoSerial(string p, speed_t baud): portStr(p), baudRate(baud)
     printf("Port: %s, Baud Rate: %d\n", ports[port].c_str(), baudRate);
 #endif
 }
+#endif
 
 /**
  * Re-establish the previous port settings on destruction.
@@ -55,6 +57,7 @@ ArduinoSerial::~ArduinoSerial(){
 	resetPort();
 }
 
+#ifndef WINDOWS
 void copyTermios( termios *tty_old, termios *tty  ) {
 	tty_old->c_cc[VMIN] 	= tty->c_cc[VMIN];
 	tty_old->c_cc[VTIME] = tty->c_cc[VTIME];
@@ -188,9 +191,11 @@ bool ArduinoSerial::resetPort() {
 	initialized = false;
 	return true;
 }
+#endif
 
 //-------------------------------// READING / WRITING //-------------------------------//
 
+#ifndef WINDOWS
 /** Read an array of bytes from the serial port
  * @int USBB		- Serial port to read from. 
  * @char* response 	- character array to read into
@@ -216,6 +221,7 @@ int ArduinoSerial::readBytes( int USBB, char* response, int buf_size, char termi
 
 	return spot;
 }
+
 
 /** Performs readBytes in another thread with timeout
  * @char* response 	- character array to read into
@@ -269,6 +275,7 @@ int ArduinoSerial::readString( char* response, int buf_size, char terminator ) {
 
 	try {
 		n = readBytes_wrapper(response, buf_size, terminator);
+
 	} catch(runtime_error &e) {
 #ifdef DEBUG
 		printf("Read Request Timed Out\n");
@@ -326,6 +333,7 @@ char ArduinoSerial::readByte( int USBB ) {
 
 	return c;
 }
+#endif
 
 /** Read a Character
  * @return char 	char read from serial
@@ -346,6 +354,7 @@ char ArduinoSerial::readChar() {
 	}
 }
 
+#ifndef WINDOWS
 /** Write a String to the Arduino 
  * @const unsigned char* cmd - command string to be sent to the arduino
  * @return write string success or fail
@@ -379,6 +388,7 @@ bool ArduinoSerial::writeChar(char c) {
 
 	return true;
 }
+#endif
 
 //-------------------------------// PRIVATE FUNCTIONS //-------------------------------//
 
@@ -408,6 +418,7 @@ void ArduinoSerial::setTimeout(chrono::seconds s) {
 	timeout = s;
 }
 
+#ifndef WINDOWS
 bool ArduinoSerial::setBaudRate( speed_t baud ) {
 	if(!isNotInitialized()) return false;
 	baudRate = baud;
@@ -425,6 +436,7 @@ bool ArduinoSerial::setBaudRate( int baud ) {
 	baudRate = BaudRate::getBaudRate(baud);
 	return true;
 }
+#endif 
 
 bool ArduinoSerial::setPort( Port p ) {
 	if(!isNotInitialized()) return false;
@@ -459,6 +471,11 @@ Port ArduinoSerial::getPort(){
 	return port;
 }
 
+chrono::seconds ArduinoSerial::getTimeout() {
+	return timeout;
+}
+
+#ifndef WINDOWS
 /** Get the baud rate used to establish a connection */
 speed_t ArduinoSerial::getBaudRate(){
 	return baudRate;
@@ -472,10 +489,6 @@ int ArduinoSerial::getBaudRate_int(){
 /** Get the double value of the baud rate used to establish a connection */
 double ArduinoSerial::getBaudRate_double(){
 	return BaudRate::getBaudRate_double(baudRate);
-}
-
-chrono::seconds ArduinoSerial::getTimeout() {
-	return timeout;
 }
 
 //-------------------------------// BAUD RATE FUNCTIONS //-------------------------------// 
@@ -509,4 +522,4 @@ double BaudRate::getBaudRate_double(speed_t baud) {
 	}
 	return -1;
 }
-
+#endif

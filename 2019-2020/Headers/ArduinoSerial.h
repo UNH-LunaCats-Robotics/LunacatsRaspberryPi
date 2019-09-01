@@ -3,14 +3,17 @@
 
 #include "config.h"
 
+#ifndef WINDOWS
+#include <sys/file.h>
+#include <unistd.h>     // UNIX standard function definitions
+#include <termios.h>    // POSIX terminal control definitions
+#endif
+
 #include <cstring>		// string function definitions
 #include <unordered_map>
-#include <sys/file.h>
 #include <cstdio>       // standard input / output functions
-#include <unistd.h>     // UNIX standard function definitions
 #include <fcntl.h>      // File control definitions
 #include <errno.h>      // Error number definitions
-#include <termios.h>    // POSIX terminal control definitions
 
 #include <chrono>
 #include <thread> 
@@ -37,6 +40,7 @@ enum Port { custom = -1,
 	cuaU0   = 30, 	cuaU1   = 31, 	cuaU2   = 32, 	cuaU3  = 33
 };
 
+#ifndef WINDOWS
 /** Baud Rate Conversion Class
  *  - Shows the list of possible baud rates (in cpp file)
  *  - Converts between integers/doubles and speed_t, the type used for baud rates.
@@ -54,6 +58,7 @@ private:
 	//all possible baud rate options
 	static unordered_map<double, speed_t> baudRateList;
 };
+#endif
 
 class ArduinoSerial{
 private: 
@@ -76,8 +81,10 @@ private:
 	int USB = -1; 				//port integer value
 	Port port;				//port location
     string portStr;             //non traditional port
+#ifndef WINDOWS
 	speed_t baudRate;           //baud rate used
 	termios tty_old; 			//old port settings
+#endif
 	///int status_old = 0;			//old modem settings
 	bool initialized = false;   //if initializaion has happened
 	
@@ -94,9 +101,10 @@ private:
     
 public:
 	//create the connection
+#ifndef WINDOWS
 	ArduinoSerial(Port p, speed_t baud); //default timeout = 2s
     ArduinoSerial(string p, speed_t baud); //default timeout = 2s
-    
+#endif
 	//ArduinoSerial(Port p, speed_t baud, chrono::seconds tout);
 	~ArduinoSerial();
 
@@ -111,10 +119,14 @@ public:
 	char readChar();
 	bool writeString( const unsigned char* cmd );
 	bool writeChar(char c);
-	
+
+#ifndef WINDOWS
+	bool setBaudRate(speed_t baud);
+	speed_t getBaudRate();
+#endif
+
 	//set descriptor information
 	void setTimeout(chrono::seconds s);
-	bool setBaudRate( speed_t baud );
 	bool setBaudRate( double baud );
 	bool setBaudRate( int baud );
 	bool setPort( Port p );
@@ -125,14 +137,15 @@ public:
 	int getUSB();
 	string getPortStr();
     Port getPort();
-	speed_t getBaudRate();
 	int getBaudRate_int();
 	double getBaudRate_double();
 	chrono::seconds getTimeout();
 
+#ifndef WINDOWS
 	void flushPort() {
 		tcflush(USB, TCIOFLUSH);
 	}
+#endif
 
 	bool operator<<(const unsigned char* cmd) {
 		return writeString( cmd );
