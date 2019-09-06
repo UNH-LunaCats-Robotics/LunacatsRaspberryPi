@@ -2,23 +2,6 @@
 
 //-------------------------------// INITIALIZATION //-------------------------------//
 
-#ifndef WINDOWS
-//list of all possible baud rates given from <termios.h>
-unordered_map<double, speed_t> BaudRate::baudRateList = {
-	{300, 	B300},   //300 baud
-	{600, 	B600},   //600 baud
-	{1200, 	B1200},  //1200 baud
-	{1800, 	B1800},  //1800 baud
-	{2400, 	B2400},  //2400 baud
-	{4800, 	B4800},  //4800 baud
-	{9600, 	B9600},  //9600 baud
-	{19200, B19200}, //19200 baud
-	{38400, B38400},  //38400 baud
-	{57600, B57600},  //38400 baud
-	{115200, B115200},  //38400 baud
-	{230400, B230400}  //38400 baud
-};
-
 /** ArduinoSerial Constructor (Port Only)
  * @Port p - the port where the arduino is connected
  * @speed_t baud - the baud rate for communication.
@@ -27,7 +10,7 @@ unordered_map<double, speed_t> BaudRate::baudRateList = {
  * 	 	with a default timeout of two seconds
  * - Calibrate the settings of the serial port
  */
-ArduinoSerial::ArduinoSerial(Port p, speed_t baud): port(p), baudRate(baud) {
+ArduinoSerial::ArduinoSerial(Port p, BaudRate baud): port(p), baudRate(baud) {
     portStr = ports[p];
 #ifdef DEBUG
 	printf("Port: %s, Baud Rate: %d\n", ports[port].c_str(), baudRate);
@@ -42,13 +25,12 @@ ArduinoSerial::ArduinoSerial(Port p, speed_t baud): port(p), baudRate(baud) {
  *          with a default timeout of two seconds
  * - Calibrate the settings of the serial port
  */
-ArduinoSerial::ArduinoSerial(string p, speed_t baud): portStr(p), baudRate(baud) {
+ArduinoSerial::ArduinoSerial(string p, BaudRate baud): portStr(p), baudRate(baud) {
     port = custom;
 #ifdef DEBUG
     printf("Port: %s, Baud Rate: %d\n", ports[port].c_str(), baudRate);
 #endif
 }
-#endif
 
 /**
  * Re-establish the previous port settings on destruction.
@@ -189,6 +171,87 @@ bool ArduinoSerial::resetPort() {
 	flock(USB, LOCK_UN);
 	
 	initialized = false;
+	return true;
+}
+#else 
+void copyPortSettings(DCB* oldSettings, DCB* newSettings) {
+	oldSettings->BaudRate = newSettings->BaudRate;
+	oldSettings->ByteSize = newSettings->ByteSize;
+	oldSettings->StopBits = newSettings->StopBits;
+	oldSettings->Parity   = newSettings->Parity;
+}
+
+bool ArduinoSerial::initializePort(bool force) {
+	//do not initialize port if already done unless forced
+	if (!force && !isNotInitialized()) return false;
+
+	hSerial = CreateFile(portStr.c_str(),
+		GENERIC_READ | GENERIC_WRITE,
+		0,
+		0,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		0);
+
+	if (hSerial == INVALID_HANDLE_VALUE) {
+		if (GetLastError() == ERROR_FILE_NOT_FOUND) {
+			throw invalid_argument("Cannot find serial port to open\n");
+		}
+		throw invalid_argument("Unknown Error occured\n");
+	}
+
+	DCB portSettings = { 0 };
+	portSettings.DCBlength = sizeof(portSettings);
+	oldSettings.DCBlength = sizeof(oldSettings);
+
+	if (!GetCommState(hSerial, &portSettings))
+		throw invalid_argument("Error getting port state\n");
+
+	if (!isInitialized()) {
+		copyPortSettings(&oldSettings, &portSettings);
+	}
+
+	portSettings.BaudRate = baudRate;
+	portSettings.ByteSize = 8;
+	portSettings.StopBits = ONESTOPBIT;
+	portSettings.Parity = NOPARITY;
+
+	if (!SetCommState(hSerial, &portSettings))
+		throw invalid_argument("Error setting port state\n");
+
+	COMMTIMEOUTS timeouts = { 0 };
+
+	if (!isInitialized()) {
+		if (!GetCommTimeouts(hSerial, &oldTimeouts))
+			throw invalid_argument("Error getting port timeouts");
+	}
+
+	//time is in milliseconds
+	timeouts.ReadIntervalTimeout		 = 50;
+	timeouts.ReadTotalTimeoutConstant	 = 50;
+	timeouts.ReadTotalTimeoutMultiplier  = 10;
+	timeouts.WriteTotalTimeoutConstant	 = 50;
+	timeouts.WriteTotalTimeoutMultiplier = 10;
+
+	if (!SetCommTimeouts(hSerial, &timeouts))
+		throw invalid_argument("Error setting port timeouts");
+
+	if (!isInitialized()) {
+		if (!GetCommMask(hSerial, &oldMask))
+			throw invalid_argument("Error getting port mask");
+	}
+
+	if (!SetCommMask(hSerial, EV_RXCHAR | EV_TXEMPTY ))
+		throw invalid_argument("Error setting port mask");
+
+	return true;
+}
+
+bool ArduinoSerial::resetPort() {
+	if (!SetCommState(hSerial, &oldSettings)) printf("Error setting old port settings\n");
+	if (!SetCommTimeouts(hSerial, &oldTimeouts)) printf("Error setting old port timeouts\n");
+	if (!SetCommMask(hSerial, oldMask)) printf("Error setting old port mask\n");
+	CloseHandle(hSerial);
 	return true;
 }
 #endif
@@ -333,6 +396,21 @@ char ArduinoSerial::readByte( int USBB ) {
 
 	return c;
 }
+#else 
+int ArduinoSerial::readString(char* response, int buf_size, char terminator) {
+	int n = -1, spot = 0;
+	char buf = '\0';
+	DWORD bytesRead = 0;
+	do {
+		n = ReadFile(hSerial, response, 1, &bytesRead, NULL);
+		sprintf(&response[spot], "%c", buf);
+		spot += n;
+	} while (buf != terminator && n > 0);
+
+	if (n < 0) return -1;
+
+	return spot;
+}
 #endif
 
 /** Read a Character
@@ -475,51 +553,8 @@ chrono::seconds ArduinoSerial::getTimeout() {
 	return timeout;
 }
 
-#ifndef WINDOWS
 /** Get the baud rate used to establish a connection */
-speed_t ArduinoSerial::getBaudRate(){
+BaudRate ArduinoSerial::getBaudRate(){
 	return baudRate;
 }
 
-/** Get the integer value of the baud rate used to establish a connection */
-int ArduinoSerial::getBaudRate_int(){
-	return BaudRate::getBaudRate_int(baudRate);
-}
-
-/** Get the double value of the baud rate used to establish a connection */
-double ArduinoSerial::getBaudRate_double(){
-	return BaudRate::getBaudRate_double(baudRate);
-}
-
-//-------------------------------// BAUD RATE FUNCTIONS //-------------------------------// 
-
-/** Get the baud rate value when given an integer */
-speed_t BaudRate::getBaudRate(int baud) {
-	return getBaudRate((double) baud);
-}
-
-/** Get the baud rate value when given a double */
-speed_t BaudRate::getBaudRate(double baud) {
-	unordered_map<double, speed_t>::const_iterator got = baudRateList.find(baud);
-
-	if( got == baudRateList.end())
-		throw invalid_argument("Baud Rate not valid\n");
-	
-	return got->second;
-}
-
-/** Get the integer value when given a baud rate */
-int BaudRate::getBaudRate_int(speed_t baud) {
-	return (int) getBaudRate_double(baud);
-}
-
-/** Get the double value when given a baud rate */
-double BaudRate::getBaudRate_double(speed_t baud) {
-	for(unordered_map<double, speed_t>::const_iterator it = baudRateList.begin(); 
-		it != baudRateList.end(); ++it) {
-		
-		if(it->second == baud) return it->first;
-	}
-	return -1;
-}
-#endif
