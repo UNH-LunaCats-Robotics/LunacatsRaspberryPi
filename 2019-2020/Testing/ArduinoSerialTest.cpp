@@ -10,7 +10,7 @@ typedef struct ArduinoSettings ArduinoSettings;
 
 struct ArduinoSettings {
     string port;
-    speed_t baudRate;
+    BaudRate baudRate;
     chrono::seconds timeout;
 };
 
@@ -22,7 +22,7 @@ string port = "/dev/ttyACM0";
 port = "/dev/cu.usbmodem1451101"
 #endif
 
-ArduinoSettings settings{ port, (speed_t)B9600, chrono::seconds(2) };
+ArduinoSettings settings{ port, B_9600, chrono::seconds(2) };
 ArduinoSerial serial( settings.port, settings.baudRate );
 
 void resetPort() {
@@ -64,8 +64,8 @@ TEST(ArduinoSerialTest_Initialization, ConnectToArduino) {
 }
 
 TEST(ArduinoSerialTest_Initialization, CantChangeSettingsWhenInitialized) {
-    ASSERT_FALSE(serial.setBaudRate(1152000));
-    assert( serial.getBaudRate_int() != 1152000);
+    ASSERT_FALSE(serial.setBaudRate(B_115200));
+    assert( serial.getBaudRate() != B_115200);
     
     ASSERT_FALSE(serial.setPort(ttyACM1));
     assert( serial.getPort() != ttyACM1 );
@@ -79,8 +79,8 @@ TEST(ArduinoSerialTest_Initialization, DisconnectFromArduino) {
 
 TEST(ArduinoSerialTest_Initialization, CanChangeSettingsWhenNotInitialized) {
     try {
-        ASSERT_TRUE(serial.setBaudRate(115200));
-        assert( serial.getBaudRate_int() == 115200);
+        ASSERT_TRUE(serial.setBaudRate(B_115200));
+        assert( serial.getBaudRate() == B_115200);
     } catch(const exception &e) {
         FAIL() << e.what();
     }
@@ -451,6 +451,22 @@ void writeArduinoFile_wr( int speed ) {
     uploadChanges();
 }
 
+int getBaudRate(BaudRate r) {
+    switch(r) {
+        case B_300: return 300;
+        case B_600: return 600;
+        case B_1200: return 1200;
+        //case B_1800: return;
+        case B_2400: return 2400;
+        case B_4800: return 4800;
+        case B_9600: return 9600;
+        case B_19200: return 19200;
+        case B_38400: return 38400;
+        case B_57600: return 57600;
+    }
+    return 0;
+}
+
 void writeArduinoFile( string funcName, int delay, bool init ) {
     ofstream ardFile;
 
@@ -462,7 +478,7 @@ void writeArduinoFile( string funcName, int delay, bool init ) {
     }
 
     ardFile <<  "void setup() {\n"                                  << 
-                "    Serial.begin( "<< BaudRate::getBaudRate_int(settings.baudRate) <<" );\n"  <<
+                "    Serial.begin( "<< getBaudRate(settings.baudRate) <<" );\n"  <<
                 "    Serial.setTimeout(20);\n";
     if(init) ardFile << "    Serial.println(\" init\");\n";
     ardFile <<  "}\n\n"                                             <<

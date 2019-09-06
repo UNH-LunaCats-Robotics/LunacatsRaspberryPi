@@ -4,7 +4,13 @@
 #define BUF_SIZE 1024
 
 int main() {
-    ArduinoSerial serial("/dev/cu.usbmodem1451101", (speed_t)B9600);
+    string port = "/dev/ttyACM0";
+
+#ifdef MAC
+    port = /dev/cu.usbmodem1451101;
+#endif
+
+    ArduinoSerial serial(port, B_9600);
 
     try {
         serial.initializePort();

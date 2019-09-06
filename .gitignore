@@ -12,3 +12,6 @@ Other/
 
 #arduino build code
 build-uno/
+
+#keep custom config settings
+config.h

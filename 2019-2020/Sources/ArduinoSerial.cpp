@@ -496,25 +496,11 @@ void ArduinoSerial::setTimeout(chrono::seconds s) {
 	timeout = s;
 }
 
-#ifndef WINDOWS
-bool ArduinoSerial::setBaudRate( speed_t baud ) {
+bool ArduinoSerial::setBaudRate( BaudRate baud ) {
 	if(!isNotInitialized()) return false;
 	baudRate = baud;
 	return true;
 }
-
-bool ArduinoSerial::setBaudRate( double baud ) {
-	if(!isNotInitialized()) return false;
-	baudRate = BaudRate::getBaudRate(baud);
-	return true;
-}
-
-bool ArduinoSerial::setBaudRate( int baud ) {
-	if(!isNotInitialized()) return false;
-	baudRate = BaudRate::getBaudRate(baud);
-	return true;
-}
-#endif 
 
 bool ArduinoSerial::setPort( Port p ) {
 	if(!isNotInitialized()) return false;
