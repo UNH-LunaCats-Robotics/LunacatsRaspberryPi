@@ -12,9 +12,9 @@ If you have just joined the club or are interested in trying to run the code, yo
 
 ## Other Current Repositories
 
-- **Arduino Library:** <https://github.com/lunacats/LunacatsArduino>
-- **Client Node Server:** <https://github.com/lunacats/LunacatsNodeServer>
-- **Controller Code:** <https://github.com/lunacats/Controller>
+- **Arduino Library:** <https://github.com/UNH-LunaCats-Robotics/LunacatsArduino>
+- **Client Node Server:** <https://github.com/UNH-LunaCats-Robotics/LunacatsNodeServer>
+- **Controller Code:** <https://github.com/UNH-LunaCats-Robotics/Controller>
 
 
 *[Join our Discord](https://discord.gg/q4r8ZTM) if you would like to participate in discussions about the code!*
