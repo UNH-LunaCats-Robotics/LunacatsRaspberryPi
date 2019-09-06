@@ -411,6 +411,10 @@ int ArduinoSerial::readString(char* response, int buf_size, char terminator) {
 
 	return spot;
 }
+
+char ArduinoSerial::readByte(int USBB) {
+	return 0;
+}
 #endif
 
 /** Read a Character
@@ -465,6 +469,25 @@ bool ArduinoSerial::writeChar(char c) {
 	write( USB, &c, 1 );
 
 	return true;
+}
+#else 
+/** Write a String to the Arduino
+ * @const unsigned char* cmd - command string to be sent to the arduino
+ * @return write string success or fail
+ *
+ * Write a string to the serial port for the arduino to recieve.
+ */
+bool ArduinoSerial::writeString(const unsigned char* cmd) {
+	printf("Not created yet");
+	return false;
+}
+
+/** Write a Character
+ * Write a character sent to the aduino
+ */
+bool ArduinoSerial::writeChar(char c) {
+	printf("Not created yet");
+	return false;
 }
 #endif
 

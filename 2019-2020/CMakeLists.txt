@@ -50,32 +50,21 @@ if( CMAKE_CXX_COMPILER_ID STREQUAL "Clang" )
     set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-g -O3" )
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++
  -dead_strip")
-
-#check if linux (includes raspberry pi)
-elif(UNIX AND NOT APPLE)
-    #Check Build_Instructions/Linux/Linux.txt for how to run this project
-    
-#check if windows
-elif(WIN32)
-    # Check Build_Instructions/Windows/Windows.txt for how to run this project
-    
-#check if mac
-elif(APPLE)
-    # Check Build_Instructions/Mac/Mac.txt for how to run this project
-    
-endif()
-
+ endif()
 #enable testing
 option(PACKAGE_TESTS "Build the tests" ON)
 
 include(FetchContent)
 
-#add compiler flags
-add_compile_options("-Wno-psabi")
+if(NOT WIN32)
+	#add compiler flags
+	add_compile_options("-Wno-psabi")
+endif()
 
 #require cmake to be aware of pthreads
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+
 
 #allows us to run tests
 enable_testing()
