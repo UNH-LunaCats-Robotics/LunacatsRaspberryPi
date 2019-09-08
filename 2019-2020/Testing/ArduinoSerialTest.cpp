@@ -16,13 +16,13 @@ struct ArduinoSettings {
 
 #define BUF_SIZE 1024
 
-string port = "/dev/ttyACM0";
-
 #ifdef MAC
-port = "/dev/cu.usbmodem1451101"
+string pp = "/dev/cu.usbmodem1451101";
+#else
+string pp = "/dev/ttyACM0";
 #endif
 
-ArduinoSettings settings{ port, B_9600, chrono::seconds(2) };
+ArduinoSettings settings{ pp, B_9600, chrono::seconds(2) };
 ArduinoSerial serial( settings.port, settings.baudRate );
 
 void resetPort() {
