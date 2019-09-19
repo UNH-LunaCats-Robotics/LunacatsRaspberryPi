@@ -39,7 +39,6 @@ ArduinoSerial::~ArduinoSerial(){
 	resetPort();
 }
 
-#ifndef WINDOWS
 void copyTermios( termios *tty_old, termios *tty  ) {
 	tty_old->c_cc[VMIN] 	= tty->c_cc[VMIN];
 	tty_old->c_cc[VTIME] = tty->c_cc[VTIME];
@@ -173,92 +172,10 @@ bool ArduinoSerial::resetPort() {
 	initialized = false;
 	return true;
 }
-#else 
-void copyPortSettings(DCB* oldSettings, DCB* newSettings) {
-	oldSettings->BaudRate = newSettings->BaudRate;
-	oldSettings->ByteSize = newSettings->ByteSize;
-	oldSettings->StopBits = newSettings->StopBits;
-	oldSettings->Parity   = newSettings->Parity;
-}
 
-bool ArduinoSerial::initializePort(bool force) {
-	//do not initialize port if already done unless forced
-	if (!force && !isNotInitialized()) return false;
-
-	hSerial = CreateFile(portStr.c_str(),
-		GENERIC_READ | GENERIC_WRITE,
-		0,
-		0,
-		OPEN_EXISTING,
-		FILE_ATTRIBUTE_NORMAL,
-		0);
-
-	if (hSerial == INVALID_HANDLE_VALUE) {
-		if (GetLastError() == ERROR_FILE_NOT_FOUND) {
-			throw invalid_argument("Cannot find serial port to open\n");
-		}
-		throw invalid_argument("Unknown Error occured\n");
-	}
-
-	DCB portSettings = { 0 };
-	portSettings.DCBlength = sizeof(portSettings);
-	oldSettings.DCBlength = sizeof(oldSettings);
-
-	if (!GetCommState(hSerial, &portSettings))
-		throw invalid_argument("Error getting port state\n");
-
-	if (!isInitialized()) {
-		copyPortSettings(&oldSettings, &portSettings);
-	}
-
-	portSettings.BaudRate = baudRate;
-	portSettings.ByteSize = 8;
-	portSettings.StopBits = ONESTOPBIT;
-	portSettings.Parity = NOPARITY;
-
-	if (!SetCommState(hSerial, &portSettings))
-		throw invalid_argument("Error setting port state\n");
-
-	COMMTIMEOUTS timeouts = { 0 };
-
-	if (!isInitialized()) {
-		if (!GetCommTimeouts(hSerial, &oldTimeouts))
-			throw invalid_argument("Error getting port timeouts");
-	}
-
-	//time is in milliseconds
-	timeouts.ReadIntervalTimeout		 = 50;
-	timeouts.ReadTotalTimeoutConstant	 = 50;
-	timeouts.ReadTotalTimeoutMultiplier  = 10;
-	timeouts.WriteTotalTimeoutConstant	 = 50;
-	timeouts.WriteTotalTimeoutMultiplier = 10;
-
-	if (!SetCommTimeouts(hSerial, &timeouts))
-		throw invalid_argument("Error setting port timeouts");
-
-	if (!isInitialized()) {
-		if (!GetCommMask(hSerial, &oldMask))
-			throw invalid_argument("Error getting port mask");
-	}
-
-	if (!SetCommMask(hSerial, EV_RXCHAR | EV_TXEMPTY ))
-		throw invalid_argument("Error setting port mask");
-
-	return true;
-}
-
-bool ArduinoSerial::resetPort() {
-	if (!SetCommState(hSerial, &oldSettings)) printf("Error setting old port settings\n");
-	if (!SetCommTimeouts(hSerial, &oldTimeouts)) printf("Error setting old port timeouts\n");
-	if (!SetCommMask(hSerial, oldMask)) printf("Error setting old port mask\n");
-	CloseHandle(hSerial);
-	return true;
-}
-#endif
 
 //-------------------------------// READING / WRITING //-------------------------------//
 
-#ifndef WINDOWS
 /** Read an array of bytes from the serial port
  * @int USBB		- Serial port to read from. 
  * @char* response 	- character array to read into
@@ -396,22 +313,6 @@ char ArduinoSerial::readByte( int USBB ) {
 
 	return c;
 }
-#else 
-int ArduinoSerial::readString(char* response, int buf_size, char terminator) {
-	int n = -1, spot = 0;
-	char buf = '\0';
-	DWORD bytesRead = 0;
-	do {
-		n = ReadFile(hSerial, response, 1, &bytesRead, NULL);
-		sprintf(&response[spot], "%c", buf);
-		spot += n;
-	} while (buf != terminator && n > 0);
-
-	if (n < 0) return -1;
-
-	return spot;
-}
-#endif
 
 /** Read a Character
  * @return char 	char read from serial
@@ -432,7 +333,6 @@ char ArduinoSerial::readChar() {
 	}
 }
 
-#ifndef WINDOWS
 /** Write a String to the Arduino 
  * @const unsigned char* cmd - command string to be sent to the arduino
  * @return write string success or fail
@@ -466,7 +366,6 @@ bool ArduinoSerial::writeChar(char c) {
 
 	return true;
 }
-#endif
 
 //-------------------------------// PRIVATE FUNCTIONS //-------------------------------//
 

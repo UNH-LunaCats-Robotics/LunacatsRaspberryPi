@@ -28,7 +28,7 @@ endif()
 #check if windows
 if(WIN32)
     # Check Build_Instructions/Windows/Windows.txt for how to run this project
-	set(WINDOWS 1)
+	message(FATAL_ERROR "This code is not supported on Windows. Please use this link and set up a virtual Raspberry Pi Environment: https://raspberrytips.com/run-raspberry-in-virtual-machine/")
 endif()
 
 #check if mac

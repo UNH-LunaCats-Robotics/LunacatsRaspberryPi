@@ -3,13 +3,9 @@
 
 #include "config.h"
 
-#ifndef WINDOWS
 #include <sys/file.h>
 #include <unistd.h>     // UNIX standard function definitions
 #include <termios.h>    // POSIX terminal control definitions
-#else
-#include <Windows.h>
-#endif
 
 #include <cstring>		// string function definitions
 #include <unordered_map>
@@ -27,7 +23,6 @@ typedef struct termios termios;
 
 #define RS232_PORTNR  38
 
-#ifndef WINDOWS
 enum Port { custom = -1,
 	ttyS0   = 0,  	ttyS1   = 1,  	ttyS2   = 2,  	ttyS3  = 3,   
 	ttyS4   = 4,  	ttyS5   = 5,  	ttyS6   = 6,  	ttyS7  = 7,   
@@ -47,7 +42,7 @@ enum BaudRate : speed_t {
 	B_300 = (speed_t)B300,
 	B_600 = (speed_t)B600,
 	B_1200 = (speed_t)B1200,
-	//B_1800 = (speed_t)B1800,  //there is no CBR_1800
+	B_1800 = (speed_t)B1800,  
 	B_2400 = (speed_t)B2400,
 	B_4800 = (speed_t)B4800,
 	B_9600 = (speed_t)B9600,
@@ -55,33 +50,12 @@ enum BaudRate : speed_t {
 	B_38400 = (speed_t)B38400,
 	B_57600 = (speed_t)B57600,
 	B_115200 = (speed_t)B115200,
-	//B_230400 = (speed_t)B230400 //there is no CBR_230400
+	B_230400 = (speed_t)B230400 
 };
-#else 
-enum Port { custom = -1,
-	COM0 = 0, COM1, COM2, COM3, COM4, COM5
-};
-
-enum BaudRate {
-	B_300 = CBR_300, 
-	B_600 = CBR_600, 
-	B_1200 = CBR_1200,
-	//B1800 = CBR_1800,  //there is no CBR_1800
-	B_2400 = CBR_2400,
-	B_4800 = CBR_4800,
-	B_9600 = CBR_9600,
-	B_19200 = CBR_19200, 
-	B_38400 = CBR_38400,
-	B_57600 = CBR_57600,
-	B_115200 = CBR_115200,
-	//B_230400 = CBR_230400 //there is no CBR_230400
-};
-#endif
 
 class ArduinoSerial{
 private: 
 	//all current possible ports to select from
-#ifndef WINDOWS
 	const string ports[RS232_PORTNR] = {
 		"/dev/ttyS0",	"/dev/ttyS1",	"/dev/ttyS2",	"/dev/ttyS3",	
 		"/dev/ttyS4",	"/dev/ttyS5",	"/dev/ttyS6",	"/dev/ttyS7",	
@@ -95,23 +69,14 @@ private:
 		"/dev/ircomm0",	"/dev/ircomm1",
 		"/dev/cuau0",	"/dev/cuau1",	"/dev/cuau2",	"/dev/cuau3",
 		"/dev/cuaU0",	"/dev/cuaU1",	"/dev/cuaU2",	"/dev/cuaU3"};
-#else 
-	const string ports[6]{
-		"COM0", "COM1", "COM2", "COM3", "COM4", "COM5"};
-#endif
+
 	//port descriptors
 	int USB = -1; 				//port integer value
 	Port port;				//port location
     string portStr;             //non traditional port
 	BaudRate baudRate;
-#ifndef WINDOWS
-	termios tty_old; 			//old port settings
-#else
-	HANDLE hSerial = nullptr;				//windows serial port
-	DCB oldSettings = { 0 };    //old port settings
-	COMMTIMEOUTS oldTimeouts = { 0 };
-	DWORD oldMask = 0;
-#endif
+	termios tty_old;
+
 	///int status_old = 0;			//old modem settings
 	bool initialized = false;   //if initializaion has happened
 	
@@ -160,11 +125,9 @@ public:
 	BaudRate getBaudRate();
 	chrono::seconds getTimeout();
 
-#ifndef WINDOWS
 	void flushPort() {
 		tcflush(USB, TCIOFLUSH);
 	}
-#endif
 
 	bool operator<<(const unsigned char* cmd) {
 		return writeString( cmd );
