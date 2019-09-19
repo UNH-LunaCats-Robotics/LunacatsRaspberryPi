@@ -83,8 +83,9 @@ private:
 	//timeout for readBytes
     chrono::seconds timeout = chrono::seconds(2);
 	int static readBytes( int USBB, char* response, int buf_size, char terminator);
+#ifndef WINDOWS
 	int readBytes_wrapper( char* response, int buf_size, char terminator);
-
+#endif 
 	char readByte( int USBB );
 
 	//prints error msg if in debug mode.

@@ -7,7 +7,7 @@ int main() {
     string port = "/dev/ttyACM0";
 
 #ifdef MAC
-    port = /dev/cu.usbmodem1451101;
+    port = "/dev/cu.usbmodem1451101";
 #endif
 
     ArduinoSerial serial(port, B_9600);

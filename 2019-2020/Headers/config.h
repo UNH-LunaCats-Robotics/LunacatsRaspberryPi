@@ -1,4 +1,4 @@
-/* #undef MAC */
-#define LINUX 1
+#define MAC 1
+/* #undef LINUX */
 /* #undef WINDOWS */
 #define DEBUG 1
