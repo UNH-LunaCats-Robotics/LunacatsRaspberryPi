@@ -5,8 +5,8 @@
         "cflags_cc!": ["-Wno-psabi", "-Wunused-result", "-fno-exceptions"],
         "sources": [
             "cppFiles/Sources/mainServer.cpp",
-            "cppFiles/Sources/ArduinoSerial.cpp",
-            "cppFiles/Headers/ArduinoSerial.h",
+            "cppFiles/Sources/ServerFunctions.cpp",
+            "cppFiles/Headers/ServerFunctions.h",
             "cppFiles/Headers/config.h"
         ],
         'include_dirs': [
