@@ -56,15 +56,12 @@ option(PACKAGE_TESTS "Build the tests" ON)
 
 include(FetchContent)
 
-if(NOT WIN32)
-	#add compiler flags
-	add_compile_options("-Wno-psabi")
+#add compiler flags
+add_compile_options("-Wno-psabi")
 
-	#require cmake to be aware of pthreads
-	set(THREADS_PREFER_PTHREAD_FLAG ON)
-	find_package(Threads REQUIRED)
-
-endif()
+#require cmake to be aware of pthreads
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
 
 #allows us to run tests
 enable_testing()
@@ -77,22 +74,16 @@ add_library( RobotSourceCode STATIC Headers/config.h
 )
 
 #create the executable for the project
-add_executable(main main.cpp)
+add_executable(main Sources/main.cpp)
 
 #add linked libraries to the compiled result 
 target_link_libraries(main PUBLIC 
     RobotSourceCode
-)
-
-if(NOT WIN32)
-target_link_libraries(main PUBLIC
     Threads::Threads
 )
-endif()
 
 #includes the googletest directory and Testing Directory
 if(PACKAGE_TESTS)
-
     FetchContent_Declare(
         googletest
         GIT_REPOSITORY https://github.com/google/googletest.git
@@ -104,7 +95,7 @@ if(PACKAGE_TESTS)
         FetchContent_Populate(googletest)
         add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
     endif()
-  
+
     add_subdirectory(Testing)
 
 endif()

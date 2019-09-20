@@ -26,15 +26,7 @@ int main() {
             //printf("Writing %s\n", cmd);
             serial.writeString(cmd);
             //printf("Reading Response... \n");
-            int n = serial.readString(response, BUF_SIZE);
-            /*
-            if(n != 0) {
-                printf("\tResponce Recieved: %s\n\n", response);
-            }
-            else {
-                printf("\tResponce Timed Out\n\n");
-            }
-            */
+            serial.readString(response, BUF_SIZE);
         }
         
     } catch( const invalid_argument &e ) {

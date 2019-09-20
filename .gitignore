@@ -15,3 +15,8 @@ build-uno/
 
 #keep custom config settings
 config.h
+
+#keep node modules from cluttering git
+node_modules/
+
+*.log
