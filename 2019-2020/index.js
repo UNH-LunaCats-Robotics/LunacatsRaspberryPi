@@ -1,6 +1,9 @@
+/*
 const rpserver = require('./build/Release/rpserver.node');
+*/
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
+const Gamecontroller = require('gamecontroller');
 
 const express = require('express');
 var cors = require('cors')
@@ -9,84 +12,96 @@ const bodyParser = require('body-parser');
 const app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+//const ctrl = new Gamecontroller('');
+var isTethered = false;
 
-app.use(cors())
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({  extended: true }));
+var HID = require('node-hid');
+console.log(HID.devices());
 
-app.use((error, request, response, next) => {
-    if (error !== null) {
-        return response.json(ERROR(700)); //invalid json
-    }
-    return next();
-});
-
-var port = 3001;
-var port2 = 3002;
-
-io.on('connection', function(socket) {
-    console.log('a user connected');
-    socket.on('subscribeToTimer', (interval) => {
-        console.log('client is subscribing to timer with interval ', interval);
-        setInterval(() => {
-            socket.emit('timer', new Date());
-        }, interval);
-    });
-});
-
-io.listen(port2);
-console.log("listening on port ", port2);
-
-var webserver = {
-     name: 'Robot Web Services',
-     hostname: 'http://localhost',
-     version: '1.0.0',
-     env: process.env.NODE_ENV || 'development',
-     port: 3000,
-     cors: {
-         preflightMaxAge: 5, //Optional
-         origins: ['*'],
-         allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Access-Control-Allow-Origin'],
-         acceptable: ['POST']
-     }
-}
-
-app.listen(port, () => {
-    console.log('%s Version: %s ',webserver.name, webserver.version);
-    console.log('URL: %s:%s', webserver.hostname, port);
-});
-
-app.get('/', function (req, res) {
-    res.send('System Active!');
-});
 /*
-app.post('/test', function (req, res) {
-    res.send(req.body);
-});
-
-app.get('/', function (req, res) {
-    res.send('System Active!');
-});
-
-app.get('/maps/search/', function(req, res) {
-    res.send("tagId is set to " + req.query.api);
-});
-  
-app.use(require('express-status-monitor')());
+ctrl.connect(function() {
+    isTethed = true;
+    console.log("Controlle Connected");
+})
 */
+if(!isTethered) {
+    app.use(cors())
+    app.use(bodyParser.json());
+    app.use(bodyParser.urlencoded({  extended: true }));
 
-exports.server = app;
+    app.use((error, request, response, next) => {
+        if (error !== null) {
+            return response.json(ERROR(700)); //invalid json
+        }
+        return next();
+    });
 
+    var port = 3001;
+    var port2 = 3002;
 
+    io.on('connection', function(socket) {
+        console.log('a user connected');
+        socket.on('subscribeToTimer', (interval) => {
+            console.log('client is subscribing to timer with interval ', interval);
+            setInterval(() => {
+                socket.emit('timer', new Date());
+            }, interval);
+        });
+    });
+
+    io.listen(port2);
+    console.log("listening on port ", port2);
+
+    var webserver = {
+        name: 'Robot Web Services',
+        hostname: 'http://localhost',
+        version: '1.0.0',
+        env: process.env.NODE_ENV || 'development',
+        port: 3000,
+        cors: {
+            preflightMaxAge: 5, //Optional
+            origins: ['*'],
+            allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Access-Control-Allow-Origin'],
+            acceptable: ['POST']
+        }
+    }
+
+    app.listen(port, () => {
+        console.log('%s Version: %s ',webserver.name, webserver.version);
+        console.log('URL: %s:%s', webserver.hostname, port);
+    });
+
+    app.get('/', function (req, res) {
+        res.send('System Active!');
+    });
+    /*
+    app.post('/test', function (req, res) {
+        res.send(req.body);
+    });
+
+    app.get('/', function (req, res) {
+        res.send('System Active!');
+    });
+
+    app.get('/maps/search/', function(req, res) {
+        res.send("tagId is set to " + req.query.api);
+    });
+    
+    app.use(require('express-status-monitor')());
+    */
+
+    exports.server = app;
+}
+/*
 console.log("--------- C++ Function Examples ---------");
 console.log("rpserver: ", rpserver);
 console.log("Hello World: ", rpserver.helloWorld());
 console.log("Add 2 + 3: ", rpserver.add(2,3));
 console.log("-----------------------------------------");
-
+*/
 //this is the main robot controller arduino that moves the arduino
 
-const robot = new SerialPort('/dev/ttyACM0', { baudRate: 9600 });
+const robot = new SerialPort('/dev/cu.usbmodem145101', { baudRate: 9600 });
 const cmdParser = robot.pipe(new Readline({ delimiter: '\n' }));// Read the port data
 var cmd_can_read = false;
 var commandServer; 
@@ -166,5 +181,6 @@ setInterval(function() {
     }
 }, 20);
 */
-
+/*
 module.exports = rpserver;
+*/
