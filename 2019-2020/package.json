@@ -19,7 +19,6 @@
     "express-status-monitor": "^1.2.6",
     "gamecontroller": "0.0.2",
     "node-addon-api": "^1.7.1",
-    "node-hid": "^0.7.9",
     "serialport": "^7.1.5"
   }
 }

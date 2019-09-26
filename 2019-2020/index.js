@@ -15,8 +15,8 @@ var io = require('socket.io')(http);
 //const ctrl = new Gamecontroller('');
 var isTethered = false;
 
-var HID = require('node-hid');
-console.log(HID.devices());
+var dev = Gamecontroller.getDevices();
+console.log(dev);
 
 /*
 ctrl.connect(function() {
