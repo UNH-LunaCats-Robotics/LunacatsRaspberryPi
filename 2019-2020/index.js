@@ -1,7 +1,82 @@
-
 const rpserver = require('./build/Release/rpserver.node');
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
+
+const express = require('express');
+var cors = require('cors')
+const bodyParser = require('body-parser');
+
+const app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+app.use(cors())
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({  extended: true }));
+
+app.use((error, request, response, next) => {
+    if (error !== null) {
+        return response.json(ERROR(700)); //invalid json
+    }
+    return next();
+});
+
+var port = 3001;
+var port2 = 3002;
+
+io.on('connection', function(socket) {
+    console.log('a user connected');
+    socket.on('subscribeToTimer', (interval) => {
+        console.log('client is subscribing to timer with interval ', interval);
+        setInterval(() => {
+            socket.emit('timer', new Date());
+        }, interval);
+    });
+});
+
+io.listen(port2);
+console.log("listening on port ", port2);
+
+var webserver = {
+     name: 'Robot Web Services',
+     hostname: 'http://localhost',
+     version: '1.0.0',
+     env: process.env.NODE_ENV || 'development',
+     port: 3000,
+     cors: {
+         preflightMaxAge: 5, //Optional
+         origins: ['*'],
+         allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Access-Control-Allow-Origin'],
+         acceptable: ['POST']
+     }
+}
+
+app.listen(port, () => {
+    console.log('%s Version: %s ',webserver.name, webserver.version);
+    console.log('URL: %s:%s', webserver.hostname, port);
+});
+
+app.get('/', function (req, res) {
+    res.send('System Active!');
+});
+/*
+app.post('/test', function (req, res) {
+    res.send(req.body);
+});
+
+app.get('/', function (req, res) {
+    res.send('System Active!');
+});
+
+app.get('/maps/search/', function(req, res) {
+    res.send("tagId is set to " + req.query.api);
+});
+  
+app.use(require('express-status-monitor')());
+*/
+
+exports.server = app;
+
 
 console.log("--------- C++ Function Examples ---------");
 console.log("rpserver: ", rpserver);
@@ -17,7 +92,7 @@ var cmd_can_read = false;
 var commandServer; 
 
 //each sensor aduino should be added here. 
-const sensorPorts = ['/dev/ttyACM0'];
+const sensorPorts = ['/dev/ttyACM1'];
 
 //sensor info 'stack' to be sent
 var sensorInfo = []; 
@@ -33,14 +108,16 @@ robot.on("open", () => {
 });
 
 //ping pong
+
 var i = 0;
 cmdParser.on('data', data =>{
     console.log('got word from arduino:', data);
     
+    //note that all strings will terminate with \r
     if(data === 'init\r') {
         cmd_can_read = true;   
     }
-
+/*
     if(cmd_can_read) {
         robot.write( i++ + ": hello from node", (err) => {
             if(err) {
@@ -49,6 +126,7 @@ cmdParser.on('data', data =>{
             console.log("message written");
         }); 
     }
+*/
 });
 
 sensorPorts.forEach( (str) => {
@@ -69,10 +147,11 @@ sensorPorts.forEach( (str) => {
             console.log("sensor serial port open");
         });
 
-        //since these are write-only arduinos,
+        //since these are read-only arduinos for the server,
         //we do not need to wait for when we can write to them.
         parser.on('data', data => {
-            sensorInfo.push(data);
+            console.log("sensor info: ", data);
+            //sensorInfo.push(data);
         });
     }
 });
