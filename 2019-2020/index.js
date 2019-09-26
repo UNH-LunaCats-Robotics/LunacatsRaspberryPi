@@ -3,7 +3,6 @@ const rpserver = require('./build/Release/rpserver.node');
 */
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
-const Gamecontroller = require('gamecontroller');
 
 const express = require('express');
 var cors = require('cors')
@@ -15,15 +14,17 @@ var io = require('socket.io')(http);
 //const ctrl = new Gamecontroller('');
 var isTethered = false;
 
-var dev = Gamecontroller.getDevices();
-console.log(dev);
+var gamepad = require('gamepad');
+gamepad.init();
 
-/*
-ctrl.connect(function() {
-    isTethed = true;
-    console.log("Controlle Connected");
-})
-*/
+console.log(gamepad.numDevices());
+for(var i = 0, l = gamepad.numDevices(); i < l; i++) {
+    console.log(i, gamepad.deviceAtIndex())
+    isTethered = true;
+}
+
+console.log(isTethered);
+
 if(!isTethered) {
     app.use(cors())
     app.use(bodyParser.json());
@@ -91,6 +92,61 @@ if(!isTethered) {
     */
 
     exports.server = app;
+} else {
+    setInterval(gamepad.processEvents, 16);
+    setInterval(gamepad.detectDevices, 500);
+
+    /* axis numbers
+        left y axis: 0
+        left x axis: 1
+        right y axis: 3
+        right x axis: 2
+    */
+    //listen for move events on all gamepads
+    gamepad.on("move", function (id, axis, value) {
+        if(axis != 0 || value > 0.1) {
+            console.log("move", {
+                id: id,
+                axis: axis,
+                value: value
+            });
+        }
+    });
+
+    //listen for button up events
+    gamepad.on("up", function(id, num) {
+        console.log("up", {
+            id: id,
+            num: num
+        });
+    });
+
+    /* num for buttons
+        y: 0
+        x: 3
+        a: 2
+        b: 1
+
+        +: 9
+        home: 12
+        square: 13
+        -: 8
+
+        R: 5
+        ZR: 7
+        L: 4
+        ZL: 6
+
+        arrow keys are axis
+        left joystick button: 10
+        right joystick button: 11
+    */
+    gamepad.on('down', function(id, num) {
+        console.log("down", {
+            id: id,
+            num: num
+        });
+    });
 }
 /*
 console.log("--------- C++ Function Examples ---------");
@@ -114,7 +170,7 @@ var sensorInfo = [];
 
 robot.on("error", function(err) {
     console.log('Controller Arduino', err.message);
-    process.exit();
+    //process.exit();
 })
 
 //just because it is open does not mean it is ready to recieve data

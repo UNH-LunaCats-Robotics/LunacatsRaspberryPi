@@ -17,7 +17,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-status-monitor": "^1.2.6",
-    "gamecontroller": "0.0.2",
+    "gamepad": "^1.6.0",
     "node-addon-api": "^1.7.1",
     "serialport": "^7.1.5"
   }
