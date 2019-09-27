@@ -1,31 +1,136 @@
-/*
+//c++ code
 const rpserver = require('./build/Release/rpserver.node');
-*/
+
+//serial port
 const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
 
+//network
 const express = require('express');
-var cors = require('cors')
+var cors = require('cors');
 const bodyParser = require('body-parser');
-
 const app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-//const ctrl = new Gamecontroller('');
+
+//tether
+var gamepad = require('gamepad');
+
+//serial port
+//const robot = new SerialPort('/dev/cu.usbmodem145101', { baudRate: 9600 }); //mac
+var robot; //linux
+var cmdParser;
+var can_write_cmd = false;
+//each sensor aduino should be added here. 
+const sensorPorts = ['/dev/ttyACM1'];
+
+var connectArd = function() {
+    robot = new SerialPort('/dev/ttyACM0', { baudRate: 9600 }); //linux
+    cmdParser = robot.pipe(new Readline({ delimiter: '\n' }));// Read the port data
+    //stop process if arduino cannot be reached
+    robot.on("error", function(err) {
+        can_write_cmd = false;
+        reconnectArd();
+    })
+
+    robot.on("close", () => {
+        console.log("!!!ERROR: LOST CONNECTION TO CONTROLLER!!!");
+        reconnectArd();
+    });
+
+    //just because it is open does not mean it is ready to recieve data
+    robot.on("open", () => {
+        console.log('robot serial port open');
+    });
+
+    //print data recieved from arduino and init.
+    var i = 0;
+    cmdParser.on('data', data =>{
+        console.log('got word from arduino:', data);
+        
+        //note that all strings will terminate with \r
+        if(data === 'init\r') {
+            cmd_can_read = true;   
+        }
+    /*  //ping pong
+        if(cmd_can_read) {
+            robot.write( i++ + ": hello from node", (err) => {
+                if(err) {
+                    return console.log("Error on write: ", err.message);
+                }
+                console.log("message written");
+            }); 
+        }
+    */
+    });
+}
+
+connectArd();
+
+var reconnectArd = function() {
+    setTimeout(function() {
+        console.log("SEARCHING...");
+        connectArd();
+    }, 1000);
+}
+
+//tethered
 var isTethered = false;
 
-var gamepad = require('gamepad');
+//initialize gamepad for input reading
 gamepad.init();
 
-console.log(gamepad.numDevices());
+//display connected controllers
+console.log("Controllers Detected: ", gamepad.numDevices());
 for(var i = 0, l = gamepad.numDevices(); i < l; i++) {
-    console.log(i, gamepad.deviceAtIndex())
+    console.log(i, gamepad.deviceAtIndex());
     isTethered = true;
 }
 
-console.log(isTethered);
+//tether means that the robot will drive from controller connection
+console.log("Tethered Connection:", isTethered);
 
+sensorPorts.forEach( (str) => {
+    //unlike other languages, functions in javascript are allocated on the heap 
+    //  and not a stack, so these variables will remain in the scope of 
+    //  the async functions after the function ends
+    const port = new SerialPort(str, { baudRate: 9600 });
+    const parser = port.pipe(new Readline({ delimiter: '\n' }));// Read the port data
+    var no_error = true;
+
+    port.on('error', function(err) {
+        console.log("Sensor", err.message);
+        no_error = false;
+    })
+
+    if(no_error) {
+        port.on("open", () => {
+            console.log("sensor serial port open");
+        });
+
+        //since these are read-only arduinos for the server,
+        //we do not need to wait for when we can write to them.
+        parser.on('data', data => {
+            console.log("sensor info: ", data);
+        });
+    }
+});
+
+/* 
+//post data from the sensorInfo stack every 20 ms
+//probably a better way, so don't use this.
+setInterval(function() {
+    if(sensorInfo.length != 0) {
+        console.log(sensorInfo);
+        console.log("data: ", sensorInfo.pop());
+    }
+}, 20);
+*/
+
+//create server to host if not tethered and socket connection
 if(!isTethered) {
+    //note that everything set up currently is for testing how
+    //express and serialio works here.
     app.use(cors())
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({  extended: true }));
@@ -92,19 +197,29 @@ if(!isTethered) {
     */
 
     exports.server = app;
-} else {
+} 
+//if tethered, control robot using commands 
+else {
+    //create intervals that will call the functions repeatedly
     setInterval(gamepad.processEvents, 16);
-    setInterval(gamepad.detectDevices, 500);
+    setInterval(gamepad.detectDevices, 500); //this needs fix
 
     /* axis numbers
-        left y axis: 0
-        left x axis: 1
-        right y axis: 3
-        right x axis: 2
+        Left JoyStick: [0,1]
+            left y axis: 1
+            left x axis: 0
+        *
+        Right Joystick: [2,3]
+            right y axis: 3
+            right x axis: 2
+        * 
+        Arrow Buttons: [4,5]
+            arrow y axis:
+            arrow x axis: 
     */
     //listen for move events on all gamepads
     gamepad.on("move", function (id, axis, value) {
-        if(axis != 0 || value > 0.1) {
+        if(value > 0.1 || -value > 0.1) {
             console.log("move", {
                 id: id,
                 axis: axis,
@@ -119,27 +234,36 @@ if(!isTethered) {
             id: id,
             num: num
         });
+        
+        robot.write( "{ \"id\": "+id+", \"num\": "+num+" }", (err) => {
+            if(err) {
+                return console.log("Error on write: ", err.message);
+            }
+        });
     });
 
     /* num for buttons
-        y: 0
-        x: 3
-        a: 2
-        b: 1
+        Four Main Buttons: [0-3]
+            y: 0
+            b: 1
+            a: 2
+            x: 3
 
-        +: 9
-        home: 12
-        square: 13
-        -: 8
+        Center Buttons: [8,9],[12,13]
+            +: 9
+            home: 12
+            square: 13
+            -: 8
 
-        R: 5
-        ZR: 7
-        L: 4
-        ZL: 6
+        Trigger Buttons: [4-7]
+            L: 4
+            R: 5
+            ZL: 6
+            ZR: 7
 
-        arrow keys are axis
-        left joystick button: 10
-        right joystick button: 11
+        Joystick Buttons: [10,11]
+            left: 10
+            right: 11
     */
     gamepad.on('down', function(id, num) {
         console.log("down", {
@@ -148,95 +272,12 @@ if(!isTethered) {
         });
     });
 }
-/*
+
 console.log("--------- C++ Function Examples ---------");
 console.log("rpserver: ", rpserver);
 console.log("Hello World: ", rpserver.helloWorld());
 console.log("Add 2 + 3: ", rpserver.add(2,3));
 console.log("-----------------------------------------");
-*/
-//this is the main robot controller arduino that moves the arduino
 
-const robot = new SerialPort('/dev/cu.usbmodem145101', { baudRate: 9600 });
-const cmdParser = robot.pipe(new Readline({ delimiter: '\n' }));// Read the port data
-var cmd_can_read = false;
-var commandServer; 
-
-//each sensor aduino should be added here. 
-const sensorPorts = ['/dev/ttyACM1'];
-
-//sensor info 'stack' to be sent
-var sensorInfo = []; 
-
-robot.on("error", function(err) {
-    console.log('Controller Arduino', err.message);
-    //process.exit();
-})
-
-//just because it is open does not mean it is ready to recieve data
-robot.on("open", () => {
-    console.log('robot serial port open');
-});
-
-//ping pong
-
-var i = 0;
-cmdParser.on('data', data =>{
-    console.log('got word from arduino:', data);
-    
-    //note that all strings will terminate with \r
-    if(data === 'init\r') {
-        cmd_can_read = true;   
-    }
-/*
-    if(cmd_can_read) {
-        robot.write( i++ + ": hello from node", (err) => {
-            if(err) {
-                return console.log("Error on write: ", err.message);
-            }
-            console.log("message written");
-        }); 
-    }
-*/
-});
-
-sensorPorts.forEach( (str) => {
-    //unlike other languages, functions in javascript are allocated on the heap 
-    //  and not a stack, so these variables will remain in the scope of 
-    //  the async functions after the function ends
-    const port = new SerialPort(str, { baudRate: 9600 });
-    const parser = port.pipe(new Readline({ delimiter: '\n' }));// Read the port data
-    var no_error = true;
-
-    port.on('error', function(err) {
-        console.log("Sensor", err.message);
-        no_error = false;
-    })
-
-    if(no_error) {
-        port.on("open", () => {
-            console.log("sensor serial port open");
-        });
-
-        //since these are read-only arduinos for the server,
-        //we do not need to wait for when we can write to them.
-        parser.on('data', data => {
-            console.log("sensor info: ", data);
-            //sensorInfo.push(data);
-        });
-    }
-});
-
-/* 
-//post data from the sensorInfo stack every 20 ms
-//probably a better way, so don't use this.
-setInterval(function() {
-    if(sensorInfo.length != 0) {
-        console.log(sensorInfo);
-        console.log("data: ", sensorInfo.pop());
-    }
-}, 20);
-*/
-/*
 module.exports = rpserver;
-*/
+
