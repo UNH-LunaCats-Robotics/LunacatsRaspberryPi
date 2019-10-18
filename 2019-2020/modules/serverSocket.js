@@ -5,6 +5,8 @@ var io = require('socket.io')(http);
 
 var port = 3002;
 
+var cmd = "";
+
 io.on('connection', function(socket) {
     console.log('a user connected: '+socket);
     socket.on('subscribeToTimer', (interval) => {
@@ -20,7 +22,12 @@ var connectSocket = function(){
     console.log("listening on port ", port);
 }
 
+var getCommand = function() {
+    return cmd;
+}
+
 module.exports = {
     io: io,
-    connectSocket: connectSocket
+    connectSocket: connectSocket,
+    getCommand: getCommand
 }
