@@ -1,11 +1,12 @@
 //documentation: https://socket.io/
 var app = require('./server.js').app;
+var commands = require('./commands.js');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var port = 3002;
 
-var cmd = "";
+var cmd = commands.STOP;
 
 io.on('connection', function(socket) {
     console.log('a user connected: '+socket);
