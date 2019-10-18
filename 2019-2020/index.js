@@ -1,5 +1,5 @@
 //c++ code
-const rpserver = require('./build/Release/rpserver.node');
+//const rpserver = require('./build/Release/rpserver.node');
 
 //serial port
 const arduino = require('./modules/arduino.js');
@@ -31,28 +31,34 @@ console.log("Tethered Connection:", controller.isTethered);
 serverSocket.connectSocket();
 exports.server = sensorServer.app;
 
+/*
 console.log("--------- C++ Function Examples ---------");
 console.log("rpserver: ", rpserver);
 console.log("Hello World: ", rpserver.helloWorld());
 console.log("Add 2 + 3: ", rpserver.add(2,3));
 console.log("-----------------------------------------");
+*/
+
+var prevCmd = "";
 
 //send the commands from the controller or the server to the arduino
 setInterval(() => {
+    var curCmd = "";
     if(controller.isTethered) {
-        robot.write(controller.getCommand(), (err) => {
-            if(err) {
-                return console.log("Error on write: ", err.message);
-            }
-            //console.log("message written");
-        });
+        curCmd = controller.getCommand();
     } else {
-        robot.write(serverSocket.getCommand(), (err) => {
+        curCmd = serverSocket.getCommand();
+    }
+
+    if(prevCmd !== curCmd) {
+        robot.write(curCmd, (err) => {
             if(err) {
                 return console.log("Error on write: ", err.message);
             }
             //console.log("message written");
         });
+        console.log(curCmd);
+        prevCmd = curCmd;
     }
 }, 20);
 

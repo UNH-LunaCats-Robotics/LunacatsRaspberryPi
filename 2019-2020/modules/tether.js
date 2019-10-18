@@ -66,17 +66,17 @@ function setButton(id, value) {
 
 function setAxis(id, val) {
     switch(id) {
-        case 0: state.left_x = val;
+        case 0: state.left_y = -val;
             break;
-        case 1: state.left_y = -val;
+        case 1: state.left_x = val;
             break;
-        case 2: state.right_x = val;
+        case 2: state.right_y = -val;
             break;
-        case 3: state.right_y = -val;
+        case 3: state.right_x = val;
             break;
-        case 4: state.arrow_x = val;
+        case 4: state.arrow_y = -val;
             break;
-        case 5: state.arrow_y = val;
+        case 5: state.arrow_x = val;
             break;
     }
 }

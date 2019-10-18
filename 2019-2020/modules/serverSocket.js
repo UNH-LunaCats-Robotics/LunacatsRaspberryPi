@@ -16,6 +16,18 @@ io.on('connection', function(socket) {
             socket.emit('timer', new Date());
         }, interval);
     });
+
+    socket.on('button', (value) => {
+        console.log('button', value);
+        //cmd = commands.RAISE_F
+
+    });
+
+    //joystick event: joystick 45 -> L:45:0
+    socket.on('joystick', (angle) => {
+        console.log('joystick', angle);
+
+     });
 });
 
 var connectSocket = function(){
