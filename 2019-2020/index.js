@@ -55,7 +55,7 @@ setInterval(() => {
             if(err) {
                 return console.log("Error on write: ", err.message);
             }
-            //console.log("message written");
+            console.log("Command sent: ", curCmd);
         });
         console.log(curCmd);
         prevCmd = curCmd;
