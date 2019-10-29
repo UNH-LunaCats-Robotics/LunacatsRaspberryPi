@@ -61,16 +61,16 @@ function setAxisCommand(str){
   }
   else{
     if(angle >= 0 && angle < 45 || angle >= 315 && angle < 360){
-      cmd = commands.RIGHT;
+      cmd = commands.FORWARD;
     }
     else if(angle >= 45 && angle <= 135){
-      cmd = commands.FORWARD;
+      cmd = commands.LEFT;
     }
     else if(angle > 135 && angle < 225){
-      cmd = commands.FORWARD;
+      cmd = commands.BACK;
     }
     else{
-      cmd = commands.BACK;
+      cmd = commands.RIGHT;
     }
   }
 }
@@ -105,8 +105,6 @@ var connectSocket = function(){
 }
 
 var getCommand = function() {
-    //local test
-    //setButtonCommand(str);
     return cmd;
 }
 
