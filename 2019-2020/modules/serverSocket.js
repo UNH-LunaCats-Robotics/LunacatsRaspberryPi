@@ -20,7 +20,7 @@ function setButtonCommand(str){
     cmd = commands.STOP;
   }else{//key down
     switch(id){
-    case 'Y': cmd = comands.Move.BALL_SCREW_DN;
+    case 'Y': cmd = comands.BALL_SCREW_DN;
       break;
     case 'B': cmd = commands.BALL_SCREW_UP;
       break;
@@ -50,22 +50,28 @@ function setButtonCommand(str){
 }
 
 //string format -> L:45:0
-function setAxis(str){
+function setAxisCommand(str){
   var tmp = str.split(":", 3)
   //tmp[0]
   var angle = tmp[1]
   var on = tmp[2]
-  if(angle >= 0 && angle < 45 || angle >= 315 && angle < 360){
-    cmd = commands.RIGHT;
-  }
-  else if(angle >= 45 && angle <= 135){
-    cmd = commands.FORWARD;
-  }
-  else if(angle > 135 && angle < 225){
-    cmd = commands.FORWARD;
+  
+  if(on == 0){//key up, stop
+    cmd = commands.STOP;
   }
   else{
-    cmd = commands.BACK;
+    if(angle >= 0 && angle < 45 || angle >= 315 && angle < 360){
+      cmd = commands.RIGHT;
+    }
+    else if(angle >= 45 && angle <= 135){
+      cmd = commands.FORWARD;
+    }
+    else if(angle > 135 && angle < 225){
+      cmd = commands.FORWARD;
+    }
+    else{
+      cmd = commands.BACK;
+    }
   }
 }
 
