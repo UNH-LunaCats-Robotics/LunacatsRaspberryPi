@@ -3,15 +3,15 @@ const SerialPort = require('serialport');
 const Readline = require('@serialport/parser-readline');
 
 //serial port
-//const robot = new SerialPort('/dev/cu.usbmodem145101', { baudRate: 9600 }); //mac
+//const robot = new SerialPort('/dev/cu.usbmodem145101', { baudRate: 115200 }); //mac
 var robot; //linux
 var cmdParser;
 var can_write_cmd = false;
 //each sensor aduino should be added here. 
-const sensorPorts = ['/dev/ttyACM1'];
+//const sensorPorts = ['/dev/ttyACM1'];
 
 var connectArd = function() {
-    robot = new SerialPort('/dev/ttyACM0', { baudRate: 9600 }); //linux
+    robot = new SerialPort('/dev/ttyACM0', { baudRate: 115200 }); //linux
     cmdParser = robot.pipe(new Readline({ delimiter: '\n' }));// Read the port data
     //stop process if arduino cannot be reached
     robot.on("error", function(err) {
@@ -93,4 +93,5 @@ module.exports = {
     connectArd: connectArd,
     reconnectArd: reconnectArd,
     robot: robot,
+    parser: cmdParser
 };

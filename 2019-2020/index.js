@@ -16,7 +16,7 @@ var controller = require('./modules/tether.js');
 //this is how you can write to the arduino
 setTimeout(() => {
     console.log("writing...");
-    robot.write("hello", (err) => {
+    robot.write("init", (err) => {
         if(err) {
             return console.log("Error on write: ", err.message);
         }
@@ -39,6 +39,7 @@ console.log("Add 2 + 3: ", rpserver.add(2,3));
 console.log("-----------------------------------------");
 */
 
+/*
 var prevCmd = "";
 
 //send the commands from the controller or the server to the arduino
@@ -61,5 +62,5 @@ setInterval(() => {
         prevCmd = curCmd;
     }
 }, 20);
-
+*/
 

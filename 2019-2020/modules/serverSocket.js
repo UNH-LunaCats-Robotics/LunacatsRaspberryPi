@@ -1,6 +1,6 @@
 //documentation: https://socket.io/
 var app = require('./server.js').app;
-var commands = require('./commands.js');
+var commands = require('./commands.js').old;
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 

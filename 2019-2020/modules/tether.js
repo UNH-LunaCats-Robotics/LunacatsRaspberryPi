@@ -1,5 +1,9 @@
 var gamepad = require('gamepad');
-var Move = require('./commands.js');
+var Move = require('./commands.js').cmds;
+var ctrl = require('./commands').controller;
+
+const arduino = require('./arduino.js');
+var robot = arduino.robot;
 
 //tethered
 var isTethered = false;
@@ -30,57 +34,82 @@ var state = {
 //tolerance for deciding driving and direction
 var tolerance = 0.5;
 
+function getBtnCommand(id) {
+    switch(id) {
+        case ctrl.Y:  return Move.BALL_SCREW_DN;
+        case ctrl.B:  return Move.BALL_SCREW_UP;
+        case ctrl.A:  return Move.TURN_AUGUR_CW;
+        case ctrl.X:  return Move.TURN_AUGUR_CCW;
+
+        case ctrl.L:  return Move.CONVEYOR_EMPTY;
+        case ctrl.R:  return Move.LOWER_ACTUATOR;
+        case ctrl.ZL: return Move.CONVEYOR_COLLECT;
+        case ctrl.ZR: return Move.RAISE_ACTUATOR;
+
+        case ctrl.MINUS: return Move.INCREASE_SPEED;
+        case ctrl.PLUS:  return Move.DECREASE_SPEED;
+
+        case ctrl.HOME: return Move.STOP;
+        /*
+        case ctrl.JOYSTICK_L: break;
+        case ctrl.JOYSTICK_R: break;
+        case ctrl.SQUARE: break;
+        */
+    }
+}
+
 function setButton(id, value) {
     switch(id) {
-        case 0: state.y = value;
-            break;
-        case 1: state.b = value;
-            break;
-        case 2: state.a = value;
-            break;
-        case 3: state.x = value;
-            break;
-        case 4: state.L = value;
-            break;
-        case 5: state.R = value;
-            break;
-        case 6: state.ZL = value;
-            break;
-        case 7: state.ZR = value;
-            break;
-        case 8: state.minus = value;
-            break;
-        case 9: state.plus = value;
-            break;
-        case 10: state.joystick_left = value;
-            break;
-        case 11: state.joystick_right = value;
-            break;
-        case 12: //home
-            break;
-        case 13: //square
-            break;
-        
+        case ctrl.Y:  state.y = value;     break;
+        case ctrl.B:  state.b = value;     break;
+        case ctrl.A:  state.a = value;     break;
+        case ctrl.X:  state.x = value;     break;
+
+        case ctrl.L:  state.L = value;     break;
+        case ctrl.R:  state.R = value;     break;
+        case ctrl.ZL: state.ZL = value;    break;
+        case ctrl.ZR: state.ZR = value;    break;
+
+        case ctrl.MINUS: state.minus = value; break;
+        case ctrl.PLUS:  state.plus = value;  break;
+
+        case ctrl.JOYSTICK_L: state.joystick_left = value;  break;
+        case ctrl.JOYSTICK_R: state.joystick_right = value; break;
+
+        case ctrl.HOME: /*home*/           break;
+        case ctrl.SQUARE: /*square*/       break;
     }
 }
 
 function setAxis(id, val) {
     switch(id) {
-        case 0: state.left_y = -val;
-            break;
-        case 1: state.left_x = val;
-            break;
-        case 2: state.right_y = -val;
-            break;
-        case 3: state.right_x = val;
-            break;
-        case 4: state.arrow_y = -val;
-            break;
-        case 5: state.arrow_x = val;
-            break;
+        case ctrl.left_y: state.left_y = -val;   break;
+        case ctrl.left_x: state.left_x = val;    break;
+        case ctrl.right_y: state.right_y = -val; break;
+        case ctrl.right_x: state.right_x = val;  break;
+        case ctrl.arrow_y: state.arrow_y = -val; break;
+        case ctrl.arrow_x: state.arrow_x = val;  break;
     }
 }
 
+function writeButton(id, val) {
+    var cmd = getBtnCommand(id);
+    if(cmd) {
+        if(cmd == Move.STOP) {
+            robot.write(cmd, (err) => {
+                if(err) return console.error("Error on write: ", err.message);
+                console.log(cmd+" - message written");
+            });
+        }
+        var action = cmd + ":" + val;
+        robot.write(action, (err) => {
+            if(err) return console.log("Error on write: ", err.message);
+            console.log(action+" - message written");
+        });
+    }
+}
+
+/*
 function getCommand() {
     if(!isTethered) return Move.STOP;
 
@@ -108,6 +137,22 @@ function getCommand() {
     if(state.minus) moveCmd = Move.DECREASE_SPEED;
 
     return moveCmd;
+}
+*/
+
+function angle(cx, cy, ex, ey) {
+    var dy = ey - cy;
+    var dx = ex - cx;
+    var theta = Math.atan2(dy, dx); // range (-PI, PI]
+    //theta *= 180 / Math.PI; // rads to degs, range (-180, 180]
+    //if (theta < 0) theta = 360 + theta; // range [0, 360)
+    return theta;
+  }
+
+function writeAxis(axis) {
+    if(axis != ctrl.left_y && axis != ctrl.left_x) {
+        
+    }
 }
 
 /* axis numbers
@@ -138,7 +183,7 @@ gamepad.on("move", function (id, axis, value) {
 //listen for button up events
 gamepad.on("up", function(id, num) {
     setButton(num, false);
-
+    writeButton(num, 0);
     console.log("up", {
         id: id,
         num: num
@@ -170,6 +215,8 @@ gamepad.on("up", function(id, num) {
 */
 gamepad.on('down', function(id, num) {
     setButton(num, true);
+    writeButton(num, 1);
+
     console.log("down", {
         id: id,
         num: num
@@ -200,6 +247,5 @@ setInterval(() => {
 
 module.exports = {
     state: state,
-    isTethered: isTethered,
-    getCommand: getCommand
+    isTethered: isTethered
 };
