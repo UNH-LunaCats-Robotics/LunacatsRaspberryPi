@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include <math.h>
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -61,6 +62,14 @@ void ofApp::draw(){
 	cout << "signalStrength = " << signalStrength << ", ";
 
 	cout << endl;
+}
+
+double ofApp::getXlength(double angle, double strightDistance){
+	double pi = 3.14159265;
+	double sinangle = sin (angle * pi / 180);
+	cout << "The sin of angle is " << sinangle << " for strightDistance";
+	double xlength = sinangle * strightDistance;
+	return xlength;
 }
 
 //--------------------------------------------------------------
