@@ -73,6 +73,15 @@ double ofApp::getXlength(double angle, double straightDistance){
 	return xlength;
 }
 
+// Get the straight distance
+double ofApp::getHeight(double angle, double straightDistance){
+	double pi = 3.14159265;
+	double sinangle = cos (angle * pi / 180);
+	cout << "The cos of angle is " << sinangle << " for strightDistance";
+	double hlength = sinangle * straightDistance;
+	return hlength;
+}
+
 // straightDistance is the distance from the lidar to the rock
 // HereY is the Y of the current position
 // UR means up right
