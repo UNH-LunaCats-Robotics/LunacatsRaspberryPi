@@ -3,6 +3,7 @@ var app = require('./server.js').app;
 var commands = require('./commands.js').old;
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+const rpserver = require('../build/Release/rpserver.node');
 
 var port = 3002;
 
@@ -97,6 +98,15 @@ io.on('connection', function(socket) {
         setAxisCommand(angle);
         console.log('joystick', angle);
      });
+
+     var n = 0;
+     setInterval( () => {
+       var p = new rpserver.Point(n, n, 0);
+       var res = p.X() + ":" + p.Y() + ":" + p.Z();
+       socket.emit('lidar', res);
+       n++;
+       console.log("X: ", p.X(), " Y: ", p.Y(), " Z: ", p.Z());
+     }, 1000);
 });
 
 var connectSocket = function(){

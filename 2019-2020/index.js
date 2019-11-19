@@ -1,6 +1,6 @@
 //c++ code
 const rpserver = require('./build/Release/rpserver.node');
-/*
+
 //serial port
 const arduino = require('./modules/arduino.js');
 var robot = arduino.robot;
@@ -17,7 +17,6 @@ console.log("Tethered Connection:", controller.isTethered);
 
 serverSocket.connectSocket();
 exports.server = sensorServer.app;
-*/
 
 console.log("--------- C++ Function Examples ---------");
 console.log("rpserver: ", rpserver);
