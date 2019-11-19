@@ -117,7 +117,7 @@ double ofApp::getYforUR(double angle, double straightDistance, double hereY){
 }
 
 // straightDistance is the distance from the lidar to the rock
-// HereY is the Y of the current position
+// HereX is the X of the current position
 // UR means up right
 double ofApp::getXforUR(double angle, double straightDistance, double hereX){
 	double pi = 3.14159265;
@@ -154,7 +154,7 @@ double ofApp::getXforUR(double angle, double straightDistance, double hereX){
 }
 
 // straightDistance is the distance from the lidar to the rock
-// HereY is the Y of the current position
+// HereX is the X of the current position
 // UL means up Left
 double ofApp::getXforUL(double angle, double straightDistance, double hereX){
 	double pi = 3.14159265;
