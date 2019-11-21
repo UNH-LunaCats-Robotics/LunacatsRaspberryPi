@@ -6,12 +6,13 @@ var http = require('http').Server(app);
 
 const arduino = require('./arduino.js');
 var robot = arduino.robot;
+var io = require('socket.io')(http);
+const rpserver = require('../build/Release/rpserver.node');
 
 var port = 3002;
-var io = require('socket.io')(3002);
 
-
-function sendToArduino(cmd, val){
+// assemble message and send to the robot
+function sendToRobot(cmd, val){
   var action = cmd + ":" + val;
   //write to robot
   console.log("(remote control) sending message -> " + action);
@@ -31,7 +32,7 @@ function sendButtonCommand(str){
   if(Object.values(commands).indexOf(cmd) == -1){
     console.log("??? Invalid command -> " + cmd + " ???");
   }else{
-    sendToArduino(cmd, on);
+    sendToRobot(cmd, on);
   }
   
 }
@@ -44,11 +45,11 @@ function sendAxisCommand(str){
   var angle = tmp[1]
   var on = tmp[2]
 
-  sendToArduino(commands.MOVE, angle);
+  sendToRobot(commands.MOVE, angle);
 }
 
 var connectSocket = function(){
-  //io.listen(port);
+  io.listen(port);
   console.log("listening on port ", port);
   
   //connection event
@@ -64,8 +65,24 @@ var connectSocket = function(){
     socket.on('joystick', (angle) => {
       sendAxisCommand(angle);
     });
-  });
     
+    /*
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     * Rui: did not see this new update, found conflict and moved them here
+     * Hopefully it still works.
+     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     */
+    var n = 0;
+     setInterval( () => {
+       var p = new rpserver.Point(n, n, 0);
+       var res = p.X() + ":" + p.Y() + ":" + p.Z();
+       socket.emit('lidar', res);
+       n++;
+       console.log("X: ", p.X(), " Y: ", p.Y(), " Z: ", p.Z());
+     }, 1000);  
+     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  });
 }
 
 var getCommand = function() {
