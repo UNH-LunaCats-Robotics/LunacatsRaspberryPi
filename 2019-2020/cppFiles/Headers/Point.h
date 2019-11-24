@@ -1,7 +1,10 @@
 #include <string>
+#include <iostream>
 
 #ifndef POINT
 #define POINT
+
+using namespace std;
 
 //we can expand on this class later
 class Point {
@@ -20,7 +23,16 @@ public:
                +", \"z\":"+std::to_string(z_)+"}";
         return res;
     }
-private:
+
+    Point& operator=(const Point& r);
+    Point operator*(float factor) const;
+    friend Point operator*(float factor, const Point& other);
+    Point operator/(float factor) const;
+    Point& operator*=(float amount);
+    Point& operator/=(float amount);
+    friend ostream& operator<<(ostream& os,const Point& m);
+    friend istream& operator>>(istream& is, Point& p);
+protected:
     float x_;
     float y_;
     float z_;
