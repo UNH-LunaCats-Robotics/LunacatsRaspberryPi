@@ -22,6 +22,7 @@ console.log("--------- C++ Function Examples ---------");
 console.log("rpserver: ", rpserver);
 console.log("Hello World: ", rpserver.helloWorld());
 console.log("Add 2 + 3: ", rpserver.add(2,3));
+console.log("getPoint: ", JSON.parse(rpserver.getPoint()));
 const p = new rpserver.Point(1, 2, 3);
 console.log("Point: ", p);
 console.log("X: ", p.X(), " Y: ", p.Y(), " Z: ", p.Z());

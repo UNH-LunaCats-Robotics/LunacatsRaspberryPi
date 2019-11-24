@@ -13,7 +13,7 @@ namespace serverFunctions {
     //[JS equivalent] FunctionWrap(const Napi::CallbackInfo& info );
     Napi::String HelloWrapped(const Napi::CallbackInfo& info);
     Napi::Number AddWrapped(const Napi::CallbackInfo& info);
-    //Napi::Object GetPointWrapped(const Napi::CallbackInfo& info);
+    Napi::String GetPointWrapped(const Napi::CallbackInfo& info);
 
     //returns functions
     Napi::Object Init(Napi::Env env, Napi::Object exports);

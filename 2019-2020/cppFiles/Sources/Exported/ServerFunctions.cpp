@@ -1,6 +1,8 @@
 #include "../../Headers/Exported/ServerFunctions.h"
 
-std::string serverFunctions::helloWorld() {
+using namespace std;
+
+string serverFunctions::helloWorld() {
     return "Hello World!";
 }
 
@@ -8,8 +10,9 @@ int serverFunctions::add(int a, int b) {
     return a+b;
 }
 
+//example of function that returns points
 Point serverFunctions::getPoint() {
-    return Point(1.0f,2.0f,3.0f);
+    return Point(1.5f,2.0f,3.0f);
 }
 
 Napi::String serverFunctions::HelloWrapped(const Napi::CallbackInfo& info) {
@@ -34,29 +37,19 @@ Napi::Number serverFunctions::AddWrapped(const Napi::CallbackInfo &info){
     return Napi::Number::New(env, returnVal);
 }
 
-//currently still working on this
-/*
-Napi::Object serverFunctions::GetPointWrapped(const Napi::CallbackInfo &info) {
+Napi::String serverFunctions::GetPointWrapped(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
-    if(info.Length() != 0) {
-        Napi::TypeError::New(env, "No Arguments Expected").ThrowAsJavaScriptException();
-    }
 
-    Point *p = new Point();
-    Point get = getPoint();
-    p->set(get.X(), get.Y(), get.Z());
+    Point p = getPoint();
+    string res = static_cast<string>(p);
+    Napi::String returnValue = Napi::String::New(env, res);
 
-    Napi::ObjectWrap<PointWrapper> pt = PointWrapper(p, info);
-    Napi::Object res = Napi::Object::New(env);
-
-    res.Set("Point", pt);
-    return res;
+    return returnValue;
 }
-*/
 
 Napi::Object serverFunctions::Init(Napi::Env env, Napi::Object exports) {
     exports.Set("helloWorld", Napi::Function::New(env, serverFunctions::HelloWrapped));
     exports.Set("add", Napi::Function::New(env, serverFunctions::AddWrapped));
-    //exports.Set("getPoint", Napi::Function::New(env, serverFunctions::GetPointWrapped));
+    exports.Set("getPoint", Napi::Function::New(env, serverFunctions::GetPointWrapped));
     return exports;
 }
