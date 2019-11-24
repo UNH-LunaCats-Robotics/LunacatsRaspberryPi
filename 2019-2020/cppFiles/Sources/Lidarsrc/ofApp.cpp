@@ -2,10 +2,10 @@
 #include <math.h>
 
 //--------------------------------------------------------------
-void ofApp::setup(){
+void ofApp::setup(bool fasti2c, int i2c){
 	cout << "Here is the start of file" << endl;
 	myLidarLite = LidarLite();
-	myLidarLite.begin();
+	myLidarLite.begin(0, fasti2c, true, i2c);
 
 	// Exit if the lidar lite didn't initialize properly
 	if (!myLidarLite.hasBegun()) ofApp::exit();
