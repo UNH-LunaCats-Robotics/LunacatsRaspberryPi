@@ -10,6 +10,7 @@ var io = require('socket.io')(http);
 const rpserver = require('../build/Release/rpserver.node');
 
 var port = 3002;
+var connections = 0;
 
 // assemble message and send to the robot
 function sendToRobot(cmd, val){
@@ -55,7 +56,7 @@ var connectSocket = function(){
   //connection event
   io.on('connection', function(socket) {
     console.log('a user connected: '+ socket);
-  
+    connections++;
     //button event: A button down -> A:0
     socket.on('button', (value) => {
       sendButtonCommand(value);
@@ -80,6 +81,7 @@ var connectSocket = function(){
 
     socket.on('disconnect', ()=>{
       console.log('user disconnected');
+      connections--;
       clearInterval(testPoints);
     });
   });
@@ -97,7 +99,12 @@ io.on('reconnect', (attempt) => {
   console.log("attempting to reconnect");
 })
 
+function getConnections() {
+  return connections;
+}
+
 module.exports = {
     io: io,
-    connectSocket: connectSocket
+    connectSocket: connectSocket,
+    getConnections: getConnections
 }

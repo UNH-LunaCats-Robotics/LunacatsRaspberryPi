@@ -3,6 +3,10 @@ var cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
 
+var controller = require('./tether.js');
+var socket = require('./serverSocket');
+var robot = require('./arduino.js');
+
 //note that everything set up currently is for testing how
 //express and serialio works here.
 app.use(cors())
@@ -40,11 +44,23 @@ app.listen(port, () => {
 app.get('/', function (req, res) {
     res.send('System Active!');
 });
-var n = 0;
+
 app.get('/status', cors(webserver.cors), function(req, res, next) {
-    console.log("got a message")
-    res.json({msg: n});
-    n++;
+    //console.log("got a message")
+    var status = {
+        arduino: {
+            connected: robot.isConnected() ? 1:0,
+            can_write: robot.canWrite() ? 1:0
+        },
+        socket: socket.getConnections() ? 1:0,
+        tethered: controller.isTethered() ? 1:0
+    }
+    
+    if(controller.isTethered()) {
+        status["state"] = controller.state;
+    }
+
+    res.json(status);
 });
 
 /*

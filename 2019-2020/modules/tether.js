@@ -242,7 +242,11 @@ setInterval(() => {
     }
 }, 500);
 
+function getTethered() {
+    return isTethered;
+}
+
 module.exports = {
     state: state,
-    isTethered: isTethered
+    isTethered: getTethered
 };

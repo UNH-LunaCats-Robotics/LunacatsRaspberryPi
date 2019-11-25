@@ -1,6 +1,6 @@
 
 function callRest() {
-    var apiUrl = "http://localhost:3001/status";
+    var apiUrl = "http://localhost:3001/";
     fetch(apiUrl).then(response => {
         var data = {};
 

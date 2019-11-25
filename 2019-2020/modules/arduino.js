@@ -7,6 +7,8 @@ const Readline = require('@serialport/parser-readline');
 var robot; //linux
 var cmdParser;
 var can_write_cmd = false;
+var isConnected = false;
+
 //each sensor aduino should be added here. 
 //const sensorPorts = ['/dev/ttyACM1'];
 
@@ -16,17 +18,21 @@ var connectArd = function() {
     //stop process if arduino cannot be reached
     robot.on("error", function(err) {
         can_write_cmd = false;
+        isConnected = false;
         reconnectArd();
     })
 
     robot.on("close", () => {
         console.log("!!!ERROR: LOST CONNECTION TO CONTROLLER!!!");
+        can_write_cmd = false;
+        isConnected = false;
         reconnectArd();
     });
 
     //just because it is open does not mean it is ready to recieve data
     robot.on("open", () => {
         console.log('robot serial port open');
+        isConnected = true;
     });
 
     //print data recieved from arduino and init.
@@ -98,9 +104,18 @@ sensorPorts.forEach( (str) => {
 });
 */
 
+function getConnected() {
+    return isConnected;
+}
+
+function getCanWrite() {
+    return can_write_cmd;
+}
+
 module.exports = {
     connectArd: connectArd,
     reconnectArd: reconnectArd,
     robot: robot,
-    parser: cmdParser
+    isConnected: getConnected,
+    canWrite: getCanWrite
 };
