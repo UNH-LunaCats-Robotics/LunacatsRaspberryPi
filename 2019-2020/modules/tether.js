@@ -31,9 +31,6 @@ var state = {
     minus: false
 }
 
-//tolerance for deciding driving and direction
-var tolerance = 0.5;
-
 function getBtnCommand(id) {
     switch(id) {
         case ctrl.Y:  return Move.BALL_SCREW_DN;
@@ -150,7 +147,7 @@ function angle(cx, cy, ex, ey) {
   }
 
 function writeAxis(axis) {
-    if(axis != ctrl.left_y && axis != ctrl.left_x) {
+    if(axis == ctrl.left_y || axis == ctrl.left_x) {
         
     }
 }

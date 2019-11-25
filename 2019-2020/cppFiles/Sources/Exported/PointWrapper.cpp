@@ -18,10 +18,6 @@ Napi::Object PointWrapper::Init(Napi::Env env, Napi::Object exports) {
     return exports;
 }
 
-PointWrapper::PointWrapper(Point* p, const Napi::CallbackInfo& info):Napi::ObjectWrap<PointWrapper>(info) {
-    this->actualClass_ = p;
-}
-
 PointWrapper::PointWrapper(const Napi::CallbackInfo& info):Napi::ObjectWrap<PointWrapper>(info) {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);

@@ -60,6 +60,15 @@ var reconnectArd = function() {
 
 connectArd();
 
+var lastCommand = {
+    cmd: "",
+    success: "pending"
+}
+
+function writeToRobot(cmd) {
+    
+}
+
 
 /* //quickly looking like we wont need this
 sensorPorts.forEach( (str) => {

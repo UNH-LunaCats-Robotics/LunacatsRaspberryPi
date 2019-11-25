@@ -65,32 +65,39 @@ var connectSocket = function(){
     socket.on('joystick', (angle) => {
       sendAxisCommand(angle);
     });
-    
-    /*
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     * Rui: did not see this new update, found conflict and moved them here
-     * Hopefully it still works.
-     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     */
+
+    //this function still works!
     var n = 0;
-     setInterval( () => {
-       var p = new rpserver.Point(n, n, 0);
-       var res = p.X() + ":" + p.Y() + ":" + p.Z();
-       socket.emit('lidar', res);
-       n++;
-       console.log("X: ", p.X(), " Y: ", p.Y(), " Z: ", p.Z());
-     }, 1000);  
-     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    var testPoints = setInterval( () => {
+      var z = Math.random()*20;
+      if(n%2) z = -z;
+      var p = new rpserver.Point(Math.random()*380, Math.random()*252, z);
+      var res = p.X() + ":" + p.Y() + ":" + p.Z();
+      socket.emit('lidar', res);
+      n++;
+      //console.log("n: ", n, " X: ", p.X(), " Y: ", p.Y(), " Z: ", p.Z());
+    }, 20);  
+
+    socket.on('disconnect', ()=>{
+      console.log('user disconnected');
+      clearInterval(testPoints);
+    });
   });
 }
 
-var getCommand = function() {
-    return cmd;
-}
+io.on('connect_error', (err) => {
+  console.log("something went wrong with the connection");
+})
+
+io.on('connect_timeout', () => { 
+  console.log("connection timed out");
+})
+
+io.on('reconnect', (attempt) => {
+  console.log("attempting to reconnect");
+})
 
 module.exports = {
     io: io,
-    connectSocket: connectSocket,
-    getCommand: getCommand
+    connectSocket: connectSocket
 }

@@ -1,5 +1,5 @@
 //c++ code
-const rpserver = require('./build/Release/rpserver.node');
+const cppFunctions = require('./build/Release/rpserver.node');
 
 //serial port
 const arduino = require('./modules/arduino.js');
@@ -19,11 +19,11 @@ serverSocket.connectSocket();
 exports.server = sensorServer.app;
 
 console.log("--------- C++ Function Examples ---------");
-console.log("rpserver: ", rpserver);
-console.log("Hello World: ", rpserver.helloWorld());
-console.log("Add 2 + 3: ", rpserver.add(2,3));
-console.log("getPoint: ", JSON.parse(rpserver.getPoint()));
-const p = new rpserver.Point(1, 2, 3);
+console.log("cppFunctions: ", cppFunctions);
+console.log("Hello World: ", cppFunctions.helloWorld());
+console.log("Add 2 + 3: ", cppFunctions.add(2,3));
+console.log("getPoint: ", JSON.parse(cppFunctions.getPoint()));
+const p = new cppFunctions.Point(1, 2, 3);
 console.log("Point: ", p);
 console.log("X: ", p.X(), " Y: ", p.Y(), " Z: ", p.Z());
 console.log("-----------------------------------------");

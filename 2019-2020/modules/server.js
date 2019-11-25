@@ -28,7 +28,7 @@ var webserver = {
         preflightMaxAge: 5, //Optional
         origins: ['*'],
         allowHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Access-Control-Allow-Origin'],
-        acceptable: ['POST']
+        acceptable: ['POST', 'GET']
     }
 }
 
@@ -40,6 +40,13 @@ app.listen(port, () => {
 app.get('/', function (req, res) {
     res.send('System Active!');
 });
+var n = 0;
+app.get('/status', cors(webserver.cors), function(req, res, next) {
+    console.log("got a message")
+    res.json({msg: n});
+    n++;
+});
+
 /*
 app.post('/test', function (req, res) {
     res.send(req.body);
