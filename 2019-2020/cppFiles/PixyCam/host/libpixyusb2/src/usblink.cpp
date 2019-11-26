@@ -15,10 +15,10 @@
 
 
 #include <stdio.h>
-#include "pixydefs.h"
-#include "usblink.h"
-#include "debuglog.h"
-#include "util.h"
+#include "../../../common/inc/pixydefs.h"
+#include "../include/usblink.h"
+#include "../../../common/inc/debuglog.h"
+#include "../include/util.h"
 
 USBLink::USBLink()
 {

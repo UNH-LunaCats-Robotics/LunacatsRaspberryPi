@@ -26,11 +26,11 @@ macro(package_add_test TESTNAME)
     set_target_properties(${TESTNAME} PROPERTIES FOLDER Testing)
 endmacro()
 
-package_add_test(${PROJECT_NAME}
-    ArduinoSerialTest.cpp
+#package_add_test(${PROJECT_NAME}
+#    ArduinoSerialTest.cpp
 #    ../Sources/ArduinoSerial.cpp
 #   [className]Tests/[className]Test.cpp
-)
+#)
 
 #[[
 

@@ -64,11 +64,24 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 #allows us to run tests
-enable_testing()
+#enable_testing()
 
 #create the libraries used by the main file.
 add_library( RobotSourceCode STATIC Headers/config.h
-    Sources/ArduinoSerial.cpp	Headers/ArduinoSerial.h
+    PixyCam/host/libpixyusb2/src/libpixyusb2.cpp
+    PixyCam/host/libpixyusb2/include/libpixyusb2.h
+
+    PixyCam/host/libpixyusb2/include/usblink.h
+    PixyCam/host/libpixyusb2/src/usblink.cpp
+    
+    PixyCam/host/libpixyusb2/include/util.h
+    PixyCam/host/libpixyusb2/src/util.cpp
+
+    PixyCam/host/arduino/libraries/Pixy2/TPixy2.h
+    
+    PixyCam/common/inc/chirp.hpp
+    PixyCam/common/src/chirp.cpp
+#   Sources/ArduinoSerial.cpp	Headers/ArduinoSerial.h
 #   Sources/[className].cpp     Headers/[className].h
 #                               Headers/[declarations].h
 )
@@ -108,8 +121,8 @@ mark_as_advanced(
 )
 
 #keeping IDEs that support folders clean
-set_target_properties(gtest PROPERTIES FOLDER extern)
-set_target_properties(gtest_main PROPERTIES FOLDER extern)
-set_target_properties(gmock PROPERTIES FOLDER extern)
-set_target_properties(gmock_main PROPERTIES FOLDER extern)
+#set_target_properties(gtest PROPERTIES FOLDER extern)
+#set_target_properties(gtest_main PROPERTIES FOLDER extern)
+#set_target_properties(gmock PROPERTIES FOLDER extern)
+#set_target_properties(gmock_main PROPERTIES FOLDER extern)
 
