@@ -42,7 +42,7 @@ app.listen(port, () => {
 });
 
 app.get('/', function (req, res) {
-    res.send('System Active!');
+    res.sendFile(__dirname+'/robotClient/status.html');
 });
 
 app.get('/status', cors(webserver.cors), function(req, res, next) {

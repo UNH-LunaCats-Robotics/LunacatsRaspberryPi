@@ -66,6 +66,7 @@ var reconnectArd = function() {
 
 connectArd();
 
+//skeleton of an idea//
 var lastCommand = {
     cmd: "",
     success: "pending"
@@ -74,35 +75,7 @@ var lastCommand = {
 function writeToRobot(cmd) {
     
 }
-
-
-/* //quickly looking like we wont need this
-sensorPorts.forEach( (str) => {
-    //unlike other languages, functions in javascript are allocated on the heap 
-    //  and not a stack, so these variables will remain in the scope of 
-    //  the async functions after the function ends
-    const port = new SerialPort(str, { baudRate: 9600 });
-    const parser = port.pipe(new Readline({ delimiter: '\n' }));// Read the port data
-    var no_error = true;
-
-    port.on('error', function(err) {
-        console.log("Sensor", err.message);
-        no_error = false;
-    })
-
-    if(no_error) {
-        port.on("open", () => {
-            console.log("sensor serial port open");
-        });
-
-        //since these are read-only arduinos for the server,
-        //we do not need to wait for when we can write to them.
-        parser.on('data', data => {
-            console.log("sensor info: ", data);
-        });
-    }
-});
-*/
+////////////////////////
 
 function getConnected() {
     return isConnected;
