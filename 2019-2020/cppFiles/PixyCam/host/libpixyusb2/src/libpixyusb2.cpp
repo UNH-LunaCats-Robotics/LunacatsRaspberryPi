@@ -1,4 +1,4 @@
-#include "libpixyusb2.h"
+#include "../include/libpixyusb2.h"
 
 Link2USB::Link2USB()
 {

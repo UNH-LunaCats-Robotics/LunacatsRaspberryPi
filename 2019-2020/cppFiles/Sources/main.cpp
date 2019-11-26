@@ -1,9 +1,10 @@
   
-#include "../Headers/ArduinoSerial.h"
+//#include "../Headers/ArduinoSerial.h"
 
 #define BUF_SIZE 1024
 
 int main() {
+    /*
     string port = "/dev/ttyACM0";
 
 #ifdef MAC
@@ -18,7 +19,7 @@ int main() {
         unsigned char cmd[] = "Lets test this messenger!";
         //printf("Writing %s\n", cmd);
 
-        /* Whole response*/
+        // Whole response
         char response[BUF_SIZE];
         memset(response, '\0', sizeof response);
         
@@ -32,6 +33,6 @@ int main() {
     } catch( const invalid_argument &e ) {
         printf("Error: %s", e.what());
     }
-
+*/
 	return 0;
 }
