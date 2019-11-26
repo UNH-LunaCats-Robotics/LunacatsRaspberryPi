@@ -16,7 +16,7 @@
 #ifndef _USBLINK_H
 #define _USBLINK_H
 
-#include "../../../common/inc/link.h"
+#include "link.h"
 //#include <libusb.h>
 #include </usr/local/Cellar/libusb/1.0.23/include/libusb-1.0/libusb.h>
 

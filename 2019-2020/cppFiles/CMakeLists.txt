@@ -56,6 +56,7 @@ option(PACKAGE_TESTS "Build the tests" ON)
 
 include(FetchContent)
 
+
 #add compiler flags
 add_compile_options("-Wno-psabi")
 
@@ -81,13 +82,27 @@ add_library( RobotSourceCode STATIC Headers/config.h
     
     PixyCam/common/inc/chirp.hpp
     PixyCam/common/src/chirp.cpp
-#   Sources/ArduinoSerial.cpp	Headers/ArduinoSerial.h
+    # Sources/ArduinoSerial.cpp	Headers/ArduinoSerial.h
 #   Sources/[className].cpp     Headers/[className].h
 #                               Headers/[declarations].h
 )
 
+target_include_directories( RobotSourceCode PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Headers
+    ${CMAKE_CURRENT_SOURCE_DIR}/Sources 
+    ${CMAKE_CURRENT_SOURCE_DIR}/Headers/Exported
+    ${CMAKE_CURRENT_SOURCE_DIR}/Sources/Exported
+    ${CMAKE_CURRENT_SOURCE_DIR}/PixyCam/host/libpixyusb2/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/PixyCam/host/libpixyusb2/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/PixyCam/common/inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/PixyCam/common/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/PixyCam/host/arduino/libraries/Pixy2
+)
+
 #create the executable for the project
 add_executable(main Sources/main.cpp)
+
+
 
 #add linked libraries to the compiled result 
 target_link_libraries(main PUBLIC 
@@ -109,7 +124,7 @@ if(PACKAGE_TESTS)
         add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
     endif()
 
-    add_subdirectory(Testing)
+    #add_subdirectory(Testing)
 
 endif()
 
