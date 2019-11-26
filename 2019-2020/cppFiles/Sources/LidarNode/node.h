@@ -10,7 +10,9 @@ class ofApp : public ofBaseApp{
     long boty;
     long botheight;
 
+		void setup(bool fasti2c, char i2c);
 		void node(long x, long y, long z);
+		void getdistance();
 		void update(long x, long y);
 		void draw();
 
@@ -18,5 +20,6 @@ class ofApp : public ofBaseApp{
     long getobstacle(long angle);
 
 		ofApp myApp;
+		LidarLite myLidarLite;
 		int wDistance;
 };
