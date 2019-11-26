@@ -10,6 +10,7 @@ class ofApp : public ofBaseApp{
     long boty;
     long botheight;
 		long stridis;
+		int whichLidar;
 
 		void setup(bool fasti2c, char i2c);
 		void node(long x, long y, long z);

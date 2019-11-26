@@ -2,11 +2,12 @@
 #include <math.h>
 
 //--------------------------------------------------------------
-void node::node(long x, long y, long z);{
+void node::node(long x, long y, long z, int lidarpoint);{
 	botx = x;
   boty = y;
   botheight = z;
 	stridis = 0;
+	whichLidar = lidarpoint;
 }
 
 //setup for the lidar
@@ -63,7 +64,7 @@ int node::gettypeofobstacle(long angle){
 long * node::getobstacle(long angle, int ulur){
 	int dis = getdistance();
 	if(ulur == 1){//upleft
-		
+
 	}
 
 }
