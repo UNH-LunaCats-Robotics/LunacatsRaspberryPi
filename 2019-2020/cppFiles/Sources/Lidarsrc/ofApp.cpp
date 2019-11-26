@@ -73,7 +73,7 @@ double ofApp::getXlength(double angle, double straightDistance){
 	return xlength;
 }
 
-// Get the straight distance
+// Get the height of the obstacle
 double ofApp::getHeight(double angle, double straightDistance){
 	double pi = 3.14159265;
 	double sinangle = cos (angle * pi / 180);

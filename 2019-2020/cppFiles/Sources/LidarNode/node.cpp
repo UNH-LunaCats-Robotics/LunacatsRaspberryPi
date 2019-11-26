@@ -1,4 +1,4 @@
-#include "ofApp.h"
+#include "ofApp.cpp"
 #include <math.h>
 
 //--------------------------------------------------------------
@@ -6,6 +6,7 @@ void node::node(long x, long y, long z);{
 	botx = x;
   boty = y;
   botheight = z;
+	stridis = 0;
 }
 
 //setup for the lidar
@@ -36,4 +37,33 @@ long node::getdistance(){
 		cout << "Wrong number" << endl;
 		return -1;
 	}
+}
+
+void node::update(long x, long y){
+	botx = x;
+	boty = y;
+}
+
+int node::gettypeofobstacle(long angle){
+	int dis = getdistance();
+	double strightdis = getXlength(angle, dis);
+	stridis = strightdis;
+	double height = getHeight(angle, dis);
+	if(height < botheight){
+		cout << "This is a rock" << endl;
+		//return height;
+	}
+	else if(height >= botheight){
+		cout << "This is a hole" << endl;
+		//return height;
+	}
+	return height;
+}
+
+long * node::getobstacle(long angle, int ulur){
+	int dis = getdistance();
+	if(ulur == 1){//upleft
+		
+	}
+
 }
