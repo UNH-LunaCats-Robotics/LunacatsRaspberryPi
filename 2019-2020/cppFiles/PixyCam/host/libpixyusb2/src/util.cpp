@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <time.h>
-#include "../include/util.h"
+#include "util.h"
 
 
 uint32_t millis()
