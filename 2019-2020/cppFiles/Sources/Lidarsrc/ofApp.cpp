@@ -20,7 +20,7 @@ void ofApp::setup(bool fasti2c, int i2c){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-	int desread = myLidarLite.startDistanceRead();
+	int desread = myLidarLite.distance(true,true);
 	if(desread) {
 		cout << "myLidarLite read something" << endl;
 	}

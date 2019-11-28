@@ -60,11 +60,50 @@ int node::gettypeofobstacle(long angle){
 	}
 	return height;
 }
-
-long * node::getobstacle(long angle, int ulur){
+//ulur is the number of the lidar
+//ulur = 0, this is upleft
+//ulur = 1, this is upright
+//ulur = 2, this is backlidars
+double node::getXobstacle(long angle, int ulur){
 	int dis = getdistance();
-	if(ulur == 1){//upleft
-
+	double xvalue = 0;
+	if(ulur == 0){//upleft
+		xvalue = getXforUL(angle, dis, botx);
 	}
-
+	else if(ulur == 1){//upright
+		xvalue = getXforUR(angle, dis, botx);
+	}
+	else if(ulur == 2){//back lidars
+		xvalue = getXnormal(angle, dis, boty);
+	}
+	else{
+		xvalue = -1;
+	}
+	return xvalue;
+}
+//ulur is the number of the lidar
+//ulur = 0, this is upleft
+//ulur = 1, this is upright
+//ulur = 2, this is downleft
+//this angle is the angle for the lidar direction
+double node::getYobstacle(long angle, int ulur){
+	int dis = getdistance();
+	double yvalue = 0;
+	if(ulur == 0){//upleft
+		yvalue = getYforUL(angle, dis, boty);
+	}
+	else if(ulur == 1){//upright
+		yvalue = getYforUR(angle, dis, boty);
+	}
+	else if(ulur == 2){//back lidars
+		yvalue = getYnormal(angle, dis, boty);
+	}
+	else{
+		yvalue = -1;
+	}
+	return yvalue;
+}
+void node::exit(){
+	// Stop it
+	myLidarLite.stop();
 }

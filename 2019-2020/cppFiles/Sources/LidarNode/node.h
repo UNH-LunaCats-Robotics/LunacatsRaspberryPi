@@ -19,7 +19,9 @@ class ofApp : public ofBaseApp{
 		//void draw();
 
     int gettypeofobstacle(long angle);
-    long getobstacle(long angle);
+    double getXobstacle(long angle, int ulur);
+		double getYobstacle(long angle, int ulur)
+
 
 		ofApp myApp;
 		LidarLite myLidarLite;
