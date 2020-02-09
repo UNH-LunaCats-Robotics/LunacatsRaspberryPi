@@ -7,6 +7,8 @@ const Readline = require('@serialport/parser-readline');
 var robot; //linux
 var cmdParser;
 var can_write_cmd = false;
+var isConnected = false;
+
 //each sensor aduino should be added here. 
 //const sensorPorts = ['/dev/ttyACM1'];
 
@@ -16,17 +18,21 @@ var connectArd = function() {
     //stop process if arduino cannot be reached
     robot.on("error", function(err) {
         can_write_cmd = false;
+        isConnected = false;
         reconnectArd();
     })
 
     robot.on("close", () => {
         console.log("!!!ERROR: LOST CONNECTION TO CONTROLLER!!!");
+        can_write_cmd = false;
+        isConnected = false;
         reconnectArd();
     });
 
     //just because it is open does not mean it is ready to recieve data
     robot.on("open", () => {
         console.log('robot serial port open');
+        isConnected = true;
     });
 
     //print data recieved from arduino and init.
@@ -60,38 +66,29 @@ var reconnectArd = function() {
 
 connectArd();
 
+//skeleton of an idea//
+var lastCommand = {
+    cmd: "",
+    success: "pending"
+}
 
-/* //quickly looking like we wont need this
-sensorPorts.forEach( (str) => {
-    //unlike other languages, functions in javascript are allocated on the heap 
-    //  and not a stack, so these variables will remain in the scope of 
-    //  the async functions after the function ends
-    const port = new SerialPort(str, { baudRate: 9600 });
-    const parser = port.pipe(new Readline({ delimiter: '\n' }));// Read the port data
-    var no_error = true;
+function writeToRobot(cmd) {
+    
+}
+////////////////////////
 
-    port.on('error', function(err) {
-        console.log("Sensor", err.message);
-        no_error = false;
-    })
+function getConnected() {
+    return isConnected;
+}
 
-    if(no_error) {
-        port.on("open", () => {
-            console.log("sensor serial port open");
-        });
-
-        //since these are read-only arduinos for the server,
-        //we do not need to wait for when we can write to them.
-        parser.on('data', data => {
-            console.log("sensor info: ", data);
-        });
-    }
-});
-*/
+function getCanWrite() {
+    return can_write_cmd;
+}
 
 module.exports = {
     connectArd: connectArd,
     reconnectArd: reconnectArd,
     robot: robot,
-    parser: cmdParser
+    isConnected: getConnected,
+    canWrite: getCanWrite
 };

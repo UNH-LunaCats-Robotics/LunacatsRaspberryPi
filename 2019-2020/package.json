@@ -4,6 +4,8 @@
   "description": "server that communicates with the laptop to run the robot",
   "main": "index.js",
   "scripts": {
+    "build": "node-gyp rebuild",
+    "clean": "node-gyp clean",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "UNH",

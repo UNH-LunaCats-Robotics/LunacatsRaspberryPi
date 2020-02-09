@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include <math.h>
 
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -62,6 +63,169 @@ void ofApp::draw(){
 
 	cout << endl;
 }
+
+// Get the straight distance
+double ofApp::getXlength(double angle, double straightDistance){
+	double pi = 3.14159265;
+	double sinangle = sin (angle * pi / 180);
+	cout << "The sin of angle is " << sinangle << " for strightDistance";
+	double xlength = sinangle * straightDistance;
+	return xlength;
+}
+
+// Get the straight distance
+double ofApp::getHeight(double angle, double straightDistance){
+	double pi = 3.14159265;
+	double sinangle = cos (angle * pi / 180);
+	cout << "The cos of angle is " << sinangle << " for strightDistance";
+	double hlength = sinangle * straightDistance;
+	return hlength;
+}
+
+// straightDistance is the distance from the lidar to the rock
+// HereY is the Y of the current position
+// UR means up right
+double ofApp::getYforUR(double angle, double straightDistance, double hereY){
+	double pi = 3.14159265;
+	double result, cosnum;
+	if(angle == 0 || angle == 360){
+		result = straightDistance + hereY;
+	}
+	else if(angle < 90 && angle > 0){
+		cosnum = cos(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = result + hereY;
+	}
+	else if(angle == 90 || angle == 270){
+		result = hereY;
+	}
+	else if(angle > 270 && angle < 360){
+		angle = angle - 270;
+		cosnum = cos(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = result + hereY;
+	}
+	else if(angle > 90 && angle < 180){
+		cosnum = cos(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = hereY + result;
+	}
+	else{
+		result = -1;
+	}
+	return result;
+}
+
+// straightDistance is the distance from the lidar to the rock
+// HereX is the X of the current position
+// UR means up right
+double ofApp::getXforUR(double angle, double straightDistance, double hereX){
+	double pi = 3.14159265;
+	double result, cosnum;
+	if(angle == 0 || angle == 360 || ngle == 180){
+		result = hereX;
+	}
+	else if(angle < 90 && angle > 0){
+		cosnum = sin(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = result + hereX;
+	}
+	else if(angle == 90){
+		result = hereX + straightDistance;
+	}
+	else if(angle == 270){
+		result = hereX - straightDistance;
+	}
+	else if(angle > 270 && angle < 360){
+		angle = angle - 270;
+		cosnum = sin(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = hereX - result;
+	}
+	else if(angle > 90 && angle < 180){
+		cosnum = sin(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = result - hereX;
+	}
+	else{
+		result = -1;
+	}
+	return result;
+}
+
+// straightDistance is the distance from the lidar to the rock
+// HereX is the X of the current position
+// UL means up Left
+double ofApp::getXforUL(double angle, double straightDistance, double hereX){
+	double pi = 3.14159265;
+	double result, cosnum;
+	if(angle == 0 || angle == 360 || angle == 180){
+		result = hereX;
+	}
+	else if(angle < 90 && angle > 0){
+		cosnum = sin(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = result + hereX;
+	}
+	else if(angle == 90){
+		result = hereX + straightDistance;
+	}
+	else if(angle == 270){
+		result = hereX - straightDistance;
+	}
+	else if(angle > 270 && angle < 360){
+		angle = angle - 270;
+		cosnum = sin(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = hereX - result;
+	}
+	else if(angle > 180 && angle < 270){
+		angle = angle - 180;
+		cosnum = sin(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = hereX - result;
+	}
+	else{
+		result = -1;
+	}
+	return result;
+}
+
+// straightDistance is the distance from the lidar to the rock
+// HereY is the Y of the current position
+// UL means up Left
+double ofApp::getYforUL(double angle, double straightDistance, double hereY){
+	double pi = 3.14159265;
+	double result, cosnum;
+	if(angle == 0 || angle == 360){
+		result = straightDistance + hereY;
+	}
+	else if(angle < 90 && angle > 0){
+		cosnum = cos(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = result + hereY;
+	}
+	else if(angle == 90 || angle == 270){
+		result = hereY;
+	}
+	else if(angle > 270 && angle < 360){
+		angle = angle - 270;
+		cosnum = cos(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = result + hereY;
+	}
+	else if(angle > 180 && angle < 270){
+		cosnum = cos(angle * pi /180);
+		result = cosnum * straightDistance;
+		result = hereY - result;
+	}
+	else{
+		result = -1;
+	}
+	return result;
+}
+
+
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
