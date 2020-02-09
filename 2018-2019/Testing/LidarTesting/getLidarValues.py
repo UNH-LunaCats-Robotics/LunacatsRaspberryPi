@@ -2,7 +2,7 @@
 #-----------------!!NOTICE!!-----------------#
 YOU NEED CAPACITORS TO POWER THE LIDAR
 
-This is really important since you can do 
+This is really important since you can do
 some real damage to the devine your testing with
 because it does not consistantly draw power.
 
@@ -40,10 +40,10 @@ IN+ . . . . . . . W2+ . . . . L+
 IN- . . . . . . . W2- . . . . L-
 ----------------------------------
 .  W1+ .  .  .  W2+ .  .  .  .  .
-.  .   .  .  .  W1+ .  .  .  .  . 
-.  X+  .  .  .  X+  .  .  .  .  . 
-.  X-  .  .  .  X-  .  .  .  .  . 
-.  .   .  .  .  W2- .  .  .  .  . 
+.  .   .  .  .  W1+ .  .  .  .  .
+.  X+  .  .  .  X+  .  .  .  .  .
+.  X-  .  .  .  X-  .  .  .  .  .
+.  .   .  .  .  W2- .  .  .  .  .
 .  W1- .  .  .  W1- .  .  .  .  .
 
 Connect positive leads for capacitors to eachother
@@ -52,7 +52,7 @@ Power goes into the first capacitor's positive lead
     and fed back from the last capacitor's positive lead
 Ground goes into the first capacitor's negative lead
     and fed back from the last capacitor's negative lead
-    
+
 RASPBERRY PI WIRING
 
 The odd pin numbers are the top row starting from
@@ -63,10 +63,13 @@ USB ports. Here is the Pinout:
 Red: 6   Black: 4    Blue: 3    Green: 5
 
 use sudo i2cdetect -y 1 to verify if it is connected
-correctly. 
+correctly.
 
 #--------------------------------------------#
 '''
+
+from Lidar_Lite import Lidar_Lite
+from time import sleep
 
 lidar = Lidar_Lite()
 connected = lidar.connect(1)
@@ -78,7 +81,7 @@ if __name__ == "__main__":
     print("Starting Test")
     while True:
         try:
-            
+
             print "Distance: "+lidar.getDistance()
             sleep(0.1)
         except:
