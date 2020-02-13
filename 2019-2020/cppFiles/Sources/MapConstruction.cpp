@@ -17,6 +17,8 @@ double angleTo(vertex* v1, vertex* v2);
 double angleTo(double x1, double y1, double x2, double y2);
 void printMap(vertex** vertices);
 
+int terrain [100][100];
+
 vertex** samplePoints() {
     vertex** vertices = new vertex*[NUM_POINTS];
 
@@ -93,8 +95,60 @@ vertex** constructRoadmap() {
     return constructRoadmap(3.0, 3.0, 97.0, 97.0);
 }
 
+vertex* dijkstra(vertex** vertices) {
+    vertices[0]->d = 0;
+
+    roadmap* map = roadmap_create(NUM_POINTS);
+    for(int i = 0; i < NUM_POINTS; i++)
+        roadmap_insert(map, vertices[i]);
+
+    while(roadmap_size(map) > 0) {
+	    //printf("%i\n", roadmap_size(map));
+        vertex* u = roadmap_extract(map);
+	    //printf("%i\n", roadmap_size(map));
+	//printf("%i, %i, %f\n", u->id, u->index, u->d);
+        if(u->id == 1)
+            break;
+	//printf("past break\n");
+        edge* e = u->edges;
+        while(e != nullptr) {
+            if(e->dest->finished == 0 && e->dest->d > u->d + e->distance) {
+		    //printf("edit: %i\n", e->dest->id);
+                e->dest->d = u->d + e->distance;
+                roadmap_pullup(map, e->dest->index);
+                e->dest->parent = u->id;
+            }
+            e = e->next;
+        }
+	//printf("past while\n");
+        u->finished = 1;
+    }
+
+    for(int i = 0; i < 100; i++) {
+	//printf("%i <- %i\n", vertices[i]->id, vertices[i]->parent);
+    }
+
+    vertex* path = vertices[1];
+    while(path->parent != -1) {
+        vertices[path->parent]->next = path;
+        path = vertices[path->parent];
+    }
+
+    roadmap_delete(map);
+    
+    return path;
+}
+
 vertex** findPath(double x1, double y1, double x2, double y2) {
     vertex** vertices = constructRoadmap(x1, y1, x2, y2);
+    
+    vertex* path =  dijkstra(vertices);
+
+    printf("path\n");
+    while(path != nullptr) {
+	printf("%f:%f\n", path->x, path->y);
+	path = path->next;
+    }
 
     return vertices; //TEMP, NOT RIGHT
 }
@@ -133,6 +187,8 @@ bool isValidPoint(vertex* v) {
 }
 
 bool isValidPoint(double x, double y) {
+	if(terrain[(int)x][(int)y] == 1)
+		return false;
     return true; 
 }
 
@@ -186,6 +242,34 @@ void printMap(vertex** vertices) {
     }
 }
 
+void buildTerrain() {
+	for(int x = 0; x < 100; x++) {
+		for(int y = 0; y < 100; y++)
+			terrain[x][y] = 0;
+	}
+	for(int x = 10; x < 80; x++) {
+		for(int y = 10; y < 20; y++)
+			terrain[x][y] = 1;
+	}
+	for(int x = 10; x < 15; x++) {
+		for(int y = 20; y < 80; y++)
+			terrain[x][y] = 1;
+	}
+	for(int x = 35; x < 90; x++) {
+		for(int y = 35; y < 65; y++)
+			terrain[x][y] = 1;
+	}
+	for(int x = 0; x < 80; x++) {
+		for(int y = 80; y < 100; y++)
+			terrain[x][y] = 1;
+	}
+	for(int x = 90; x < 100; x++) {
+		for(int y = 30; y < 70; y++)
+			terrain[x][y] = 1;
+	}
+}
+
 int main() {
-    constructRoadmap();
+	buildTerrain();
+    findPath(3.0, 3.0, 97.0, 97.0);
 }
