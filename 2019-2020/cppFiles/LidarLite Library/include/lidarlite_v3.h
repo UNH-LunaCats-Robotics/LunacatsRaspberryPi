@@ -56,6 +56,13 @@ class LIDARLite_v3
         __s32     i2cWrite    (__u8 regAddr, __u8 * dataBytes, __u8 numBytes, __u8 lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
         __s32     i2cRead     (__u8 regAddr, __u8 * dataBytes, __u8 numBytes, __u8 lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
         void      correlationRecordRead (__s16 * corrValues, __u16 numberOfReadings = 256, __u8 lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+        
+        double	  getXlength(double angle, double straightDistance);
+        double	  getHeight(double angle, double straightDistance);
+        double    getYforUR(double angle, double straightDistance, double hereY);
+        double	  getXforUR(double angle, double straightDistance, double hereX);
+        double    getXforUL(double angle, double straightDistance, double hereX);
+        double    getYforUL(double angle, double straightDistance, double hereY);
 };
 
 #endif
