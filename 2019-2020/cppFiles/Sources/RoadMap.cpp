@@ -19,6 +19,7 @@ void addedge(vertex* v1, vertex* v2, double d) {
     e->dest = v2;
     e->distance = d;
     //e->angle = a;
+    e->valid = true;
 
     e->next = v1->edges;
     v1->edges = e;

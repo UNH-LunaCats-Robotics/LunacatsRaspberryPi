@@ -20,6 +20,7 @@ struct edge {
     vertex* dest;
     double distance;
     double angle;
+    bool valid;
 
     struct edge* next;
 };
